@@ -1,0 +1,5 @@
+JWT_SECRET=SEU SEGREDO
+DB_DIALECT=sqlite
+DB_STORAGE=./database.sqlite
+PORT=3000
+NODE_ENV=development
