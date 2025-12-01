@@ -1,0 +1,395 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  getNiveisAcesso, 
+  createNivelAcesso, 
+  updateNivelAcesso, 
+  deleteNivelAcesso,
+  isAdmin,
+  isAuthenticated 
+} from '../services/api';
+import '../styles/NiveisAcesso.css';
+
+const NiveisAcesso = () => {
+  const navigate = useNavigate();
+  
+  // Estados
+  const [niveis, setNiveis] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
+  // Modal states
+  const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState('create'); // 'create' ou 'edit'
+  const [selectedNivel, setSelectedNivel] = useState(null);
+  
+  // Form states
+  const [formData, setFormData] = useState({
+    nome: '',
+    descricao: '',
+    nivel: 1,
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  
+  // Delete confirmation
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [nivelToDelete, setNivelToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  // Verificar permissão de admin
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/login');
+      return;
+    }
+    
+    if (!isAdmin()) {
+      navigate('/dashboard');
+      return;
+    }
+    
+    loadNiveis();
+  }, [navigate]);
+
+  // Carregar níveis de acesso
+  const loadNiveis = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const data = await getNiveisAcesso();
+      setNiveis(data);
+    } catch (err) {
+      if (err.status === 403) {
+        setError('Acesso negado. Apenas administradores podem acessar esta página.');
+      } else {
+        setError(err.message || 'Erro ao carregar níveis de acesso');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Limpar mensagens após 5 segundos
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  // Abrir modal para criar
+  const handleCreate = () => {
+    setModalMode('create');
+    setFormData({ nome: '', descricao: '', nivel: 1 });
+    setFormErrors({});
+    setSelectedNivel(null);
+    setShowModal(true);
+  };
+
+  // Abrir modal para editar
+  const handleEdit = (nivel) => {
+    setModalMode('edit');
+    setFormData({
+      nome: nivel.nome,
+      descricao: nivel.descricao || '',
+      nivel: nivel.nivel || 1,
+    });
+    setFormErrors({});
+    setSelectedNivel(nivel);
+    setShowModal(true);
+  };
+
+  // Fechar modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setFormData({ nome: '', descricao: '', nivel: 1 });
+    setFormErrors({});
+    setSelectedNivel(null);
+  };
+
+  // Validar formulário
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.nome.trim()) {
+      errors.nome = 'Nome é obrigatório';
+    } else if (formData.nome.length < 2) {
+      errors.nome = 'Nome deve ter pelo menos 2 caracteres';
+    } else if (formData.nome.length > 50) {
+      errors.nome = 'Nome deve ter no máximo 50 caracteres';
+    }
+    
+    if (formData.descricao && formData.descricao.length > 255) {
+      errors.descricao = 'Descrição deve ter no máximo 255 caracteres';
+    }
+    
+    if (!formData.nivel || formData.nivel < 1 || formData.nivel > 10) {
+      errors.nivel = 'Nível deve ser entre 1 e 10';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Submeter formulário
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    try {
+      setSubmitting(true);
+      setError('');
+      
+      if (modalMode === 'create') {
+        await createNivelAcesso(formData);
+        setSuccess('Nível de acesso criado com sucesso!');
+      } else {
+        await updateNivelAcesso(selectedNivel.id, formData);
+        setSuccess('Nível de acesso atualizado com sucesso!');
+      }
+      
+      handleCloseModal();
+      loadNiveis();
+    } catch (err) {
+      setError(err.message || 'Erro ao salvar nível de acesso');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Abrir confirmação de exclusão
+  const handleDeleteClick = (nivel) => {
+    setNivelToDelete(nivel);
+    setShowDeleteConfirm(true);
+  };
+
+  // Confirmar exclusão
+  const handleDeleteConfirm = async () => {
+    if (!nivelToDelete) return;
+    
+    try {
+      setDeleting(true);
+      setError('');
+      await deleteNivelAcesso(nivelToDelete.id);
+      setSuccess('Nível de acesso deletado com sucesso!');
+      setShowDeleteConfirm(false);
+      setNivelToDelete(null);
+      loadNiveis();
+    } catch (err) {
+      setError(err.message || 'Erro ao deletar nível de acesso');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Cancelar exclusão
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setNivelToDelete(null);
+  };
+
+  // Voltar ao dashboard
+  const handleBack = () => {
+    navigate('/dashboard');
+  };
+
+  return (
+    <div className="niveis-acesso-container">
+      {/* Header */}
+      <header className="niveis-header">
+        <button className="btn-back" onClick={handleBack}>
+          ← Voltar
+        </button>
+        <h1>🔐 Níveis de Acesso</h1>
+        <button className="btn-create" onClick={handleCreate}>
+          + Novo Nível
+        </button>
+      </header>
+
+      {/* Mensagens */}
+      {error && (
+        <div className="alert alert-error">
+          <span className="alert-icon">❌</span>
+          {error}
+          <button className="alert-close" onClick={() => setError('')}>×</button>
+        </div>
+      )}
+      
+      {success && (
+        <div className="alert alert-success">
+          <span className="alert-icon">✅</span>
+          {success}
+          <button className="alert-close" onClick={() => setSuccess('')}>×</button>
+        </div>
+      )}
+
+      {/* Loading */}
+      {loading ? (
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Carregando níveis de acesso...</p>
+        </div>
+      ) : (
+        /* Tabela de níveis */
+        <div className="table-container">
+          {niveis.length === 0 ? (
+            <div className="empty-state">
+              <span className="empty-icon">📋</span>
+              <p>Nenhum nível de acesso cadastrado.</p>
+              <button className="btn-create" onClick={handleCreate}>
+                Criar primeiro nível
+              </button>
+            </div>
+          ) : (
+            <table className="niveis-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Nível</th>
+                  <th>Criado em</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {niveis.map((nivel) => (
+                  <tr key={nivel.id}>
+                    <td>{nivel.id}</td>
+                    <td className="nome-cell">{nivel.nome}</td>
+                    <td className="descricao-cell">{nivel.descricao || '-'}</td>
+                    <td>
+                      <span className={`nivel-badge nivel-${nivel.nivel}`}>
+                        {nivel.nivel}
+                      </span>
+                    </td>
+                    <td>{new Date(nivel.createdAt).toLocaleDateString('pt-BR')}</td>
+                    <td className="actions-cell">
+                      <button 
+                        className="btn-action btn-edit" 
+                        onClick={() => handleEdit(nivel)}
+                        title="Editar"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="btn-action btn-delete" 
+                        onClick={() => handleDeleteClick(nivel)}
+                        title="Excluir"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+
+      {/* Modal de criação/edição */}
+      {showModal && (
+        <div className="modal-overlay" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{modalMode === 'create' ? '➕ Novo Nível de Acesso' : '✏️ Editar Nível de Acesso'}</h2>
+              <button className="modal-close" onClick={handleCloseModal}>×</button>
+            </div>
+            
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="nome">Nome *</label>
+                <input
+                  type="text"
+                  id="nome"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  placeholder="Ex: Administrador, Operador, Visitante"
+                  className={formErrors.nome ? 'error' : ''}
+                  disabled={submitting}
+                />
+                {formErrors.nome && <span className="error-message">{formErrors.nome}</span>}
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="descricao">Descrição</label>
+                <textarea
+                  id="descricao"
+                  value={formData.descricao}
+                  onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                  placeholder="Descrição das permissões deste nível"
+                  rows="3"
+                  className={formErrors.descricao ? 'error' : ''}
+                  disabled={submitting}
+                />
+                {formErrors.descricao && <span className="error-message">{formErrors.descricao}</span>}
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="nivel">Nível de Permissão * (1-10)</label>
+                <input
+                  type="number"
+                  id="nivel"
+                  value={formData.nivel}
+                  onChange={(e) => setFormData({ ...formData, nivel: parseInt(e.target.value) || 1 })}
+                  min="1"
+                  max="10"
+                  className={formErrors.nivel ? 'error' : ''}
+                  disabled={submitting}
+                />
+                <small className="form-hint">1 = Menor permissão, 10 = Maior permissão</small>
+                {formErrors.nivel && <span className="error-message">{formErrors.nivel}</span>}
+              </div>
+              
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={handleCloseModal} disabled={submitting}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-submit" disabled={submitting}>
+                  {submitting ? 'Salvando...' : (modalMode === 'create' ? 'Criar' : 'Salvar')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmação de exclusão */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay" onClick={handleDeleteCancel}>
+          <div className="modal-content modal-confirm" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>⚠️ Confirmar Exclusão</h2>
+            </div>
+            
+            <div className="confirm-body">
+              <p>Tem certeza que deseja excluir o nível de acesso:</p>
+              <strong>"{nivelToDelete?.nome}"</strong>
+              <p className="warning-text">Esta ação não pode ser desfeita!</p>
+            </div>
+            
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={handleDeleteCancel} disabled={deleting}>
+                Cancelar
+              </button>
+              <button className="btn-delete-confirm" onClick={handleDeleteConfirm} disabled={deleting}>
+                {deleting ? 'Excluindo...' : 'Excluir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="niveis-footer">
+        <p>Sistema de Monitoramento Ambiental IoT © 2025</p>
+      </footer>
+    </div>
+  );
+};
+
+export default NiveisAcesso;

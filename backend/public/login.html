@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Monitoramento Ambiental</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <!-- Logo no formulário -->
+            <div class="login-logo">
+                <img src="logo.png" alt="Logo" class="form-logo">
+            </div>
+            <div class="login-header">
+                <h1>Monitoramento Ambiental</h1>
+                <p>Sistema de Controle IoT</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <!-- Campo de Email/Usuário -->
+                <div class="form-group">
+                    <label for="email">Email ou Usuário</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Digite seu email" 
+                        required
+                    >
+                    <span class="error-message" id="emailError"></span>
+                </div>
+
+                <!-- Campo de Senha -->
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <div class="password-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Digite sua senha" 
+                            required
+                        >
+                        <button 
+                            type="button" 
+                            class="toggle-password" 
+                            id="togglePassword"
+                            aria-label="Mostrar/Ocultar senha"
+                        >
+                            👁️
+                        </button>
+                    </div>
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+
+                <!-- Botão de Login -->
+                <button 
+                    type="submit" 
+                    class="login-button" 
+                    id="loginButton"
+                >
+                    Entrar
+                </button>
+
+                <!-- Mensagem de Erro Geral -->
+                <div class="error-alert" id="errorAlert" style="display: none;"></div>
+
+                <!-- Mensagem de Sucesso -->
+                <div class="success-alert" id="successAlert" style="display: none;"></div>
+            </form>
+
+            <!-- Opções Adicionais -->
+            <div class="login-footer">
+                <p>Não tem uma conta? <a href="#register">Cadastre-se aqui</a></p>
+                <p><a href="#forgot-password">Esqueceu sua senha?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de Carregamento -->
+    <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+
+    <!-- Rodapé -->
+    <footer class="app-footer">
+        <p>© 2025 Sistema de Monitoramento Ambiental IoT</p>
+        <p>Desenvolvido com ❤️ para o Projeto Final DSIoT</p>
+    </footer>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

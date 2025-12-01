@@ -34,9 +34,24 @@ module.exports = {
         return res.status(401).json({ error: 'Credenciais inválidas' });
       }
 
-      const token = jwt.sign({ id: usuario.id, email: usuario.email }, JWT_SECRET, { expiresIn: '24h' });
-      res.json({ message: 'Login realizado com sucesso', token });
+      const token = jwt.sign({ 
+        id: usuario.id, 
+        email: usuario.email,
+        tipo_usuario: usuario.tipo_usuario 
+      }, JWT_SECRET, { expiresIn: '24h' });
+      
+      res.json({ 
+        message: 'Login realizado com sucesso', 
+        token,
+        usuario: {
+          id: usuario.id,
+          name: usuario.name,
+          email: usuario.email,
+          tipo_usuario: usuario.tipo_usuario
+        }
+      });
     } catch (error) {
+      console.error('Erro no login:', error);
       res.status(500).json({ error: 'Erro no login' });
     }
   },
@@ -44,7 +59,7 @@ module.exports = {
   async profile(req, res) {
     try {
       const usuario = await Usuario.findByPk(req.user.id, { 
-        attributes: ['id', 'name', 'email', 'tipo_Usuario'] 
+        attributes: ['id', 'name', 'email', 'tipo_usuario'] 
       });
       
       if (!usuario) {

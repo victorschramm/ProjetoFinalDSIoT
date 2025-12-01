@@ -1,0 +1,345 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ==================== LOGIN CONTAINER ==================== */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-box {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    backdrop-filter: blur(10px);
+}
+
+/* ==================== LOGO NO FORMULÁRIO ==================== */
+.login-logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Header */
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.login-header p {
+    color: #667eea;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Form */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-group input {
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #999;
+}
+
+/* Password Wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.toggle-password:hover {
+    opacity: 0.7;
+}
+
+/* Error Message */
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    min-height: 16px;
+}
+
+.error-alert {
+    background: #fee;
+    color: #c33;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e74c3c;
+    font-size: 14px;
+    animation: slideDown 0.3s ease;
+}
+
+.success-alert {
+    background: #efe;
+    color: #3c3;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 4px solid #27ae60;
+    font-size: 14px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Login Button */
+.login-button {
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.login-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.login-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Footer */
+.login-footer {
+    text-align: center;
+    margin-top: 25px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 20px;
+}
+
+.login-footer p {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.login-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .login-box {
+        padding: 30px 20px;
+    }
+
+    .login-header h1 {
+        font-size: 24px;
+    }
+
+    .form-group input {
+        padding: 11px 12px;
+        font-size: 16px;
+    }
+
+    .login-button {
+        padding: 11px;
+        font-size: 15px;
+    }
+}
+
+/* ==================== FOOTER ==================== */
+.app-footer {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.app-footer p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.app-footer p:last-child {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .login-box {
+        background: #0f3460;
+        color: #eee;
+    }
+
+    .login-header h1 {
+        color: #eee;
+    }
+
+    .login-header p {
+        color: #a8e6ff;
+    }
+
+    .form-group label {
+        color: #eee;
+    }
+
+    .form-group input {
+        background: #1a1a2e;
+        color: #eee;
+        border-color: #333;
+    }
+
+    .form-group input::placeholder {
+        color: #666;
+    }
+
+    .form-group input:focus {
+        border-color: #a8e6ff;
+        box-shadow: 0 0 0 3px rgba(168, 230, 255, 0.1);
+    }
+
+    .login-footer {
+        border-top-color: #333;
+    }
+
+    .login-footer p {
+        color: #999;
+    }
+}
