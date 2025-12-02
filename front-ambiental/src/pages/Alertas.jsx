@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Header, Drawer, Footer } from '../components';
 import {
   getAlertas,
   getAlertasBySensor,
@@ -8,7 +9,11 @@ import {
   updateAlerta,
   deleteAlerta,
   getSensores,
-  isAuthenticated
+  isAuthenticated,
+  logout as apiLogout,
+  getUserEmail,
+  isAdmin as checkIsAdmin,
+  getProfile
 } from '../services/api';
 import '../styles/Alertas.css';
 
@@ -16,6 +21,11 @@ function Alertas() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sensorIdFromUrl = searchParams.get('sensor');
+
+  // UI States
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
 
   // Estados principais
   const [alertas, setAlertas] = useState([]);
@@ -40,12 +50,49 @@ function Alertas() {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  // Função de logout
+  const handleLogout = useCallback(() => {
+    apiLogout();
+    navigate('/login');
+  }, [navigate]);
+
+  // Toggle drawer
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const closeDrawer = () => setDrawerOpen(false);
+
   // Verificar autenticação
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate('/login');
+      return;
     }
+    
+    setUserEmail(getUserEmail() || '');
+    setIsUserAdmin(checkIsAdmin());
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
+          setIsUserAdmin(tipoUsuario === 'admin');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    };
+
+    loadProfile();
   }, [navigate]);
+
+  // Keyboard events para drawer
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && drawerOpen) closeDrawer();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [drawerOpen]);
 
   // Carregar sensores
   const loadSensores = useCallback(async () => {
@@ -261,24 +308,38 @@ function Alertas() {
   };
 
   return (
-    <div className="alertas-container">
-      {/* Header */}
-      <header className="alertas-header">
-        <button className="btn-back" onClick={() => navigate('/dashboard')}>
-          ← Voltar
-        </button>
-        <h1>⚠️ Central de Alertas</h1>
-        <div className="header-stats">
-          <span className="stat-item stat-ativo">
-            🔔 {countByStatus('ativo')} Ativos
-          </span>
-          <span className="stat-item stat-pendente">
-            ⏳ {countByStatus('pendente')} Pendentes
-          </span>
-        </div>
-      </header>
+    <div className="alertas-page">
+      {/* Drawer */}
+      <Drawer 
+        isOpen={drawerOpen} 
+        onClose={closeDrawer} 
+        onLogout={handleLogout}
+        isAdmin={isUserAdmin}
+      />
 
-      {/* Filtros */}
+      {/* Header */}
+      <Header 
+        title="Central de Alertas"
+        userEmail={userEmail}
+        onMenuToggle={toggleDrawer}
+        onLogout={handleLogout}
+      />
+
+      <div className="alertas-container">
+        {/* Toolbar */}
+        <div className="alertas-toolbar">
+          <h2>⚠️ Alertas do Sistema</h2>
+          <div className="toolbar-stats">
+            <span className="stat-item stat-ativo">
+              🔔 {countByStatus('ativo')} Ativos
+            </span>
+            <span className="stat-item stat-pendente">
+              ⏳ {countByStatus('pendente')} Pendentes
+            </span>
+          </div>
+        </div>
+
+        {/* Filtros */}
       <div className="alertas-filters">
         <div className="filter-group">
           <label>Sensor:</label>
@@ -449,11 +510,6 @@ function Alertas() {
           )}
         </div>
       )}
-
-      {/* Footer */}
-      <footer className="alertas-footer">
-        <p>Sistema de Monitoramento Ambiental © 2025</p>
-      </footer>
 
       {/* Modal Visualizar Alerta */}
       {showViewModal && selectedAlerta && (
@@ -683,6 +739,10 @@ function Alertas() {
           </div>
         </div>
       )}
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

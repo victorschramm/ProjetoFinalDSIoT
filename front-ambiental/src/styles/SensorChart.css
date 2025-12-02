@@ -1,0 +1,149 @@
+/* =============================================================================
+   SENSOR CHART - Gráfico de leituras do sensor
+   ============================================================================= */
+
+.sensor-chart {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #334155;
+}
+
+.sensor-chart.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.chart-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+/* Stats row */
+.chart-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #334155;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.stat-value.max {
+  color: #ef4444;
+}
+
+.stat-value.min {
+  color: #3b82f6;
+}
+
+.stat-value.avg {
+  color: #f59e0b;
+}
+
+.stat-value.current {
+  color: #10b981;
+}
+
+/* Chart container */
+.chart-container {
+  width: 100%;
+}
+
+/* No data state */
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+}
+
+.no-data .icon {
+  font-size: 3rem;
+  opacity: 0.5;
+}
+
+.no-data p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Custom tooltip */
+.chart-tooltip {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip-label {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.tooltip-value {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+/* Recharts customizations */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #334155;
+  stroke-opacity: 0.5;
+}
+
+.recharts-text {
+  fill: #94a3b8;
+}
+
+.recharts-legend-item-text {
+  color: #94a3b8 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chart-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .sensor-chart {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-value {
+    font-size: 1rem;
+  }
+}

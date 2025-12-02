@@ -1,18 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Header, Drawer, Footer } from '../components';
 import { 
   getAmbientes, 
   getAmbienteById,
   createAmbiente,
   updateAmbiente, 
   deleteAmbiente,
-  isAuthenticated
+  isAuthenticated,
+  logout as apiLogout,
+  getUserEmail,
+  isAdmin as checkIsAdmin,
+  getProfile
 } from '../services/api';
 import '../styles/Ambientes.css';
 
 const Ambientes = () => {
   const navigate = useNavigate();
+  
+  // UI States
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   
   // Estados principais
   const [ambientes, setAmbientes] = useState([]);
@@ -39,14 +49,50 @@ const Ambientes = () => {
   const [ambienteToDelete, setAmbienteToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Função de logout
+  const handleLogout = useCallback(() => {
+    apiLogout();
+    navigate('/login');
+  }, [navigate]);
+
+  // Toggle drawer
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const closeDrawer = () => setDrawerOpen(false);
+
   // Verificar autenticação
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate('/login');
       return;
     }
+    
+    setUserEmail(getUserEmail() || '');
+    setIsUserAdmin(checkIsAdmin());
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
+          setIsUserAdmin(tipoUsuario === 'admin');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    };
+
+    loadProfile();
     loadAmbientes();
   }, [navigate]);
+
+  // Keyboard events para drawer
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && drawerOpen) closeDrawer();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [drawerOpen]);
 
   // Carregar ambientes
   const loadAmbientes = async () => {
@@ -237,17 +283,31 @@ const Ambientes = () => {
   };
 
   return (
-    <div className="ambientes-container">
+    <div className="ambientes-page">
+      {/* Drawer */}
+      <Drawer 
+        isOpen={drawerOpen} 
+        onClose={closeDrawer} 
+        onLogout={handleLogout}
+        isAdmin={isUserAdmin}
+      />
+
       {/* Header */}
-      <header className="ambientes-header">
-        <button className="btn-back" onClick={handleBack}>
-          ← Voltar
-        </button>
-        <h1>🏢 Gerenciar Ambientes</h1>
-        <button className="btn-new" onClick={handleCreate}>
-          + Novo Ambiente
-        </button>
-      </header>
+      <Header 
+        title="Gerenciar Ambientes"
+        userEmail={userEmail}
+        onMenuToggle={toggleDrawer}
+        onLogout={handleLogout}
+      />
+
+      <div className="ambientes-container">
+        {/* Toolbar */}
+        <div className="ambientes-toolbar">
+          <h2>🏢 Ambientes Cadastrados</h2>
+          <button className="btn-new" onClick={handleCreate}>
+            + Novo Ambiente
+          </button>
+        </div>
 
       {/* Loading */}
       {loading && !showModal ? (
@@ -506,11 +566,10 @@ const Ambientes = () => {
           </div>
         </div>
       )}
+      </div>
 
       {/* Footer */}
-      <footer className="ambientes-footer">
-        <p>© 2025 Sistema de Monitoramento Ambiental IoT</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

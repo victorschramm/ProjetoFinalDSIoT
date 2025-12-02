@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import '../styles/Drawer.css';
 
 const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
   console.log('📋 Drawer - isAdmin:', isAdmin);
@@ -32,10 +33,30 @@ const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
               🏠 Início
             </NavLink>
           </li>
+          
+          <li className="drawer-divider" />
+          <li className="drawer-section-title">
+            <span>📊 Monitoramento</span>
+          </li>
           <li>
-            <NavLink to="/dashboard" onClick={onClose}>
-              📊 Dashboard
+            <NavLink to="/monitoramento" onClick={onClose}>
+              📡 Tempo Real
             </NavLink>
+          </li>
+          <li>
+            <NavLink to="/historico" onClick={onClose}>
+              📈 Histórico e Gráficos
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/alertas" onClick={onClose}>
+              ⚠️ Alertas
+            </NavLink>
+          </li>
+          
+          <li className="drawer-divider" />
+          <li className="drawer-section-title">
+            <span>⚙️ Configurações</span>
           </li>
           <li>
             <NavLink to="/ambientes" onClick={onClose}>
@@ -50,11 +71,6 @@ const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
           <li>
             <NavLink to="/leituras" onClick={onClose}>
               📊 Leituras
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/alertas" onClick={onClose}>
-              ⚠️ Alertas
             </NavLink>
           </li>
           

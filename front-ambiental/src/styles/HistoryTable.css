@@ -1,0 +1,199 @@
+/* =============================================================================
+   HISTORY TABLE - Tabela de histórico de leituras
+   ============================================================================= */
+
+.history-table {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 16px;
+  border: 1px solid #334155;
+  overflow: hidden;
+}
+
+.history-table.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+/* Table container for horizontal scroll */
+.table-container {
+  overflow-x: auto;
+}
+
+/* Table styles */
+.history-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.history-table thead {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.history-table th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #334155;
+}
+
+.history-table td {
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.history-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Column specific styles */
+.col-datetime {
+  white-space: nowrap;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.col-ambiente {
+  font-weight: 500;
+}
+
+.col-sensor {
+  color: #94a3b8;
+}
+
+.col-tipo {
+  text-transform: capitalize;
+}
+
+.col-valor {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-weight: 600;
+}
+
+.col-status {
+  white-space: nowrap;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.status-normal {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.status-badge.status-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.status-badge.status-critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.status-badge.status-unknown {
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+}
+
+/* No data state */
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  padding: 2rem;
+}
+
+.no-data .icon {
+  font-size: 3rem;
+  opacity: 0.5;
+}
+
+.no-data p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Loading more */
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: #94a3b8;
+  border-top: 1px solid #334155;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #334155;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Load more button */
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+  border-top: 1px solid #334155;
+}
+
+.btn-load-more {
+  background: transparent;
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-load-more:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .history-table th,
+  .history-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+}

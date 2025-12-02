@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Login, Dashboard, Register, NiveisAcesso, Usuarios, Ambientes, Sensores, Leituras, Alertas } from './pages';
+import { Login, Dashboard, Register, NiveisAcesso, Usuarios, Ambientes, Sensores, Leituras, Alertas, Monitoramento, Historico } from './pages';
 import './styles/global.css';
 
 function App() {
@@ -33,6 +33,12 @@ function App() {
         
         {/* Dashboard (protegida) */}
         <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Monitoramento em Tempo Real */}
+        <Route path="/monitoramento" element={<Monitoramento />} />
+        
+        {/* Histórico e Gráficos */}
+        <Route path="/historico" element={<Historico />} />
         
         {/* Níveis de Acesso (apenas admin) */}
         <Route path="/niveis-acesso" element={<NiveisAcesso />} />

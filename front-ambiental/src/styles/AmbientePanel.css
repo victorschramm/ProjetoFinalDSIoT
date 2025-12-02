@@ -1,0 +1,207 @@
+/* =============================================================================
+   AMBIENTE PANEL - Painel expansível de ambiente
+   ============================================================================= */
+
+.ambiente-panel {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 16px;
+  border: 1px solid #334155;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.ambiente-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transition: background 0.3s ease;
+}
+
+.ambiente-panel.status-normal {
+  border-top: 3px solid #10b981;
+}
+
+.ambiente-panel.status-atencao {
+  border-top: 3px solid #f59e0b;
+}
+
+.ambiente-panel.status-critico {
+  border-top: 3px solid #ef4444;
+}
+
+.ambiente-panel.status-offline {
+  border-top: 3px solid #6b7280;
+}
+
+.ambiente-panel:hover {
+  border-color: #475569;
+}
+
+/* Header */
+.ambiente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ambiente-header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ambiente-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-indicator {
+  font-size: 1.25rem;
+}
+
+.ambiente-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ambiente-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.ambiente-location {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.ambiente-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sensor-count {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+}
+
+.alert-badge {
+  font-size: 0.85rem;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 500;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.expand-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+}
+
+.expand-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+
+/* Content */
+.ambiente-content {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid #334155;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sensors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.no-sensors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.no-sensors .icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+.no-sensors p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ambiente-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .ambiente-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .sensors-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .ambiente-header {
+    padding: 1rem;
+  }
+  
+  .ambiente-content {
+    padding: 0 1rem 1rem;
+  }
+}

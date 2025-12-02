@@ -1,18 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Header, Drawer, Footer } from '../components';
 import { 
   getNiveisAcesso, 
   createNivelAcesso, 
   updateNivelAcesso, 
   deleteNivelAcesso,
   isAdmin,
-  isAuthenticated 
+  isAuthenticated,
+  logout as apiLogout,
+  getUserEmail,
+  getProfile
 } from '../services/api';
 import '../styles/NiveisAcesso.css';
 
 const NiveisAcesso = () => {
   const navigate = useNavigate();
+  
+  // UI States
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   
   // Estados
   const [niveis, setNiveis] = useState([]);
@@ -37,6 +46,16 @@ const NiveisAcesso = () => {
   const [nivelToDelete, setNivelToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Função de logout
+  const handleLogout = useCallback(() => {
+    apiLogout();
+    navigate('/login');
+  }, [navigate]);
+
+  // Toggle drawer
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const closeDrawer = () => setDrawerOpen(false);
+
   // Verificar permissão de admin
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -49,8 +68,33 @@ const NiveisAcesso = () => {
       return;
     }
     
+    setUserEmail(getUserEmail() || '');
+    setIsUserAdmin(true); // Se chegou até aqui, é admin
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
+          setIsUserAdmin(tipoUsuario === 'admin');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    };
+
+    loadProfile();
     loadNiveis();
   }, [navigate]);
+
+  // Keyboard events para drawer
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && drawerOpen) closeDrawer();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [drawerOpen]);
 
   // Carregar níveis de acesso
   const loadNiveis = async () => {
@@ -179,25 +223,34 @@ const NiveisAcesso = () => {
     setNivelToDelete(null);
   };
 
-  // Voltar ao dashboard
-  const handleBack = () => {
-    navigate('/dashboard');
-  };
-
   return (
-    <div className="niveis-acesso-container">
-      {/* Header */}
-      <header className="niveis-header">
-        <button className="btn-back" onClick={handleBack}>
-          ← Voltar
-        </button>
-        <h1>🔐 Níveis de Acesso</h1>
-        <button className="btn-create" onClick={handleCreate}>
-          + Novo Nível
-        </button>
-      </header>
+    <div className="niveis-acesso-page">
+      {/* Drawer */}
+      <Drawer 
+        isOpen={drawerOpen} 
+        onClose={closeDrawer} 
+        onLogout={handleLogout}
+        isAdmin={isUserAdmin}
+      />
 
-      {/* Loading */}
+      {/* Header */}
+      <Header 
+        title="Níveis de Acesso"
+        userEmail={userEmail}
+        onMenuToggle={toggleDrawer}
+        onLogout={handleLogout}
+      />
+
+      <div className="niveis-acesso-container">
+        {/* Toolbar */}
+        <div className="niveis-toolbar">
+          <h2>🔐 Gerenciar Níveis</h2>
+          <button className="btn-create" onClick={handleCreate}>
+            + Novo Nível
+          </button>
+        </div>
+
+        {/* Loading */}
       {loading ? (
         <div className="loading-container">
           <div className="loading-spinner"></div>
@@ -354,11 +407,10 @@ const NiveisAcesso = () => {
           </div>
         </div>
       )}
+      </div>
 
       {/* Footer */}
-      <footer className="niveis-footer">
-        <p>Sistema de Monitoramento Ambiental IoT © 2025</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

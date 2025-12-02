@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Header, Drawer, Footer } from '../components';
 import { 
   getUsuarios, 
   updateUsuario, 
   deleteUsuario,
   getNiveisAcesso,
   isAdmin,
-  isAuthenticated 
+  isAuthenticated,
+  logout as apiLogout,
+  getUserEmail,
+  getProfile
 } from '../services/api';
 import '../styles/Usuarios.css';
 
@@ -18,6 +22,11 @@ const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [niveisAcesso, setNiveisAcesso] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // UI States
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -38,7 +47,21 @@ const Usuarios = () => {
   const [usuarioToDelete, setUsuarioToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Verificar permissão de admin
+  // Funções do Drawer
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      navigate('/login');
+    }
+  };
+
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const closeDrawer = () => setDrawerOpen(false);
+
+  // Verificar permissão de admin e carregar perfil
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate('/login');
@@ -50,8 +73,30 @@ const Usuarios = () => {
       return;
     }
     
+    // Carregar perfil do usuário
+    const loadProfile = async () => {
+      try {
+        const profileData = await getProfile();
+        setUserEmail(profileData.email || getUserEmail());
+        setIsUserAdmin(profileData.tipo_usuario === 'admin');
+      } catch {
+        setUserEmail(getUserEmail());
+        setIsUserAdmin(isAdmin());
+      }
+    };
+    loadProfile();
+    
     loadData();
-  }, [navigate]);
+    
+    // Keyboard events
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && drawerOpen) {
+        closeDrawer();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [navigate, drawerOpen]);
 
   // Carregar usuários e níveis de acesso
   const loadData = async () => {
@@ -175,23 +220,31 @@ const Usuarios = () => {
     setUsuarioToDelete(null);
   };
 
-  // Voltar ao dashboard
-  const handleBack = () => {
-    navigate('/dashboard');
-  };
-
   return (
-    <div className="usuarios-container">
-      {/* Header */}
-      <header className="usuarios-header">
-        <button className="btn-back" onClick={handleBack}>
-          ← Voltar
-        </button>
-        <h1>👥 Gerenciar Usuários</h1>
-        <div style={{ width: '100px' }}></div>
-      </header>
+    <div className="usuarios-page">
+      {/* Drawer */}
+      <Drawer 
+        isOpen={drawerOpen} 
+        onClose={closeDrawer} 
+        onLogout={handleLogout}
+        isAdmin={isUserAdmin}
+      />
 
-      {/* Loading */}
+      {/* Header */}
+      <Header 
+        title="Gerenciar Usuários"
+        userEmail={userEmail}
+        onMenuToggle={toggleDrawer}
+        onLogout={handleLogout}
+      />
+
+      <div className="usuarios-container">
+        {/* Toolbar */}
+        <div className="usuarios-toolbar">
+          <h2>👥 Usuários do Sistema</h2>
+        </div>
+
+        {/* Loading */}
       {loading ? (
         <div className="loading-container">
           <div className="loading-spinner"></div>
@@ -372,11 +425,10 @@ const Usuarios = () => {
           </div>
         </div>
       )}
+      </div>
 
       {/* Footer */}
-      <footer className="usuarios-footer">
-        <p>Sistema de Monitoramento Ambiental IoT © 2025</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -2,45 +2,36 @@
    NÍVEIS DE ACESSO - Estilos
    ============================================================================= */
 
-.niveis-acesso-container {
+/* Page Wrapper */
+.niveis-acesso-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
-.niveis-header {
+.niveis-acesso-container {
+  flex: 1;
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Toolbar */
+.niveis-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  margin-bottom: 20px;
+  padding: 15px 20px;
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.niveis-header h1 {
+.niveis-toolbar h2 {
   color: #fff;
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   margin: 0;
-}
-
-.btn-back {
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-back:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateX(-5px);
 }
 
 .btn-create {

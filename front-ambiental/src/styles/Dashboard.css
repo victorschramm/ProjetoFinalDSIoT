@@ -1,157 +1,254 @@
 .dashboard-page {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     min-height: 100vh;
     color: white;
+    display: flex;
+    flex-direction: column;
 }
 
-/* ==================== DRAWER ==================== */
-.drawer-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 999;
+/* ==================== CONTAINER ==================== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    flex: 1;
 }
 
-.drawer-overlay.active {
-    opacity: 1;
-    visibility: visible;
+/* ==================== WELCOME SECTION ==================== */
+.welcome-section {
+    margin-bottom: 2rem;
 }
 
-.drawer {
-    position: fixed;
-    left: -320px;
-    top: 0;
-    width: 300px;
-    height: 100vh;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.4);
-    transition: left 0.3s ease;
-    z-index: 1000;
-    overflow-y: auto;
+.welcome-section h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #f1f5f9;
 }
 
-.drawer.active {
-    left: 0;
+.welcome-subtitle {
+    margin: 0;
+    font-size: 1rem;
+    color: #94a3b8;
 }
 
-.drawer-header {
-    background: rgba(0, 184, 148, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 20px;
+/* ==================== STATS GRID ==================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* ==================== QUICK ACTIONS ==================== */
+.quick-actions {
+    margin-bottom: 2rem;
+}
+
+.quick-actions h2 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.action-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    position: relative;
-}
-
-.drawer-logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #00b894;
-    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
-}
-
-.drawer-header h2 {
-    font-size: 20px;
-    margin: 0;
-}
-
-.drawer-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    font-size: 30px;
+    gap: 0.5rem;
     cursor: pointer;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
     transition: all 0.3s ease;
+    text-align: center;
 }
 
-.drawer-close:hover {
-    background: rgba(255, 255, 255, 0.3);
+.action-card:hover {
+    transform: translateY(-4px);
+    border-color: #3b82f6;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
 }
 
-.drawer-menu {
-    list-style: none;
-    padding: 20px 0;
+.action-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
 }
 
-.drawer-menu li {
-    margin: 0;
-}
-
-.drawer-menu a,
-.drawer-menu button {
-    display: block;
-    width: 100%;
-    padding: 15px 20px;
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    background: none;
-    border-right: none;
-    border-top: none;
-    border-bottom: none;
-    font-size: 16px;
-    text-align: left;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.drawer-menu a:hover,
-.drawer-menu button:hover {
-    background: rgba(0, 184, 148, 0.1);
-    border-left-color: #00b894;
-    color: #00cec9;
-    padding-left: 25px;
-}
-
-.drawer-menu a.active {
-    background: rgba(0, 184, 148, 0.15);
-    border-left-color: #00b894;
-    color: #00cec9;
+.action-title {
+    font-size: 1rem;
     font-weight: 600;
+    color: #f1f5f9;
 }
 
-.drawer-divider {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 10px 0;
+.action-desc {
+    font-size: 0.8rem;
+    color: #64748b;
 }
 
-.drawer-section-title {
-    padding: 10px 20px 5px 20px;
+/* ==================== CHARTS SECTION ==================== */
+.charts-section {
+    margin-bottom: 2rem;
 }
 
-.drawer-section-title span {
-    font-size: 12px;
-    font-weight: 700;
-    color: #00cec9;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.charts-section h2 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.empty-charts {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 16px;
+    border: 1px dashed #334155;
+    padding: 3rem;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.empty-charts p {
+    margin: 0 0 1.5rem;
+    color: #64748b;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* ==================== ALERTS SECTION ==================== */
+.alerts-section {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 16px;
+    border: 1px solid #334155;
+    padding: 1.5rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.btn-link:hover {
+    color: #60a5fa;
+}
+
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.alert-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.alert-item:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.alert-item.severidade-alto {
+    border-left-color: #ef4444;
+}
+
+.alert-item.severidade-medio {
+    border-left-color: #f59e0b;
+}
+
+.alert-item.severidade-baixo {
+    border-left-color: #10b981;
+}
+
+.alert-icon {
+    font-size: 1.25rem;
+}
+
+.alert-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.alert-tipo {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #f1f5f9;
+}
+
+.alert-local {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.alert-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
 }
 
 /* ==================== APP HEADER ==================== */
 .app-header {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #334155;
     padding: 15px 20px;
     display: flex;
     align-items: center;
@@ -162,7 +259,7 @@
 }
 
 .menu-toggle {
-    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
     border: none;
     padding: 10px 15px;
@@ -173,8 +270,8 @@
 }
 
 .menu-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .header-title {
@@ -184,8 +281,9 @@
 }
 
 .header-title h1 {
-    color: #fff;
+    color: #f1f5f9;
     font-size: 18px;
+    margin: 0;
 }
 
 .header-user {
@@ -196,83 +294,61 @@
 
 .user-email {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
+    color: #94a3b8;
 }
 
 .logout-btn {
-    background: rgba(231, 76, 60, 0.3);
-    border: 1px solid rgba(231, 76, 60, 0.5);
-    color: #ff6b6b;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .logout-btn:hover {
-    background: rgba(231, 76, 60, 0.5);
-    transform: translateY(-2px);
+    background: rgba(239, 68, 68, 0.25);
 }
 
-/* ==================== CONTAINER ==================== */
-.container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-    padding-bottom: 60px;
-}
-
-.dashboard-content {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 30px;
-    backdrop-filter: blur(10px);
-}
-
-.dashboard-content h2 {
-    color: #fff;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #00b894;
-    padding-bottom: 10px;
-}
-
-.info-card {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    border-left: 4px solid #00b894;
-}
-
-.info-card label {
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
-    display: block;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-.info-card span {
-    color: #fff;
-    font-size: 16px;
-}
-
-.error-message-box {
-    background: rgba(231, 76, 60, 0.2);
-    color: #ff6b6b;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid rgba(231, 76, 60, 0.5);
-}
-
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .welcome-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .header-title h1 {
         font-size: 16px;
     }
 
     .user-email {
         display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .action-card {
+        padding: 1rem;
     }
 }

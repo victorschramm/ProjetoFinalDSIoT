@@ -1,13 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import api from '../services/api';
+import { Header, Drawer, Footer } from '../components';
+import { 
+  getLeituras,
+  getLeiturasBySensor,
+  getLeiturasByPeriodo,
+  createLeitura,
+  deleteLeitura,
+  getSensores,
+  isAuthenticated,
+  logout as apiLogout,
+  getUserEmail,
+  isAdmin as checkIsAdmin,
+  getProfile
+} from '../services/api';
 import '../styles/Leituras.css';
 
 function Leituras() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sensorIdFromUrl = searchParams.get('sensor');
+
+  // UI States
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
 
   // Estados principais
   const [leituras, setLeituras] = useState([]);
@@ -35,11 +53,21 @@ function Leituras() {
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
+  // Função de logout
+  const handleLogout = useCallback(() => {
+    apiLogout();
+    navigate('/login');
+  }, [navigate]);
+
+  // Toggle drawer
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const closeDrawer = () => setDrawerOpen(false);
+
   // Carregar sensores
   const loadSensores = useCallback(async () => {
     try {
-      const response = await api.getSensores();
-      setSensores(response.data || []);
+      const response = await getSensores();
+      setSensores(response || []);
     } catch (error) {
       console.error('Erro ao carregar sensores:', error);
     }
@@ -52,17 +80,14 @@ function Leituras() {
       let response;
 
       if (filtroSensor) {
-        // Filtrar por sensor específico
-        response = await api.getLeiturasBySensor(filtroSensor);
+        response = await getLeiturasBySensor(filtroSensor);
       } else if (dataInicio && dataFim) {
-        // Filtrar por período
-        response = await api.getLeiturasByPeriodo(dataInicio, dataFim);
+        response = await getLeiturasByPeriodo(dataInicio, dataFim);
       } else {
-        // Carregar todas
-        response = await api.getLeituras();
+        response = await getLeituras();
       }
 
-      setLeituras(response.data || []);
+      setLeituras(response || []);
     } catch (error) {
       console.error('Erro ao carregar leituras:', error);
       toast.error('Erro ao carregar leituras');
@@ -72,6 +97,31 @@ function Leituras() {
     }
   }, [filtroSensor, dataInicio, dataFim]);
 
+  // Efeito de autenticação
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/login');
+      return;
+    }
+    
+    setUserEmail(getUserEmail() || '');
+    setIsUserAdmin(checkIsAdmin());
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
+          setIsUserAdmin(tipoUsuario === 'admin');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    };
+
+    loadProfile();
+  }, [navigate]);
+
   useEffect(() => {
     loadSensores();
   }, [loadSensores]);
@@ -79,6 +129,15 @@ function Leituras() {
   useEffect(() => {
     loadLeituras();
   }, [loadLeituras]);
+
+  // Keyboard events para drawer
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && drawerOpen) closeDrawer();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [drawerOpen]);
 
   // Atualiza filtro de sensor quando vem da URL
   useEffect(() => {
@@ -189,13 +248,13 @@ function Leituras() {
         timestamp: formData.timestamp || new Date().toISOString()
       };
 
-      await api.createLeitura(payload);
+      await createLeitura(payload);
       toast.success('Leitura registrada com sucesso!');
       setShowCreateModal(false);
       loadLeituras();
     } catch (error) {
       console.error('Erro ao criar leitura:', error);
-      toast.error(error.response?.data?.message || 'Erro ao registrar leitura');
+      toast.error(error.message || 'Erro ao registrar leitura');
     } finally {
       setSubmitting(false);
     }
@@ -207,14 +266,14 @@ function Leituras() {
 
     try {
       setSubmitting(true);
-      await api.deleteLeitura(selectedLeitura.id);
+      await deleteLeitura(selectedLeitura.id);
       toast.success('Leitura excluída com sucesso!');
       setShowDeleteModal(false);
       setSelectedLeitura(null);
       loadLeituras();
     } catch (error) {
       console.error('Erro ao excluir leitura:', error);
-      toast.error(error.response?.data?.message || 'Erro ao excluir leitura');
+      toast.error(error.message || 'Erro ao excluir leitura');
     } finally {
       setSubmitting(false);
     }
@@ -236,17 +295,31 @@ function Leituras() {
   };
 
   return (
-    <div className="leituras-container">
+    <div className="leituras-page">
+      {/* Drawer */}
+      <Drawer 
+        isOpen={drawerOpen} 
+        onClose={closeDrawer} 
+        onLogout={handleLogout}
+        isAdmin={isUserAdmin}
+      />
+
       {/* Header */}
-      <header className="leituras-header">
-        <button className="btn-back" onClick={() => navigate('/dashboard')}>
-          ← Voltar
-        </button>
-        <h1>📊 Leituras dos Sensores</h1>
-        <button className="btn-new" onClick={handleOpenCreate}>
-          + Nova Leitura
-        </button>
-      </header>
+      <Header 
+        title="Leituras dos Sensores"
+        userEmail={userEmail}
+        onMenuToggle={toggleDrawer}
+        onLogout={handleLogout}
+      />
+
+      <div className="leituras-container">
+        {/* Toolbar */}
+        <div className="leituras-toolbar">
+          <h2>📊 Leituras Registradas</h2>
+          <button className="btn-new" onClick={handleOpenCreate}>
+            + Nova Leitura
+          </button>
+        </div>
 
       {/* Filtros */}
       <div className="leituras-filters">
@@ -373,11 +446,6 @@ function Leituras() {
           )}
         </div>
       )}
-
-      {/* Footer */}
-      <footer className="leituras-footer">
-        <p>Sistema de Monitoramento Ambiental © 2025</p>
-      </footer>
 
       {/* Modal Criar Leitura */}
       {showCreateModal && (
@@ -605,6 +673,10 @@ function Leituras() {
           </div>
         </div>
       )}
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

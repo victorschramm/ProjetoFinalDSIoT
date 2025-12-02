@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Header, Drawer, Footer } from '../components';
 import { 
   getSensores, 
   getSensorById,
@@ -8,12 +9,21 @@ import {
   updateSensor, 
   deleteSensor,
   getAmbientes,
-  isAuthenticated
+  isAuthenticated,
+  logout as apiLogout,
+  getUserEmail,
+  isAdmin as checkIsAdmin,
+  getProfile
 } from '../services/api';
 import '../styles/Sensores.css';
 
 const Sensores = () => {
   const navigate = useNavigate();
+  
+  // UI States
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   
   // Estados principais
   const [sensores, setSensores] = useState([]);
@@ -46,6 +56,16 @@ const Sensores = () => {
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterTipo, setFilterTipo] = useState('todos');
 
+  // Função de logout
+  const handleLogout = useCallback(() => {
+    apiLogout();
+    navigate('/login');
+  }, [navigate]);
+
+  // Toggle drawer
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const closeDrawer = () => setDrawerOpen(false);
+
   // Tipos de sensores disponíveis
   const tiposSensor = [
     { value: 'temperatura', label: '🌡️ Temperatura', icon: '🌡️' },
@@ -70,8 +90,34 @@ const Sensores = () => {
       navigate('/login');
       return;
     }
+    
+    setUserEmail(getUserEmail() || '');
+    setIsUserAdmin(checkIsAdmin());
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
+          setIsUserAdmin(tipoUsuario === 'admin');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    };
+
+    loadProfile();
     loadData();
   }, [navigate]);
+
+  // Keyboard events para drawer
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && drawerOpen) closeDrawer();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [drawerOpen]);
 
   // Carregar sensores e ambientes
   const loadData = async () => {
@@ -290,17 +336,31 @@ const Sensores = () => {
   });
 
   return (
-    <div className="sensores-container">
+    <div className="sensores-page">
+      {/* Drawer */}
+      <Drawer 
+        isOpen={drawerOpen} 
+        onClose={closeDrawer} 
+        onLogout={handleLogout}
+        isAdmin={isUserAdmin}
+      />
+
       {/* Header */}
-      <header className="sensores-header">
-        <button className="btn-back" onClick={handleBack}>
-          ← Voltar
-        </button>
-        <h1>📡 Gerenciar Sensores</h1>
-        <button className="btn-new" onClick={handleCreate}>
-          + Novo Sensor
-        </button>
-      </header>
+      <Header 
+        title="Gerenciar Sensores"
+        userEmail={userEmail}
+        onMenuToggle={toggleDrawer}
+        onLogout={handleLogout}
+      />
+
+      <div className="sensores-container">
+        {/* Toolbar */}
+        <div className="sensores-toolbar">
+          <h2>📡 Sensores Cadastrados</h2>
+          <button className="btn-new" onClick={handleCreate}>
+            + Novo Sensor
+          </button>
+        </div>
 
       {/* Filtros */}
       <div className="sensores-filters">
@@ -613,11 +673,10 @@ const Sensores = () => {
           </div>
         </div>
       )}
+      </div>
 
       {/* Footer */}
-      <footer className="sensores-footer">
-        <p>© 2025 Sistema de Monitoramento Ambiental IoT</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
