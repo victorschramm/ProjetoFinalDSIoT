@@ -48,6 +48,11 @@ const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/leituras" onClick={onClose}>
+              📊 Leituras
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/alertas" onClick={onClose}>
               ⚠️ Alertas
             </NavLink>

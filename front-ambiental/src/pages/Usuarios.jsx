@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { 
   getUsuarios, 
   updateUsuario, 
@@ -17,8 +18,6 @@ const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [niveisAcesso, setNiveisAcesso] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -58,7 +57,6 @@ const Usuarios = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      setError('');
       const [usuariosData, niveisData] = await Promise.all([
         getUsuarios(),
         getNiveisAcesso()
@@ -67,22 +65,14 @@ const Usuarios = () => {
       setNiveisAcesso(niveisData);
     } catch (err) {
       if (err.status === 403) {
-        setError('Acesso negado. Apenas administradores podem acessar esta página.');
+        toast.error('Acesso negado. Apenas administradores podem acessar esta página.');
       } else {
-        setError(err.message || 'Erro ao carregar dados');
+        toast.error(err.message || 'Erro ao carregar dados');
       }
     } finally {
       setLoading(false);
     }
   };
-
-  // Limpar mensagens após 5 segundos
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => setSuccess(''), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   // Abrir modal para editar
   const handleEdit = (usuario) => {
@@ -137,7 +127,6 @@ const Usuarios = () => {
     
     try {
       setSubmitting(true);
-      setError('');
       
       const dataToSend = {
         ...formData,
@@ -145,12 +134,12 @@ const Usuarios = () => {
       };
       
       await updateUsuario(selectedUsuario.id, dataToSend);
-      setSuccess('Usuário atualizado com sucesso!');
+      toast.success('Usuário atualizado com sucesso!');
       
       handleCloseModal();
       loadData();
     } catch (err) {
-      setError(err.message || 'Erro ao atualizar usuário');
+      toast.error(err.message || 'Erro ao atualizar usuário');
     } finally {
       setSubmitting(false);
     }
@@ -168,14 +157,13 @@ const Usuarios = () => {
     
     try {
       setDeleting(true);
-      setError('');
       await deleteUsuario(usuarioToDelete.id);
-      setSuccess('Usuário deletado com sucesso!');
+      toast.success('Usuário deletado com sucesso!');
       setShowDeleteConfirm(false);
       setUsuarioToDelete(null);
       loadData();
     } catch (err) {
-      setError(err.message || 'Erro ao deletar usuário');
+      toast.error(err.message || 'Erro ao deletar usuário');
     } finally {
       setDeleting(false);
     }
@@ -202,23 +190,6 @@ const Usuarios = () => {
         <h1>👥 Gerenciar Usuários</h1>
         <div style={{ width: '100px' }}></div>
       </header>
-
-      {/* Mensagens */}
-      {error && (
-        <div className="alert alert-error">
-          <span className="alert-icon">❌</span>
-          {error}
-          <button className="alert-close" onClick={() => setError('')}>×</button>
-        </div>
-      )}
-      
-      {success && (
-        <div className="alert alert-success">
-          <span className="alert-icon">✅</span>
-          {success}
-          <button className="alert-close" onClick={() => setSuccess('')}>×</button>
-        </div>
-      )}
 
       {/* Loading */}
       {loading ? (

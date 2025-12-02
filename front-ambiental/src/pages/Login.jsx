@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Footer, Loading } from '../components';
 import { login, saveAuthData } from '../services/api';
 import '../styles/Login.css';
@@ -11,8 +12,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
@@ -31,13 +30,11 @@ const Login = () => {
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setEmailError('');
-    setError('');
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setPasswordError('');
-    setError('');
   };
 
   // Submit do formulário
@@ -45,8 +42,6 @@ const Login = () => {
     e.preventDefault();
     
     // Limpar mensagens anteriores
-    setError('');
-    setSuccess('');
     setEmailError('');
     setPasswordError('');
 
@@ -76,7 +71,7 @@ const Login = () => {
     try {
       const data = await login(email, password);
 
-      setSuccess(data.message || 'Login realizado com sucesso!');
+      toast.success(data.message || 'Login realizado com sucesso! 🎉');
 
       // Armazenar token
       if (data.token) {
@@ -103,7 +98,7 @@ const Login = () => {
         mensagemErro = err.message;
       }
 
-      setError(mensagemErro);
+      toast.error(mensagemErro);
     } finally {
       setLoading(false);
     }
@@ -177,10 +172,6 @@ const Login = () => {
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
-
-            {/* Mensagens de Erro e Sucesso */}
-            {error && <div className="error-alert">{error}</div>}
-            {success && <div className="success-alert">{success}</div>}
           </form>
 
           {/* Footer do Form */}

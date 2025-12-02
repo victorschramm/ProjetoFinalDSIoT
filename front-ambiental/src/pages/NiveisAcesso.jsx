@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { 
   getNiveisAcesso, 
   createNivelAcesso, 
@@ -16,8 +17,6 @@ const NiveisAcesso = () => {
   // Estados
   const [niveis, setNiveis] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -57,27 +56,18 @@ const NiveisAcesso = () => {
   const loadNiveis = async () => {
     try {
       setLoading(true);
-      setError('');
       const data = await getNiveisAcesso();
       setNiveis(data);
     } catch (err) {
       if (err.status === 403) {
-        setError('Acesso negado. Apenas administradores podem acessar esta página.');
+        toast.error('Acesso negado. Apenas administradores podem acessar esta página.');
       } else {
-        setError(err.message || 'Erro ao carregar níveis de acesso');
+        toast.error(err.message || 'Erro ao carregar níveis de acesso');
       }
     } finally {
       setLoading(false);
     }
   };
-
-  // Limpar mensagens após 5 segundos
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => setSuccess(''), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   // Abrir modal para criar
   const handleCreate = () => {
@@ -141,20 +131,19 @@ const NiveisAcesso = () => {
     
     try {
       setSubmitting(true);
-      setError('');
       
       if (modalMode === 'create') {
         await createNivelAcesso(formData);
-        setSuccess('Nível de acesso criado com sucesso!');
+        toast.success('Nível de acesso criado com sucesso!');
       } else {
         await updateNivelAcesso(selectedNivel.id, formData);
-        setSuccess('Nível de acesso atualizado com sucesso!');
+        toast.success('Nível de acesso atualizado com sucesso!');
       }
       
       handleCloseModal();
       loadNiveis();
     } catch (err) {
-      setError(err.message || 'Erro ao salvar nível de acesso');
+      toast.error(err.message || 'Erro ao salvar nível de acesso');
     } finally {
       setSubmitting(false);
     }
@@ -172,14 +161,13 @@ const NiveisAcesso = () => {
     
     try {
       setDeleting(true);
-      setError('');
       await deleteNivelAcesso(nivelToDelete.id);
-      setSuccess('Nível de acesso deletado com sucesso!');
+      toast.success('Nível de acesso deletado com sucesso!');
       setShowDeleteConfirm(false);
       setNivelToDelete(null);
       loadNiveis();
     } catch (err) {
-      setError(err.message || 'Erro ao deletar nível de acesso');
+      toast.error(err.message || 'Erro ao deletar nível de acesso');
     } finally {
       setDeleting(false);
     }
@@ -208,23 +196,6 @@ const NiveisAcesso = () => {
           + Novo Nível
         </button>
       </header>
-
-      {/* Mensagens */}
-      {error && (
-        <div className="alert alert-error">
-          <span className="alert-icon">❌</span>
-          {error}
-          <button className="alert-close" onClick={() => setError('')}>×</button>
-        </div>
-      )}
-      
-      {success && (
-        <div className="alert alert-success">
-          <span className="alert-icon">✅</span>
-          {success}
-          <button className="alert-close" onClick={() => setSuccess('')}>×</button>
-        </div>
-      )}
 
       {/* Loading */}
       {loading ? (

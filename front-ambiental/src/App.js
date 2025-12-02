@@ -1,11 +1,26 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Login, Dashboard, Register, NiveisAcesso, Usuarios } from './pages';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Login, Dashboard, Register, NiveisAcesso, Usuarios, Ambientes, Sensores, Leituras, Alertas } from './pages';
 import './styles/global.css';
 
 function App() {
   return (
     <Router>
+      {/* Toast Container Global */}
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Routes>
         {/* Rota principal - redireciona para login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -25,10 +40,17 @@ function App() {
         {/* Gerenciamento de Usuários (apenas admin) */}
         <Route path="/usuarios" element={<Usuarios />} />
         
-        {/* Rotas futuras */}
-        <Route path="/ambientes" element={<Dashboard />} />
-        <Route path="/sensores" element={<Dashboard />} />
-        <Route path="/alertas" element={<Dashboard />} />
+        {/* Ambientes */}
+        <Route path="/ambientes" element={<Ambientes />} />
+        
+        {/* Sensores */}
+        <Route path="/sensores" element={<Sensores />} />
+        
+        {/* Leituras */}
+        <Route path="/leituras" element={<Leituras />} />
+        
+        {/* Alertas */}
+        <Route path="/alertas" element={<Alertas />} />
         
         {/* Rota 404 - redireciona para login */}
         <Route path="*" element={<Navigate to="/login" replace />} />

@@ -26,18 +26,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   padding: 40px 20px;
 }
 
 /* Box do formulário */
 .register-box {
-  background: white;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   padding: 40px;
   width: 100%;
   max-width: 450px;
+  backdrop-filter: blur(10px);
   animation: slideIn 0.5s ease-out;
 }
 
@@ -64,8 +66,8 @@
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #667eea;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: 4px solid #00b894;
+  box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
 }
 
 /* Cabeçalho */
@@ -75,14 +77,14 @@
 }
 
 .register-header h1 {
-  color: #333;
+  color: #fff;
   font-size: 28px;
   margin-bottom: 8px;
   font-weight: 700;
 }
 
 .register-header p {
-  color: #667eea;
+  color: #00cec9;
   font-size: 14px;
   font-weight: 500;
 }
@@ -102,7 +104,7 @@
 }
 
 .form-group label {
-  color: #333;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
   font-size: 14px;
 }
@@ -111,24 +113,25 @@
 .form-group input,
 .form-group select {
   padding: 12px 15px;
-  border: 2px solid #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
   font-family: inherit;
-  background: white;
-  color: #333;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .form-group input::placeholder {
-  color: #999;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* Input com erro */
@@ -144,10 +147,15 @@
 .form-group select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 15px center;
   padding-right: 40px;
+}
+
+.form-group select option {
+  background: #1a1a2e;
+  color: #fff;
 }
 
 /* Wrapper da senha */
@@ -193,7 +201,7 @@
 /* Botão de cadastro */
 .register-button {
   padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -206,7 +214,7 @@
 
 .register-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
 }
 
 .register-button:active:not(:disabled) {
@@ -221,22 +229,22 @@
 
 /* Alerta de erro geral */
 .error-alert {
-  background: #fee;
-  color: #c33;
+  background: rgba(231, 76, 60, 0.2);
+  color: #ff6b6b;
   padding: 12px 15px;
   border-radius: 8px;
-  border-left: 4px solid #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.5);
   font-size: 14px;
   animation: slideDown 0.3s ease;
 }
 
 /* Alerta de sucesso */
 .success-alert {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
   padding: 12px 15px;
   border-radius: 8px;
-  border-left: 4px solid #28a745;
+  border: 1px solid rgba(46, 204, 113, 0.5);
   font-size: 14px;
   animation: slideDown 0.3s ease;
 }
@@ -256,24 +264,24 @@
 .register-footer {
   text-align: center;
   margin-top: 25px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px;
 }
 
 .register-footer p {
   font-size: 14px;
-  color: #666;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .register-footer a {
-  color: #667eea;
+  color: #00cec9;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
 .register-footer a:hover {
-  color: #764ba2;
+  color: #00b894;
   text-decoration: underline;
 }
 

@@ -65,8 +65,7 @@ module.exports = {
         return res.status(404).json({ error: 'Ambiente não encontrado' });
       }
       await ambiente.destroy();
-      return res.status(404).json({ error: 'Ambiente DELETADO' });
-      res.status(204).send();
+      res.json({ message: 'Ambiente deletado com sucesso' });
     } catch (error) {
       res.status(500).json({ error: 'Erro ao deletar ambiente' });
     }

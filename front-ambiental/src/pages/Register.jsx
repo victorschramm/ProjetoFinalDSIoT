@@ -22,6 +22,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Footer, Loading } from '../components';
 import { register } from '../services/api'; // Importa função de registro da API
 import '../styles/Register.css';
@@ -45,10 +46,6 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false); // Indica se está processando
-  
-  // Estados de feedback
-  const [error, setError] = useState(''); // Mensagem de erro geral
-  const [success, setSuccess] = useState(''); // Mensagem de sucesso
   
   // Estados de validação por campo
   const [nameError, setNameError] = useState('');
@@ -112,7 +109,6 @@ const Register = () => {
   const handleNameChange = (e) => {
     setName(e.target.value);
     setNameError(''); // Limpa erro ao digitar
-    setError(''); // Limpa erro geral
   };
 
   /**
@@ -121,7 +117,6 @@ const Register = () => {
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setEmailError('');
-    setError('');
   };
 
   /**
@@ -130,7 +125,6 @@ const Register = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setPasswordError('');
-    setError('');
   };
 
   /**
@@ -139,7 +133,6 @@ const Register = () => {
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
     setConfirmPasswordError('');
-    setError('');
   };
 
   /**
@@ -168,8 +161,6 @@ const Register = () => {
     e.preventDefault(); // Previne reload da página
     
     // Limpa mensagens anteriores
-    setError('');
-    setSuccess('');
     setNameError('');
     setEmailError('');
     setPasswordError('');
@@ -243,7 +234,7 @@ const Register = () => {
       const data = await register(userData);
 
       // Se chegou aqui, cadastro foi bem-sucedido
-      setSuccess(data.message || 'Cadastro realizado com sucesso! 🎉');
+      toast.success(data.message || 'Cadastro realizado com sucesso! 🎉');
       
       // Limpa o formulário
       clearForm();
@@ -275,7 +266,7 @@ const Register = () => {
         mensagemErro = err.message;
       }
 
-      setError(mensagemErro);
+      toast.error(mensagemErro);
     } finally {
       // Sempre executado (sucesso ou erro)
       setLoading(false); // Desativa loading
@@ -418,20 +409,6 @@ const Register = () => {
             >
               {loading ? 'Cadastrando...' : 'Criar Conta'}
             </button>
-
-            {/* Mensagem de Erro Geral */}
-            {error && (
-              <div className="error-alert">
-                {error}
-              </div>
-            )}
-
-            {/* Mensagem de Sucesso */}
-            {success && (
-              <div className="success-alert">
-                {success}
-              </div>
-            )}
           </form>
 
           {/* Link para Login */}
