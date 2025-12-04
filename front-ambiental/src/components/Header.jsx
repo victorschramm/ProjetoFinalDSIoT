@@ -1,6 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Header = ({ title, userEmail, onMenuToggle, onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <header className="app-header">
       <button 
@@ -11,8 +18,12 @@ const Header = ({ title, userEmail, onMenuToggle, onLogout }) => {
         ☰
       </button>
       
-      <div className="header-title">
-        <h1>{title}</h1>
+      <div className="header-logo-center" onClick={handleLogoClick}>
+        <div className="logo-icon">🌡️</div>
+        <div className="logo-text">
+          <span className="logo-title">EcoMonitor</span>
+          <span className="logo-subtitle">Sistema Ambiental</span>
+        </div>
       </div>
       
       <div className="header-user">
