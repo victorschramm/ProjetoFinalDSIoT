@@ -269,11 +269,27 @@ const Dashboard = () => {
             </button>
             <button 
               className="action-card"
+              onClick={() => navigate('/dispositivos')}
+            >
+              <span className="action-icon">📡</span>
+              <span className="action-title">Dispositivos ESP</span>
+              <span className="action-desc">Cadastrar ESP</span>
+            </button>
+            <button 
+              className="action-card"
+              onClick={() => navigate('/sensores')}
+            >
+              <span className="action-icon">🎛️</span>
+              <span className="action-title">Sensores</span>
+              <span className="action-desc">Vincular sensores</span>
+            </button>
+            <button 
+              className="action-card"
               onClick={() => navigate('/ambientes')}
             >
               <span className="action-icon">🏢</span>
               <span className="action-title">Ambientes</span>
-              <span className="action-desc">Gerenciar</span>
+              <span className="action-desc">Gerenciar salas</span>
             </button>
           </div>
         </div>

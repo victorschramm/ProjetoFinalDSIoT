@@ -13,6 +13,7 @@ import {
   isAdmin as checkIsAdmin,
   getProfile
 } from '../services/api';
+import { obterLeiturasRecentes, obterEstatisticas } from '../services/leituras';
 import '../styles/Monitoramento.css';
 
 const Monitoramento = () => {
@@ -29,11 +30,15 @@ const Monitoramento = () => {
   const [sensores, setSensores] = useState([]);
   const [leituras, setLeituras] = useState([]);
   const [alertas, setAlertas] = useState([]);
+  const [leiturasTempoReal, setLeiturasTempoReal] = useState([]);
+  const [temperatura, setTemperatura] = useState(null);
+  const [umidade, setUmidade] = useState(null);
+  const [potenciometro, setPotenciometro] = useState(null);
   
   // Atualização automática
   const [ultimaAtualizacao, setUltimaAtualizacao] = useState(new Date());
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const REFRESH_INTERVAL = 30000; // 30 segundos
+  const REFRESH_INTERVAL = 5000; // 5 segundos para tempo real
 
   // Logout
   const handleLogout = useCallback(() => {
@@ -48,17 +53,31 @@ const Monitoramento = () => {
   // Carregar dados
   const carregarDados = useCallback(async () => {
     try {
-      const [ambientesData, sensoresData, leiturasData, alertasData] = await Promise.all([
+      const [ambientesData, sensoresData, leiturasData, alertasData, leiturasRecentesData] = await Promise.all([
         getAmbientes(),
         getSensores(),
         getLeituras(),
-        getAlertas()
+        getAlertas(),
+        obterLeiturasRecentes(60)
       ]);
       
       setAmbientes(ambientesData);
       setSensores(sensoresData);
       setLeituras(leiturasData);
       setAlertas(alertasData);
+      setLeiturasTempoReal(leiturasRecentesData);
+
+      // Processar dados para exibição em tempo real
+      if (leiturasRecentesData && Array.isArray(leiturasRecentesData)) {
+        const temp = leiturasRecentesData.find(l => l.tipo_leitura === 'temperatura');
+        const umid = leiturasRecentesData.find(l => l.tipo_leitura === 'umidade');
+        const pot = leiturasRecentesData.find(l => l.tipo_leitura === 'potenciometro');
+
+        if (temp) setTemperatura(parseFloat(temp.valor).toFixed(2));
+        if (umid) setUmidade(parseFloat(umid.valor).toFixed(2));
+        if (pot) setPotenciometro(parseFloat(pot.valor).toFixed(2));
+      }
+
       setUltimaAtualizacao(new Date());
     } catch (error) {
       console.error('Erro ao carregar dados:', error);

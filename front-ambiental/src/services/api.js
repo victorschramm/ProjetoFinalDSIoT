@@ -1088,6 +1088,179 @@ export const deleteAlerta = async (id) => {
   }
 };
 
+/**
+ * =============================================================================
+ * DISPOSITIVOS ESP - CRUD
+ * =============================================================================
+ * Funções para gerenciar dispositivos ESP32/ESP8266
+ * =============================================================================
+ */
+
+// Listar todos os dispositivos
+export const getDispositivos = async () => {
+  try {
+    const response = await authFetch('/dispositivos');
+    
+    if (!response.ok) {
+      const data = await response.json();
+      throw {
+        status: response.status,
+        message: data.error || 'Erro ao listar dispositivos',
+      };
+    }
+    
+    return response.json();
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw {
+        status: 0,
+        message: '⚠️ Servidor indisponível.',
+      };
+    }
+    throw error;
+  }
+};
+
+// Listar dispositivos ativos
+export const getDispositivosAtivos = async () => {
+  try {
+    const response = await authFetch('/dispositivos/ativos');
+    
+    if (!response.ok) {
+      const data = await response.json();
+      throw {
+        status: response.status,
+        message: data.error || 'Erro ao listar dispositivos ativos',
+      };
+    }
+    
+    return response.json();
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw {
+        status: 0,
+        message: '⚠️ Servidor indisponível.',
+      };
+    }
+    throw error;
+  }
+};
+
+// Obter dispositivo por ID
+export const getDispositivoById = async (id) => {
+  try {
+    const response = await authFetch(`/dispositivos/${id}`);
+    
+    if (!response.ok) {
+      const data = await response.json();
+      throw {
+        status: response.status,
+        message: data.error || 'Erro ao obter dispositivo',
+      };
+    }
+    
+    return response.json();
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw {
+        status: 0,
+        message: '⚠️ Servidor indisponível.',
+      };
+    }
+    throw error;
+  }
+};
+
+// Criar novo dispositivo
+export const createDispositivo = async (data) => {
+  try {
+    const response = await authFetch('/dispositivos', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        message: result.error || 'Erro ao criar dispositivo',
+      };
+    }
+    
+    return result;
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw {
+        status: 0,
+        message: '⚠️ Servidor indisponível.',
+      };
+    }
+    throw error;
+  }
+};
+
+// Atualizar dispositivo
+export const updateDispositivo = async (id, data) => {
+  try {
+    const response = await authFetch(`/dispositivos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        message: result.error || 'Erro ao atualizar dispositivo',
+      };
+    }
+    
+    return result;
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw {
+        status: 0,
+        message: '⚠️ Servidor indisponível.',
+      };
+    }
+    throw error;
+  }
+};
+
+// Deletar dispositivo
+export const deleteDispositivo = async (id) => {
+  try {
+    const response = await authFetch(`/dispositivos/${id}`, {
+      method: 'DELETE',
+    });
+    
+    if (response.status === 204) {
+      return { message: 'Dispositivo deletado com sucesso' };
+    }
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        message: result.error || 'Erro ao deletar dispositivo',
+      };
+    }
+    
+    return result;
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw {
+        status: 0,
+        message: '⚠️ Servidor indisponível.',
+      };
+    }
+    throw error;
+  }
+};
+
 export default {
   login,
   register,
@@ -1136,4 +1309,11 @@ export default {
   createAlerta,
   updateAlerta,
   deleteAlerta,
+  // Dispositivos ESP
+  getDispositivos,
+  getDispositivosAtivos,
+  getDispositivoById,
+  createDispositivo,
+  updateDispositivo,
+  deleteDispositivo,
 };

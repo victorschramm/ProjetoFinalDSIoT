@@ -59,13 +59,18 @@ const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
             <span>⚙️ Configurações</span>
           </li>
           <li>
+            <NavLink to="/dispositivos" onClick={onClose}>
+              📡 Dispositivos ESP
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/ambientes" onClick={onClose}>
               🏢 Ambientes
             </NavLink>
           </li>
           <li>
             <NavLink to="/sensores" onClick={onClose}>
-              📡 Sensores
+              🎛️ Sensores
             </NavLink>
           </li>
           <li>

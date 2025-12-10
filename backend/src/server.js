@@ -2,12 +2,14 @@ const express = require('express');
 const path = require('path');
 const sequelize = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
+const { initMQTT } = require('./config/mqtt');
 const authRoutes = require('./routes/authRoutes');
 const ambienteRoutes = require('./routes/ambienteRoutes');
 const sensorRoutes = require('./routes/sensorRoutes');
 const leituraRoutes = require('./routes/leituraRoutes');
 const alertaRoutes = require('./routes/alertaRoutes');
 const nivelAcessoRoutes = require('./routes/nivelAcessoRoutes');
+const dispositivoRoutes = require('./routes/dispositivoRoutes');
 
 const app = express();
 app.use(express.json());
@@ -49,14 +51,22 @@ app.use('/api/sensores', sensorRoutes);
 app.use('/api/leituras', leituraRoutes);
 app.use('/api/alertas', alertaRoutes);
 app.use('/api/niveis-acesso', nivelAcessoRoutes);
+app.use('/api/dispositivos', dispositivoRoutes);
 
 // Middleware de tratamento de erros (deve ser o último middleware)
 app.use(errorHandler);
 
 sequelize.sync().then(() => {
-  console.log('Banco de dados sincronizado');
+  console.log('✓ Banco de dados sincronizado');
+  
+  // Inicializar MQTT
+  initMQTT().catch(err => {
+    console.error('⚠️  Erro ao inicializar MQTT:', err.message);
+    console.log('Continuando sem MQTT...');
+  });
+
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
 }).catch(err => {
   console.error('Erro ao sincronizar o banco de dados:', err);
   process.exit(1);

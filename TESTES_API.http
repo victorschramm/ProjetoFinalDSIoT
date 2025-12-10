@@ -1,0 +1,210 @@
+### Teste de Integração IoT - Coleção HTTP
+
+## ============================================
+## 1. AUTENTICAÇÃO
+## ============================================
+
+### Registrar Novo Usuário
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+  "name": "Teste IoT",
+  "email": "teste@iot.com",
+  "password": "senha123"
+}
+
+### Login
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+  "email": "teste@iot.com",
+  "password": "senha123"
+}
+
+# Copie o token recebido e use em Authorization: Bearer {token}
+
+## ============================================
+## 2. LEITURAS - ENDPOINTS
+## ============================================
+
+### Listar Todas as Leituras
+GET http://localhost:3000/api/leituras
+Authorization: Bearer {SEU_TOKEN}
+
+### Obter Leituras Recentes (últimos 60 minutos)
+GET http://localhost:3000/api/leituras/recentes?minutos=60
+Authorization: Bearer {SEU_TOKEN}
+
+### Obter Última Leitura de um Sensor
+GET http://localhost:3000/api/leituras/sensor/1/ultima
+Authorization: Bearer {SEU_TOKEN}
+
+### Obter Leituras de um Sensor (com filtro de tipo)
+GET http://localhost:3000/api/leituras/sensor/1?limite=50&tipo=temperatura
+Authorization: Bearer {SEU_TOKEN}
+
+### Obter Leituras por Período
+GET http://localhost:3000/api/leituras/periodo?inicio=2024-01-01T00:00:00Z&fim=2024-12-31T23:59:59Z&id_sensor=1
+Authorization: Bearer {SEU_TOKEN}
+
+### Obter Estatísticas
+GET http://localhost:3000/api/leituras/estatisticas?id_sensor=1&tipo_leitura=temperatura
+Authorization: Bearer {SEU_TOKEN}
+
+### Obter Leitura Específica
+GET http://localhost:3000/api/leituras/1
+Authorization: Bearer {SEU_TOKEN}
+
+## ============================================
+## 3. CRIAR LEITURAS (Teste Manual)
+## ============================================
+
+### Criar Leitura de Temperatura
+POST http://localhost:3000/api/leituras
+Authorization: Bearer {SEU_TOKEN}
+Content-Type: application/json
+
+{
+  "id_sensor": 1,
+  "valor": 25.5,
+  "tipo_leitura": "temperatura",
+  "unidade": "°C"
+}
+
+### Criar Leitura de Umidade
+POST http://localhost:3000/api/leituras
+Authorization: Bearer {SEU_TOKEN}
+Content-Type: application/json
+
+{
+  "id_sensor": 1,
+  "valor": 65.3,
+  "tipo_leitura": "umidade",
+  "unidade": "%"
+}
+
+### Criar Leitura de Potenciômetro
+POST http://localhost:3000/api/leituras
+Authorization: Bearer {SEU_TOKEN}
+Content-Type: application/json
+
+{
+  "id_sensor": 1,
+  "valor": 75.0,
+  "tipo_leitura": "potenciometro",
+  "unidade": "%"
+}
+
+## ============================================
+## 4. AMBIENTE (para configuração)
+## ============================================
+
+### Listar Ambientes
+GET http://localhost:3000/api/ambientes
+Authorization: Bearer {SEU_TOKEN}
+
+### Criar Ambiente
+POST http://localhost:3000/api/ambientes
+Authorization: Bearer {SEU_TOKEN}
+Content-Type: application/json
+
+{
+  "nome": "Sala de Monitoramento",
+  "descricao": "Sala principal de IoT",
+  "localizacao": "Primeiro Andar",
+  "temperatura_ideal": 25.0,
+  "umidade_ideal": 60.0
+}
+
+## ============================================
+## 5. SENSORES
+## ============================================
+
+### Listar Sensores
+GET http://localhost:3000/api/sensores
+Authorization: Bearer {SEU_TOKEN}
+
+### Criar Sensor ESP32
+POST http://localhost:3000/api/sensores
+Authorization: Bearer {SEU_TOKEN}
+Content-Type: application/json
+
+{
+  "nome": "ESP32_Principal",
+  "tipo": "Ambiental",
+  "modelo": "ESP32-DevKit",
+  "descricao": "Sensor principal que lê temperatura e umidade",
+  "status": "ativo",
+  "id_ambiente": 1
+}
+
+## ============================================
+## 6. FLUXO COMPLETO DE TESTE
+## ============================================
+
+# 1. Faça login e copie o token
+POST http://localhost:3000/api/register
+POST http://localhost:3000/api/login
+
+# 2. Crie um ambiente
+POST http://localhost:3000/api/ambientes
+
+# 3. Crie um sensor
+POST http://localhost:3000/api/sensores
+
+# 4. Crie algumas leituras manualmente
+POST http://localhost:3000/api/leituras
+
+# 5. Verifique as leituras
+GET http://localhost:3000/api/leituras/recentes?minutos=60
+
+# 6. Verifique estatísticas
+GET http://localhost:3000/api/leituras/estatisticas?id_sensor=1
+
+## ============================================
+## 7. MONITORAMENTO EM TEMPO REAL
+## ============================================
+
+# O ESP32 envia dados automaticamente via MQTT
+# Os dados aparecem no banco após alguns segundos
+# 
+# Fluxo:
+# 1. ESP32 publica JSON no tópico ProjetoFinalIot
+# 2. Backend recebe via MQTT
+# 3. Backend salva no SQLite
+# 4. Frontend consulta API a cada 5 segundos
+# 5. Dashboard exibe dados em tempo real
+#
+# Testado via:
+# GET http://localhost:3000/api/leituras/recentes?minutos=60
+
+## ============================================
+## NOTAS IMPORTANTES
+## ============================================
+
+# 1. Todos os endpoints protegidos precisam de token JWT
+# 2. Token é válido por 24 horas
+# 3. Formato do header Authorization: "Bearer {token}"
+# 4. Todos os horários são em UTC (ISO 8601)
+# 5. Tipos de leitura: temperatura, umidade, potenciometro
+# 6. Unidades: °C, %, etc
+# 7. O sensor "ESP32_Principal" é criado automaticamente
+# 8. Leituras são persisidas no SQLite
+# 9. Dados nunca são perdidos, apenas consultados
+
+## ============================================
+## IMPORTAR NO INSOMNIA/POSTMAN
+## ============================================
+
+# Para Insomnia:
+# 1. File > Import
+# 2. Selecione este arquivo (.http)
+# 3. Clique em "Import"
+#
+# Para Postman:
+# 1. File > Import
+# 2. Cole o conteúdo deste arquivo
+# 3. Clique em "Import"
+

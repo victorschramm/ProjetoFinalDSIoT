@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Login, Dashboard, Register, NiveisAcesso, Usuarios, Ambientes, Sensores, Leituras, Alertas, Monitoramento, Historico } from './pages';
+import { Login, Dashboard, Register, NiveisAcesso, Usuarios, Ambientes, Sensores, Leituras, Alertas, Monitoramento, Historico, Dispositivos } from './pages';
 import './styles/global.css';
 
 function App() {
@@ -51,6 +51,9 @@ function App() {
         
         {/* Sensores */}
         <Route path="/sensores" element={<Sensores />} />
+        
+        {/* Dispositivos ESP */}
+        <Route path="/dispositivos" element={<Dispositivos />} />
         
         {/* Leituras */}
         <Route path="/leituras" element={<Leituras />} />

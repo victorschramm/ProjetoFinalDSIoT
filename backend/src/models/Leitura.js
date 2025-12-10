@@ -14,14 +14,23 @@ const Leitura = sequelize.define('Leitura', {
   },
   tipo_leitura: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    comment: 'temperatura, umidade, potenciometro, etc'
   },
   timestamp: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  unidade: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null,
+    comment: '°C, %, etc'
   }
 }, {
-  tableName: 'Leituras'
+  tableName: 'Leituras',
+  timestamps: true
 });
 
 Leitura.belongsTo(Sensor, {

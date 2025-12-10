@@ -9,3 +9,4 @@ export { default as Leituras } from './Leituras';
 export { default as Alertas } from './Alertas';
 export { default as Monitoramento } from './Monitoramento';
 export { default as Historico } from './Historico';
+export { default as Dispositivos } from './Dispositivos';

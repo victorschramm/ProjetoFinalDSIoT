@@ -9,6 +9,7 @@ import {
   updateSensor, 
   deleteSensor,
   getAmbientes,
+  getDispositivosAtivos,
   isAuthenticated,
   logout as apiLogout,
   getUserEmail,
@@ -28,6 +29,7 @@ const Sensores = () => {
   // Estados principais
   const [sensores, setSensores] = useState([]);
   const [ambientes, setAmbientes] = useState([]);
+  const [dispositivos, setDispositivos] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Modal states
@@ -42,6 +44,7 @@ const Sensores = () => {
     modelo: '',
     descricao: '',
     id_ambiente: '',
+    id_dispositivo: '',
     status: 'ativo',
   });
   const [formErrors, setFormErrors] = useState({});
@@ -119,17 +122,28 @@ const Sensores = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [drawerOpen]);
 
-  // Carregar sensores e ambientes
+  // Carregar sensores, ambientes e dispositivos
   const loadData = async () => {
     try {
       setLoading(true);
-      const [sensoresData, ambientesData] = await Promise.all([
+      console.log('🔄 Carregando dados...');
+      
+      const [sensoresData, ambientesData, dispositivosData] = await Promise.all([
         getSensores(),
-        getAmbientes()
+        getAmbientes(),
+        getDispositivosAtivos().catch(() => [])
       ]);
+      
+      console.log('✓ Sensores carregados:', sensoresData.length);
+      console.log('✓ Ambientes carregados:', ambientesData.length);
+      console.log('  Ambientes:', ambientesData);
+      console.log('✓ Dispositivos carregados:', dispositivosData.length);
+      
       setSensores(sensoresData);
       setAmbientes(ambientesData);
+      setDispositivos(dispositivosData);
     } catch (err) {
+      console.error('❌ Erro ao carregar dados:', err);
       toast.error(err.message || 'Erro ao carregar dados');
     } finally {
       setLoading(false);
@@ -144,6 +158,7 @@ const Sensores = () => {
       modelo: '',
       descricao: '',
       id_ambiente: '',
+      id_dispositivo: '',
       status: 'ativo',
     });
     setFormErrors({});
@@ -151,6 +166,9 @@ const Sensores = () => {
 
   // Abrir modal para criar
   const handleCreate = () => {
+    console.log('📝 Abrindo modal de criar sensor');
+    console.log('   Ambientes disponíveis:', ambientes.length);
+    console.log('   Dados de ambientes:', ambientes);
     resetForm();
     setModalMode('create');
     setSelectedSensor(null);
@@ -169,6 +187,7 @@ const Sensores = () => {
         modelo: data.modelo || '',
         descricao: data.descricao || '',
         id_ambiente: data.id_ambiente || '',
+        id_dispositivo: data.id_dispositivo || '',
         status: data.status || 'ativo',
       });
       setModalMode('view');
@@ -188,6 +207,7 @@ const Sensores = () => {
       modelo: sensor.modelo || '',
       descricao: sensor.descricao || '',
       id_ambiente: sensor.id_ambiente || '',
+      id_dispositivo: sensor.id_dispositivo || '',
       status: sensor.status || 'ativo',
     });
     setFormErrors({});
@@ -569,6 +589,27 @@ const Sensores = () => {
                   </select>
                   {formErrors.id_ambiente && <span className="error-message">{formErrors.id_ambiente}</span>}
                 </div>
+              </div>
+
+              {/* Dispositivo ESP */}
+              <div className="form-group">
+                <label htmlFor="id_dispositivo">📡 Dispositivo ESP (opcional)</label>
+                <select
+                  id="id_dispositivo"
+                  value={formData.id_dispositivo}
+                  onChange={(e) => setFormData({ ...formData, id_dispositivo: e.target.value })}
+                  disabled={submitting || modalMode === 'view'}
+                >
+                  <option value="">Sem dispositivo vinculado</option>
+                  {dispositivos.map(disp => (
+                    <option key={disp.id} value={disp.id}>
+                      {disp.nome} ({disp.topico_mqtt})
+                    </option>
+                  ))}
+                </select>
+                <small className="form-hint">
+                  Vincule a um dispositivo ESP para receber leituras automaticamente via MQTT
+                </small>
               </div>
               
               <div className="form-group">

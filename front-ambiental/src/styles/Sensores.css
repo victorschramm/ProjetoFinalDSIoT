@@ -779,6 +779,15 @@
   }
 }
 
+/* Form hint */
+.form-hint {
+  display: block;
+  color: #8892b0;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 @media (max-width: 480px) {
   .sensores-header {
     padding: 10px 15px;
