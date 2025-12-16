@@ -50,19 +50,49 @@ const Dashboard = () => {
   // Carregar dados do dashboard
   const carregarDados = useCallback(async () => {
     try {
-      const [ambientesData, sensoresData, leiturasData, alertasData] = await Promise.all([
+      // Carregar dados de forma independente para evitar falha total
+      const [ambientesResult, sensoresResult, leiturasResult, alertasResult] = await Promise.allSettled([
         getAmbientes(),
         getSensores(),
         getLeituras(),
         getAlertas()
       ]);
       
-      setAmbientes(ambientesData);
-      setSensores(sensoresData);
-      setLeituras(leiturasData);
-      setAlertas(alertasData);
+      // Processar resultados individualmente
+      if (ambientesResult.status === 'fulfilled') {
+        setAmbientes(Array.isArray(ambientesResult.value) ? ambientesResult.value : []);
+        console.log('✅ Ambientes carregados:', ambientesResult.value);
+      } else {
+        console.error('❌ Erro ao carregar ambientes:', ambientesResult.reason);
+        setAmbientes([]);
+      }
+      
+      if (sensoresResult.status === 'fulfilled') {
+        setSensores(Array.isArray(sensoresResult.value) ? sensoresResult.value : []);
+        console.log('✅ Sensores carregados:', sensoresResult.value);
+      } else {
+        console.error('❌ Erro ao carregar sensores:', sensoresResult.reason);
+        setSensores([]);
+      }
+      
+      if (leiturasResult.status === 'fulfilled') {
+        setLeituras(Array.isArray(leiturasResult.value) ? leiturasResult.value : []);
+        console.log('✅ Leituras carregadas:', leiturasResult.value);
+      } else {
+        console.error('❌ Erro ao carregar leituras:', leiturasResult.reason);
+        setLeituras([]);
+      }
+      
+      if (alertasResult.status === 'fulfilled') {
+        setAlertas(Array.isArray(alertasResult.value) ? alertasResult.value : []);
+        console.log('✅ Alertas carregados:', alertasResult.value);
+      } else {
+        console.error('❌ Erro ao carregar alertas:', alertasResult.reason);
+        setAlertas([]);
+      }
+      
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+      console.error('Erro geral ao carregar dados:', error);
       toast.error('Erro ao carregar dados do dashboard');
     }
   }, []);
@@ -77,19 +107,76 @@ const Dashboard = () => {
       (a.nivel_severidade || a.severidade) === 'alto'
     );
     
+    // Sensores ativos
+    const sensoresAtivos = sensores.filter(s => s.status === 'ativo');
+    
     const hoje = new Date();
     const leiturasHoje = leituras.filter(l => {
-      const data = new Date(l.data_hora || l.createdAt);
+      const data = new Date(l.data_hora || l.timestamp || l.createdAt);
       return data.toDateString() === hoje.toDateString();
     });
+
+    // Debug: mostrar tipos de sensores disponíveis
+    console.log('🔍 Sensores disponíveis:', sensores.map(s => ({ id: s.id, tipo: s.tipo, nome: s.nome })));
+    console.log('🔍 Leituras disponíveis (primeiras 5):', leituras.slice(0, 5).map(l => ({ 
+      id_sensor: l.id_sensor || l.sensor_id || l.sensorId, 
+      valor: l.valor, 
+      unidade: l.unidade,
+      tipo: l.tipo,
+      tipo_leitura: l.tipo_leitura
+    })));
+
+    // Última leitura de temperatura - verifica tipo do sensor OU unidade da leitura OU tipo_leitura
+    const leiturasTemp = leituras.filter(l => {
+      const sensorId = l.id_sensor || l.sensor_id || l.sensorId;
+      const sensor = sensores.find(s => s.id === sensorId);
+      const tipoSensor = sensor?.tipo?.toLowerCase() || '';
+      const unidadeLeitura = l.unidade?.toLowerCase() || '';
+      const tipoLeitura = (l.tipo || l.tipo_leitura || '')?.toLowerCase() || '';
+      
+      return tipoSensor.includes('temperatura') || 
+             tipoSensor.includes('temp') ||
+             unidadeLeitura.includes('°c') || 
+             unidadeLeitura.includes('celsius') ||
+             tipoLeitura.includes('temperatura') ||
+             tipoLeitura.includes('temp');
+    });
+    const ultimaTemp = leiturasTemp.length > 0 
+      ? leiturasTemp.sort((a, b) => new Date(b.data_hora || b.timestamp || b.createdAt) - new Date(a.data_hora || a.timestamp || a.createdAt))[0]
+      : null;
+
+    // Última leitura de umidade - verifica tipo do sensor OU unidade da leitura OU tipo_leitura
+    const leiturasUmid = leituras.filter(l => {
+      const sensorId = l.id_sensor || l.sensor_id || l.sensorId;
+      const sensor = sensores.find(s => s.id === sensorId);
+      const tipoSensor = sensor?.tipo?.toLowerCase() || '';
+      const unidadeLeitura = l.unidade?.toLowerCase() || '';
+      const tipoLeitura = (l.tipo || l.tipo_leitura || '')?.toLowerCase() || '';
+      
+      return tipoSensor.includes('umidade') || 
+             tipoSensor.includes('humidity') ||
+             unidadeLeitura.includes('%') || 
+             unidadeLeitura.includes('percent') ||
+             tipoLeitura.includes('umidade') ||
+             tipoLeitura.includes('humidity');
+    });
+    const ultimaUmid = leiturasUmid.length > 0 
+      ? leiturasUmid.sort((a, b) => new Date(b.data_hora || b.timestamp || b.createdAt) - new Date(a.data_hora || a.timestamp || a.createdAt))[0]
+      : null;
+    
+    console.log('🌡️ Leituras de temperatura encontradas:', leiturasTemp.length, ultimaTemp);
+    console.log('💧 Leituras de umidade encontradas:', leiturasUmid.length, ultimaUmid);
     
     return {
       totalAmbientes: ambientes.length,
       totalSensores: sensores.length,
+      sensoresAtivos: sensoresAtivos.length,
       alertasAtivos: alertasAtivos.length,
       alertasCriticos: alertasCriticos.length,
       leiturasHoje: leiturasHoje.length,
-      totalLeituras: leituras.length
+      totalLeituras: leituras.length,
+      ultimaTemperatura: ultimaTemp?.valor,
+      ultimaUmidade: ultimaUmid?.valor
     };
   };
 
@@ -101,16 +188,24 @@ const Dashboard = () => {
     
     if (sensoresDoTipo.length === 0) return [];
     
-    const sensorId = sensoresDoTipo[0].id;
+    const sensorIds = sensoresDoTipo.map(s => s.id);
     
     return leituras
-      .filter(l => (l.id_sensor || l.sensor_id || l.sensorId) === sensorId)
+      .filter(l => {
+        const sensorId = l.id_sensor || l.sensor_id || l.sensorId;
+        return sensorIds.includes(sensorId);
+      })
       .sort((a, b) => {
-        const dataA = new Date(a.data_hora || a.createdAt);
-        const dataB = new Date(b.data_hora || b.createdAt);
+        const dataA = new Date(a.data_hora || a.timestamp || a.createdAt);
+        const dataB = new Date(b.data_hora || b.timestamp || b.createdAt);
         return dataB - dataA;
       })
-      .slice(0, 24);
+      .slice(0, 24)
+      .map(l => ({
+        ...l,
+        valor: parseFloat(l.valor),
+        data: l.data_hora || l.timestamp || l.createdAt
+      }));
   };
 
   // Carregar dados do usuário
@@ -128,12 +223,19 @@ const Dashboard = () => {
 
     const loadData = async () => {
       try {
-        const profile = await getProfile();
-        setUserProfile(profile);
-        if (profile) {
-          const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
-          setIsUserAdmin(tipoUsuario === 'admin');
+        // Tenta carregar perfil, mas não falha se não conseguir
+        try {
+          const profile = await getProfile();
+          setUserProfile(profile);
+          if (profile) {
+            const tipoUsuario = profile.tipo_Usuario || profile.tipo_usuario;
+            setIsUserAdmin(tipoUsuario === 'admin');
+          }
+        } catch (profileErr) {
+          console.warn('Perfil não disponível, usando dados do localStorage:', profileErr.message);
         }
+        
+        // Sempre carrega os dados do dashboard
         await carregarDados();
       } catch (err) {
         console.error('Erro ao carregar dados:', err);
@@ -210,25 +312,43 @@ const Dashboard = () => {
         {/* Cards de estatísticas */}
         <div className="stats-grid">
           <StatsCard 
-            title="Ambientes"
-            value={stats.totalAmbientes}
-            icon="🏠"
-            color="primary"
-            subtitle="Cadastrados"
-          />
-          <StatsCard 
             title="Sensores"
-            value={stats.totalSensores}
+            value={stats.sensoresAtivos || stats.totalSensores}
             icon="📡"
             color="success"
-            subtitle="Ativos"
+            subtitle={`${stats.totalSensores} cadastrado(s)`}
+          />
+          <StatsCard 
+            title="Temperatura"
+            value={stats.ultimaTemperatura !== undefined ? `${stats.ultimaTemperatura}°C` : '--'}
+            icon="🌡️"
+            color={stats.ultimaTemperatura > 30 ? 'danger' : stats.ultimaTemperatura > 25 ? 'warning' : 'primary'}
+            subtitle="Última leitura"
+          />
+          <StatsCard 
+            title="Umidade"
+            value={stats.ultimaUmidade !== undefined ? `${stats.ultimaUmidade}%` : '--'}
+            icon="💧"
+            color={stats.ultimaUmidade > 70 || stats.ultimaUmidade < 30 ? 'warning' : 'primary'}
+            subtitle="Última leitura"
           />
           <StatsCard 
             title="Alertas"
             value={stats.alertasAtivos}
             icon="⚠️"
-            color={stats.alertasCriticos > 0 ? 'danger' : 'warning'}
-            subtitle={stats.alertasCriticos > 0 ? `${stats.alertasCriticos} crítico(s)` : 'Em aberto'}
+            color={stats.alertasCriticos > 0 ? 'danger' : stats.alertasAtivos > 0 ? 'warning' : 'success'}
+            subtitle={stats.alertasCriticos > 0 ? `${stats.alertasCriticos} crítico(s)` : stats.alertasAtivos > 0 ? 'Em aberto' : 'Nenhum ativo'}
+          />
+        </div>
+
+        {/* Cards secundários */}
+        <div className="stats-grid" style={{ marginTop: '1rem' }}>
+          <StatsCard 
+            title="Ambientes"
+            value={stats.totalAmbientes}
+            icon="🏠"
+            color="primary"
+            subtitle="Monitorados"
           />
           <StatsCard 
             title="Leituras Hoje"
@@ -269,27 +389,11 @@ const Dashboard = () => {
             </button>
             <button 
               className="action-card"
-              onClick={() => navigate('/dispositivos')}
-            >
-              <span className="action-icon">📡</span>
-              <span className="action-title">Dispositivos ESP</span>
-              <span className="action-desc">Cadastrar ESP</span>
-            </button>
-            <button 
-              className="action-card"
-              onClick={() => navigate('/sensores')}
-            >
-              <span className="action-icon">🎛️</span>
-              <span className="action-title">Sensores</span>
-              <span className="action-desc">Vincular sensores</span>
-            </button>
-            <button 
-              className="action-card"
               onClick={() => navigate('/ambientes')}
             >
               <span className="action-icon">🏢</span>
               <span className="action-title">Ambientes</span>
-              <span className="action-desc">Gerenciar salas</span>
+              <span className="action-desc">Gerenciar</span>
             </button>
           </div>
         </div>
