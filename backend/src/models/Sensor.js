@@ -30,6 +30,10 @@ const Sensor = sequelize.define('Sensor', {
     allowNull: false,
     defaultValue: 'ativo'
   },
+  lastSeen: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
   id_dispositivo: {
     type: DataTypes.INTEGER,
     allowNull: true,

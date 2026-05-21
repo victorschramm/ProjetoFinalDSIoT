@@ -152,9 +152,9 @@
 
 .sensors-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
 }
 
 .no-sensors {
@@ -192,7 +192,7 @@
   }
   
   .sensors-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
 }
 

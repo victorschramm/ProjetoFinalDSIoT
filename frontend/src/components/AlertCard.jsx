@@ -39,11 +39,13 @@ const AlertCard = ({ alerta, sensor, ambiente, onResolver }) => {
   };
 
   const getStatusConfig = () => {
-    const status = alerta.status?.toLowerCase();
-    if (status === 'resolvido' || status === 'fechado') {
-      return { icon: '✅', label: 'Resolvido', class: 'status-resolvido' };
+    switch (alerta.status?.toLowerCase()) {
+      case 'resolvido': return { icon: '✅', label: 'Resolvido', class: 'status-resolvido' };
+      case 'ignorado':  return { icon: '🚫', label: 'Ignorado',  class: 'status-ignorado'  };
+      case 'ativo':     return { icon: '🔔', label: 'Ativo',     class: 'status-ativo'     };
+      case 'pendente':
+      default:          return { icon: '⏳', label: 'Pendente',  class: 'status-pendente'  };
     }
-    return { icon: '⚠️', label: 'Aberto', class: 'status-aberto' };
   };
 
   const formatarData = (dataString) => {
@@ -60,8 +62,7 @@ const AlertCard = ({ alerta, sensor, ambiente, onResolver }) => {
 
   const severidade = getSeveridadeConfig();
   const statusConfig = getStatusConfig();
-  const isResolvido = alerta.status?.toLowerCase() === 'resolvido' || 
-                      alerta.status?.toLowerCase() === 'fechado';
+  const isResolvido = alerta.status?.toLowerCase() === 'resolvido';
 
   return (
     <div className={`alert-card ${severidade.class} ${statusConfig.class}`}>

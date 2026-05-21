@@ -33,7 +33,7 @@ const Alerta = sequelize.define('Alerta', {
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'aberto'
+    defaultValue: 'pendente'
   },
   resolucao: {
     type: DataTypes.STRING,

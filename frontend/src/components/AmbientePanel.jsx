@@ -4,10 +4,10 @@ import '../styles/AmbientePanel.css';
 
 /**
  * Painel de ambiente com seus sensores
- * @param {Object} ambiente - Dados do ambiente
- * @param {Array} sensores - Sensores do ambiente
- * @param {Object} leiturasMap - Map de sensorId -> última leitura
- * @param {Array} alertas - Alertas do ambiente
+ * @param {Object} ambiente    - Dados do ambiente
+ * @param {Array}  sensores    - Sensores do ambiente
+ * @param {Object} leiturasMap - Map de "sensorId-tipo_leitura" -> última leitura
+ * @param {Array}  alertas     - Alertas do ambiente
  */
 const AmbientePanel = ({ ambiente, sensores = [], leiturasMap = {}, alertas = [] }) => {
   const [expanded, setExpanded] = useState(true);
@@ -21,7 +21,7 @@ const AmbientePanel = ({ ambiente, sensores = [], leiturasMap = {}, alertas = []
   const alertasAtivos = alertas.filter(a => {
     const sensorIds = sensoresDoAmbiente.map(s => s.id);
     return sensorIds.includes(a.id_sensor || a.sensor_id || a.sensorId) && 
-           (a.status === 'aberto' || a.status === 'ativo');
+           (a.status === 'ativo' || a.status === 'pendente');
   });
 
   // Determina status geral do ambiente
@@ -86,16 +86,27 @@ const AmbientePanel = ({ ambiente, sensores = [], leiturasMap = {}, alertas = []
             </div>
           ) : (
             <div className="sensors-grid">
-              {sensoresDoAmbiente.map(sensor => (
-                <SensorCard
-                  key={sensor.id}
-                  sensor={sensor}
-                  ultimaLeitura={leiturasMap[sensor.id]}
-                  alertasAtivos={alertasAtivos.filter(
-                    a => (a.sensor_id || a.sensorId) === sensor.id
-                  )}
-                />
-              ))}
+              {sensoresDoAmbiente.map(sensor => {
+                // Coleta todas as leituras disponíveis para este sensor (por tipo)
+                const leiturasSensor = {};
+                Object.entries(leiturasMap).forEach(([key, leitura]) => {
+                  if (key.startsWith(`${sensor.id}-`)) {
+                    const tipo = key.slice(`${sensor.id}-`.length);
+                    leiturasSensor[tipo] = leitura;
+                  }
+                });
+
+                return (
+                  <SensorCard
+                    key={sensor.id}
+                    sensor={sensor}
+                    leituras={leiturasSensor}
+                    alertasAtivos={alertasAtivos.filter(
+                      a => (a.id_sensor || a.sensor_id || a.sensorId) === sensor.id
+                    )}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

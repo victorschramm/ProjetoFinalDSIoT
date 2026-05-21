@@ -12,8 +12,8 @@ const createAlertaSchema = z.object({
 });
 
 const updateAlertaSchema = z.object({
-  status: z.enum(['aberto', 'fechado'], {
-    errorMap: () => ({ message: 'status deve ser: aberto ou fechado' })
+  status: z.enum(['ativo', 'pendente', 'resolvido', 'ignorado'], {
+    errorMap: () => ({ message: 'status deve ser: ativo, pendente, resolvido ou ignorado' })
   }).optional(),
   resolucao: z.string().optional()
 });

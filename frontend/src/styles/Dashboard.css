@@ -47,6 +47,24 @@
     margin-bottom: 2rem;
 }
 
+/* ==================== BOTTOM GRID (Acesso Rápido | Visão Geral | Alertas) ==================== */
+.dashboard-bottom-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+    margin-bottom: 2rem;
+}
+
+.dashboard-bottom-grid .quick-actions,
+.dashboard-bottom-grid .charts-section {
+    margin-bottom: 0;
+}
+
+.alerts-column {
+    min-width: 0;
+}
+
 /* ==================== QUICK ACTIONS ==================== */
 .quick-actions {
     margin-bottom: 2rem;
@@ -321,19 +339,37 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
+@media (max-width: 1100px) {
+    .dashboard-bottom-grid {
+        grid-template-columns: 220px 1fr;
+    }
+
+    .alerts-column {
+        grid-column: 1 / -1;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
     }
-    
+
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .alerts-column {
+        grid-column: auto;
+    }
+
     .welcome-section h1 {
         font-size: 1.5rem;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .charts-grid {
         grid-template-columns: 1fr;
     }

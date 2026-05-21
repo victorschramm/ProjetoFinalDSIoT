@@ -100,12 +100,12 @@ const Dashboard = () => {
   // Calcular estatísticas
   const calcularEstatisticas = () => {
     const totalAlertasAtivos = alertas.filter(a => a.status === 'ativo').length;
-    const totalAlertasPendentes = alertas.filter(a => a.status === 'pendente' || a.status === 'aberto').length;
+    const totalAlertasPendentes = alertas.filter(a => a.status === 'pendente').length;
     const totalAlertasResolvidos = alertas.filter(a => a.status === 'resolvido').length;
     const totalAlertasIgnorados = alertas.filter(a => a.status === 'ignorado').length;
 
-    const alertasEmAtencao = alertas.filter(a => 
-      a.status === 'aberto' || a.status === 'ativo' || a.status === 'pendente'
+    const alertasEmAtencao = alertas.filter(a =>
+      a.status === 'ativo' || a.status === 'pendente'
     );
     
     const alertasCriticos = alertasEmAtencao.filter(a => 
@@ -147,39 +147,19 @@ const Dashboard = () => {
       tipo_leitura: l.tipo_leitura
     })));
 
-    // Última leitura de temperatura - verifica tipo do sensor OU unidade da leitura OU tipo_leitura
+    // Última leitura de temperatura — usa tipo_leitura para não pegar umidade do mesmo sensor
     const leiturasTemp = leituras.filter(l => {
-      const sensorId = l.id_sensor || l.sensor_id || l.sensorId;
-      const sensor = sensores.find(s => s.id === sensorId);
-      const tipoSensor = sensor?.tipo?.toLowerCase() || '';
-      const unidadeLeitura = l.unidade?.toLowerCase() || '';
-      const tipoLeitura = (l.tipo || l.tipo_leitura || '')?.toLowerCase() || '';
-      
-      return tipoSensor.includes('temperatura') || 
-             tipoSensor.includes('temp') ||
-             unidadeLeitura.includes('°c') || 
-             unidadeLeitura.includes('celsius') ||
-             tipoLeitura.includes('temperatura') ||
-             tipoLeitura.includes('temp');
+      const tipoLeitura = (l.tipo_leitura || l.tipo || '').toLowerCase();
+      return tipoLeitura.includes('temperatura') || tipoLeitura.includes('temp');
     });
     const ultimaTemp = leiturasTemp.length > 0 
       ? leiturasTemp.sort((a, b) => new Date(extrairData(b) || Date.now()) - new Date(extrairData(a) || Date.now()))[0]
       : null;
 
-    // Última leitura de umidade - verifica tipo do sensor OU unidade da leitura OU tipo_leitura
+    // Última leitura de umidade — usa tipo_leitura diretamente
     const leiturasUmid = leituras.filter(l => {
-      const sensorId = l.id_sensor || l.sensor_id || l.sensorId;
-      const sensor = sensores.find(s => s.id === sensorId);
-      const tipoSensor = sensor?.tipo?.toLowerCase() || '';
-      const unidadeLeitura = l.unidade?.toLowerCase() || '';
-      const tipoLeitura = (l.tipo || l.tipo_leitura || '')?.toLowerCase() || '';
-      
-      return tipoSensor.includes('umidade') || 
-             tipoSensor.includes('humidity') ||
-             unidadeLeitura.includes('%') || 
-             unidadeLeitura.includes('percent') ||
-             tipoLeitura.includes('umidade') ||
-             tipoLeitura.includes('humidity');
+      const tipoLeitura = (l.tipo_leitura || l.tipo || '').toLowerCase();
+      return tipoLeitura.includes('umidade') || tipoLeitura.includes('humidity');
     });
     const ultimaUmid = leiturasUmid.length > 0 
       ? leiturasUmid.sort((a, b) => new Date(extrairData(b) || Date.now()) - new Date(extrairData(a) || Date.now()))[0]
@@ -218,31 +198,23 @@ const Dashboard = () => {
     };
   };
 
-  // Pegar leituras recentes para gráfico
-  const getLeiturasRecentes = (tipoSensor) => {
-    const sensoresDoTipo = sensores.filter(s => 
-      s.tipo?.toLowerCase().includes(tipoSensor.toLowerCase())
-    );
-    
-    if (sensoresDoTipo.length === 0) return [];
-    
-    const sensorIds = sensoresDoTipo.map(s => s.id);
-    
+  // Pegar leituras recentes para gráfico filtrando por tipo_leitura
+  const getLeiturasRecentes = (tipoLeitura) => {
     return leituras
       .filter(l => {
-        const sensorId = l.id_sensor || l.sensor_id || l.sensorId;
-        return sensorIds.includes(sensorId);
+        const tipo = (l.tipo_leitura || l.tipo || '').toLowerCase();
+        return tipo.includes(tipoLeitura.toLowerCase());
       })
       .sort((a, b) => {
-        const dataA = new Date(a.data_hora || a.timestamp || a.createdAt);
-        const dataB = new Date(b.data_hora || b.timestamp || b.createdAt);
+        const dataA = new Date(a.timestamp || a.data_hora || a.createdAt);
+        const dataB = new Date(b.timestamp || b.data_hora || b.createdAt);
         return dataB - dataA;
       })
       .slice(0, 24)
       .map(l => ({
         ...l,
         valor: parseFloat(l.valor),
-        data: l.data_hora || l.timestamp || l.createdAt
+        data: l.timestamp || l.data_hora || l.createdAt
       }));
   };
 
@@ -417,133 +389,121 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Ações Rápidas */}
-        <div className="quick-actions">
-          <h2>Acesso Rápido</h2>
-          <div className="actions-grid">
-            <button 
-              className="action-card"
-              onClick={() => navigate('/monitoramento')}
-            >
-              <span className="action-icon">📊</span>
-              <span className="action-title">Monitoramento</span>
-              <span className="action-desc">Tempo real</span>
-            </button>
-            <button 
-              className="action-card"
-              onClick={() => navigate('/historico')}
-            >
-              <span className="action-icon">📈</span>
-              <span className="action-title">Histórico</span>
-              <span className="action-desc">Gráficos e dados</span>
-            </button>
-            <button 
-              className="action-card"
-              onClick={() => navigate('/alertas')}
-            >
-              <span className="action-icon">🔔</span>
-              <span className="action-title">Alertas</span>
-              <span className="action-desc">{stats.alertasEmAtencao} em atenção</span>
-            </button>
-            <button 
-              className="action-card"
-              onClick={() => navigate('/ambientes')}
-            >
-              <span className="action-icon">🏢</span>
-              <span className="action-title">Ambientes</span>
-              <span className="action-desc">Gerenciar</span>
-            </button>
-          </div>
-        </div>
+        {/* Grade inferior — Acesso Rápido | Visão Geral | Alertas */}
+        <div className="dashboard-bottom-grid">
 
-        {/* Gráficos */}
-        <div className="charts-section">
-          <h2>Visão Geral</h2>
-          <div className="charts-grid">
-            {leiturasTemperatura.length > 0 && (
-              <SensorChart
-                data={leiturasTemperatura}
-                tipo="temperatura"
-                title="🌡️ Temperatura (últimas leituras)"
-                chartType="area"
-                height={200}
-              />
-            )}
-            {leiturasUmidade.length > 0 && (
-              <SensorChart
-                data={leiturasUmidade}
-                tipo="umidade"
-                title="💧 Umidade (últimas leituras)"
-                chartType="area"
-                height={200}
-              />
-            )}
-            {leiturasTemperatura.length === 0 && leiturasUmidade.length === 0 && (
-              <div className="empty-charts">
-                <span className="empty-icon">📊</span>
-                <p>Nenhuma leitura disponível para exibir gráficos</p>
-                <button 
-                  className="btn-primary"
-                  onClick={() => navigate('/leituras')}
-                >
-                  Registrar Leituras
-                </button>
+          {/* Col 1 — Acesso Rápido */}
+          <div className="quick-actions">
+            <h2>Acesso Rápido</h2>
+            <div className="actions-grid">
+              <button className="action-card" onClick={() => navigate('/monitoramento')}>
+                <span className="action-icon">📊</span>
+                <span className="action-title">Monitoramento</span>
+                <span className="action-desc">Tempo real</span>
+              </button>
+              <button className="action-card" onClick={() => navigate('/historico')}>
+                <span className="action-icon">📈</span>
+                <span className="action-title">Histórico</span>
+                <span className="action-desc">Gráficos e dados</span>
+              </button>
+              <button className="action-card" onClick={() => navigate('/alertas')}>
+                <span className="action-icon">🔔</span>
+                <span className="action-title">Alertas</span>
+                <span className="action-desc">{stats.alertasEmAtencao} em atenção</span>
+              </button>
+              <button className="action-card" onClick={() => navigate('/ambientes')}>
+                <span className="action-icon">🏢</span>
+                <span className="action-title">Ambientes</span>
+                <span className="action-desc">Gerenciar</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Col 2 — Visão Geral */}
+          <div className="charts-section">
+            <h2>Visão Geral</h2>
+            <div className="charts-grid">
+              {leiturasTemperatura.length > 0 && (
+                <SensorChart
+                  data={leiturasTemperatura}
+                  tipo="temperatura"
+                  title="🌡️ Temperatura (últimas leituras)"
+                  chartType="area"
+                  height={200}
+                />
+              )}
+              {leiturasUmidade.length > 0 && (
+                <SensorChart
+                  data={leiturasUmidade}
+                  tipo="umidade"
+                  title="💧 Umidade (últimas leituras)"
+                  chartType="area"
+                  height={200}
+                />
+              )}
+              {leiturasTemperatura.length === 0 && leiturasUmidade.length === 0 && (
+                <div className="empty-charts">
+                  <span className="empty-icon">📊</span>
+                  <p>Nenhuma leitura disponível para exibir gráficos</p>
+                  <button className="btn-primary" onClick={() => navigate('/leituras')}>
+                    Registrar Leituras
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Col 3 — Alertas em Atenção */}
+          <div className="alerts-column">
+            {stats.alertasEmAtencao > 0 && (
+              <div className="alerts-section">
+                <div className="section-header">
+                  <h2>⚠️ Alertas em Atenção</h2>
+                  <button className="btn-link" onClick={() => navigate('/alertas')}>
+                    Ver todos →
+                  </button>
+                </div>
+                <div className="alerts-list">
+                  {alertas
+                    .filter(a => a.status === 'ativo' || a.status === 'pendente')
+                    .slice(0, 5)
+                    .map(alerta => {
+                      const sensor = sensores.find(s => s.id === (alerta.id_sensor || alerta.sensor_id || alerta.sensorId));
+                      const ambiente = sensor
+                        ? ambientes.find(a => a.id === (sensor.id_ambiente || sensor.ambiente_id || sensor.ambienteId))
+                        : null;
+                      return (
+                        <div
+                          key={alerta.id}
+                          className={`alert-item severidade-${alerta.nivel_severidade || alerta.severidade}`}
+                        >
+                          <span className="alert-icon">
+                            {(alerta.nivel_severidade || alerta.severidade) === 'alto' ? '🔴' :
+                             (alerta.nivel_severidade || alerta.severidade) === 'medio' ? '🟡' : '🟢'}
+                          </span>
+                          <div className="alert-info">
+                            <span className="alert-tipo">{alerta.tipo}</span>
+                            <span className="alert-local">
+                              {ambiente?.nome || '--'} • {sensor?.nome || '--'}
+                            </span>
+                          </div>
+                          <span className="alert-time">
+                            {new Date(alerta.timestamp || alerta.data_hora || alerta.createdAt).toLocaleString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             )}
           </div>
-        </div>
 
-        {/* Alertas Recentes */}
-        {stats.alertasEmAtencao > 0 && (
-          <div className="alerts-section">
-            <div className="section-header">
-              <h2>⚠️ Alertas em Atenção</h2>
-              <button 
-                className="btn-link"
-                onClick={() => navigate('/alertas')}
-              >
-                Ver todos →
-              </button>
-            </div>
-            <div className="alerts-list">
-              {alertas
-                .filter(a => a.status === 'aberto' || a.status === 'ativo' || a.status === 'pendente')
-                .slice(0, 5)
-                .map(alerta => {
-                  const sensor = sensores.find(s => s.id === (alerta.id_sensor || alerta.sensor_id || alerta.sensorId));
-                  const ambiente = sensor 
-                    ? ambientes.find(a => a.id === (sensor.id_ambiente || sensor.ambiente_id || sensor.ambienteId))
-                    : null;
-                  
-                  return (
-                    <div 
-                      key={alerta.id}
-                      className={`alert-item severidade-${alerta.nivel_severidade || alerta.severidade}`}
-                    >
-                      <span className="alert-icon">
-                        {(alerta.nivel_severidade || alerta.severidade) === 'alto' ? '🔴' : 
-                         (alerta.nivel_severidade || alerta.severidade) === 'medio' ? '🟡' : '🟢'}
-                      </span>
-                      <div className="alert-info">
-                        <span className="alert-tipo">{alerta.tipo}</span>
-                        <span className="alert-local">
-                          {ambiente?.nome || '--'} • {sensor?.nome || '--'}
-                        </span>
-                      </div>
-                      <span className="alert-time">
-                        {new Date(alerta.data_hora || alerta.createdAt).toLocaleString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        )}
+        </div>{/* fim dashboard-bottom-grid */}
       </div>
 
       {/* Footer */}

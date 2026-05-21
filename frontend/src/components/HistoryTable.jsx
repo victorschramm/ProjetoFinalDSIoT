@@ -30,13 +30,13 @@ const HistoryTable = ({
   }, {});
 
   const getSensor = (leitura) => {
-    return sensoresMap[leitura.sensor_id || leitura.sensorId];
+    return sensoresMap[leitura.id_sensor || leitura.sensor_id || leitura.sensorId];
   };
 
   const getAmbiente = (leitura) => {
     const sensor = getSensor(leitura);
     if (!sensor) return null;
-    return ambientesMap[sensor.ambiente_id || sensor.ambienteId];
+    return ambientesMap[sensor.id_ambiente || sensor.ambiente_id || sensor.ambienteId];
   };
 
   const getStatus = (leitura) => {
@@ -121,7 +121,7 @@ const HistoryTable = ({
               return (
                 <tr key={leitura.id || index}>
                   <td className="col-datetime">
-                    {formatarData(leitura.data_hora || leitura.createdAt)}
+                    {formatarData(leitura.timestamp || leitura.data_hora || leitura.createdAt)}
                   </td>
                   <td className="col-ambiente">
                     {ambiente?.nome || '--'}

@@ -207,12 +207,12 @@ async function verificarEGerarAlerta(sensorId, tipo_leitura, valor) {
     }
 
     if (alertaAcionado) {
-      // Evita flodar com alertas caso exista um em aberto para o mesmo tipo e sensor
+      // Evita flodar com alertas caso exista um pendente para o mesmo tipo e sensor
       const alertaExistente = await Alerta.findOne({
         where: {
           id_sensor: sensor.id,
           tipo: msgTipo,
-          status: 'aberto'
+          status: 'pendente'
         }
       });
 
@@ -224,7 +224,7 @@ async function verificarEGerarAlerta(sensorId, tipo_leitura, valor) {
           nivel_severidade: 'alto',
           valor_detectado: numValor,
           timestamp: new Date(),
-          status: 'aberto'
+          status: 'pendente'
         });
         console.log(`[ALERTA GERADO] ${mensagem}`);
       }
@@ -248,6 +248,9 @@ async function processarLeitura(data, topic) {
       console.warn(`⚠️  Sensor com id ${data.id_sensor} não encontrado, ignorando leitura`);
       return;
     }
+
+    // Atualizar lastSeen e status do sensor
+    await sensor.update({ lastSeen: new Date(), status: 'ONLINE' });
 
     // Definir unidade: usar fornecida, ou padrão, ou null
     const unidade = data.unidade || UNIDADES_PADRAO[data.tipo_leitura] || null;

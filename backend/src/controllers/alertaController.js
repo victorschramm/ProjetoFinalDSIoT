@@ -20,7 +20,7 @@ module.exports = {
         nivel_severidade,
         valor_detectado,
         timestamp,
-        status: 'aberto'
+        status: 'pendente'
       });
       res.status(201).json(alerta);
     } catch (error) {

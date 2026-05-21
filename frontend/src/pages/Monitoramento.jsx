@@ -97,29 +97,31 @@ const Monitoramento = () => {
   // Criar mapa de últimas leituras por sensor
   const criarMapaLeituras = () => {
     const mapa = {};
-    
+
     // Ordena leituras por data (mais recente primeiro)
     const leiturasOrdenadas = [...leituras].sort((a, b) => {
-      const dataA = new Date(a.data_hora || a.createdAt);
-      const dataB = new Date(b.data_hora || b.createdAt);
+      const dataA = new Date(a.timestamp || a.data_hora || a.createdAt);
+      const dataB = new Date(b.timestamp || b.data_hora || b.createdAt);
       return dataB - dataA;
     });
-    
-    // Pega a última leitura de cada sensor
+
+    // Chave por sensorId+tipo_leitura para não misturar temperatura e umidade do mesmo sensor
     leiturasOrdenadas.forEach(leitura => {
       const sensorId = leitura.id_sensor || leitura.sensor_id || leitura.sensorId;
-      if (!mapa[sensorId]) {
-        mapa[sensorId] = leitura;
+      const tipo = leitura.tipo_leitura || leitura.tipo || '';
+      const key = `${sensorId}-${tipo}`;
+      if (!mapa[key]) {
+        mapa[key] = leitura;
       }
     });
-    
+
     return mapa;
   };
 
   // Calcular estatísticas
   const calcularEstatisticas = () => {
-    const alertasAtivos = alertas.filter(a => 
-      a.status === 'aberto' || a.status === 'ativo'
+    const alertasAtivos = alertas.filter(a =>
+      a.status === 'ativo' || a.status === 'pendente'
     );
     
     const alertasCriticos = alertasAtivos.filter(a => 
@@ -268,7 +270,7 @@ const Monitoramento = () => {
             value={stats.alertasAtivos}
             icon="⚠️"
             color={stats.alertasCriticos > 0 ? 'danger' : 'warning'}
-            subtitle={stats.alertasCriticos > 0 ? `${stats.alertasCriticos} crítico(s)` : 'Em aberto'}
+            subtitle={stats.alertasCriticos > 0 ? `${stats.alertasCriticos} crítico(s)` : 'Em atenção'}
           />
           <StatsCard 
             title="Leituras Hoje"
@@ -325,7 +327,7 @@ const Monitoramento = () => {
             </div>
             <div className="alertas-preview">
               {alertas
-                .filter(a => a.status === 'aberto' || a.status === 'ativo')
+                .filter(a => a.status === 'ativo' || a.status === 'pendente')
                 .slice(0, 3)
                 .map(alerta => {
                   const sensor = sensores.find(s => s.id === (alerta.id_sensor || alerta.sensor_id || alerta.sensorId));

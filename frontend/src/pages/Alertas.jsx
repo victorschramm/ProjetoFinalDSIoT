@@ -337,7 +337,7 @@ function Alertas() {
               🔔 {countByStatus('ativo')} Ativos
             </span>
             <span className="stat-item stat-pendente">
-              ⏳ {countByStatus(['pendente', 'aberto'])} Pendentes / Abertos
+              ⏳ {countByStatus('pendente')} Pendentes
             </span>
             <span className="stat-item stat-resolvido">
               ✅ {countByStatus('resolvido')} Resolvidos

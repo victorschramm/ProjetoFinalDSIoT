@@ -110,26 +110,26 @@ const Historico = () => {
       inicio.setMinutes(horaInicio ? parseInt(horaInicio.split(':')[1]) : 0);
       
       resultado = resultado.filter(l => {
-        const dataLeitura = new Date(l.data_hora || l.createdAt);
+        const dataLeitura = new Date(l.timestamp || l.data_hora || l.createdAt);
         return dataLeitura >= inicio;
       });
     }
-    
+
     if (dataFim) {
       const fim = new Date(dataFim);
       fim.setHours(horaFim ? parseInt(horaFim.split(':')[0]) : 23);
       fim.setMinutes(horaFim ? parseInt(horaFim.split(':')[1]) : 59);
-      
+
       resultado = resultado.filter(l => {
-        const dataLeitura = new Date(l.data_hora || l.createdAt);
+        const dataLeitura = new Date(l.timestamp || l.data_hora || l.createdAt);
         return dataLeitura <= fim;
       });
     }
-    
+
     // Ordenar por data (mais recente primeiro)
     resultado.sort((a, b) => {
-      const dataA = new Date(a.data_hora || a.createdAt);
-      const dataB = new Date(b.data_hora || b.createdAt);
+      const dataA = new Date(a.timestamp || a.data_hora || a.createdAt);
+      const dataB = new Date(b.timestamp || b.data_hora || b.createdAt);
       return dataB - dataA;
     });
     
