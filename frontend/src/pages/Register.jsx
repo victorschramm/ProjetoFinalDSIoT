@@ -29,6 +29,7 @@ const Register = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [receberEmails, setReceberEmails] = useState(true);
 
   // ==========================================================================
   // FUNÇÕES DE VALIDAÇÃO
@@ -202,6 +203,7 @@ const Register = () => {
         email: email.trim().toLowerCase(),
         password: password,
         tipo_usuario: 'usuario',
+        receberEmails,
       };
 
       // Chama função de registro da API
@@ -362,11 +364,25 @@ const Register = () => {
               {confirmPasswordError && <span className="error-message">{confirmPasswordError}</span>}
             </div>
 
+            {/* Checkbox de notificações */}
+            <div className="form-check">
+              <input
+                type="checkbox"
+                id="receberEmails"
+                checked={receberEmails}
+                onChange={(e) => setReceberEmails(e.target.checked)}
+                disabled={loading}
+              />
+              <label htmlFor="receberEmails">
+                Quero receber emails e notificações da ManutAI
+              </label>
+            </div>
+
             {/* Botão de Cadastro */}
             <button
               type="submit"
               className="register-button"
-              disabled={loading} // Desabilita durante loading para evitar múltiplos envios
+              disabled={loading}
             >
               {loading ? 'Cadastrando...' : 'Criar Conta'}
             </button>

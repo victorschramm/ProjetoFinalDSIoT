@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario');
 const { registerSchema, loginSchema } = require('../schemas/usuarioSchema');
 const { enviarEmailRedefinicaoSenha } = require('../config/email');
+const NotificationSettings = require('../models/NotificationSettings');
 require('dotenv').config();
 
 if (!process.env.JWT_SECRET) {
@@ -21,13 +22,22 @@ module.exports = {
     }
 
     try {
-      const { name, email, password, id_nivel_acesso } = result.data;
+      const { name, email, password, id_nivel_acesso, receberEmails } = result.data;
 
       const existingUsuario = await Usuario.findOne({ where: { email } });
       if (existingUsuario) return res.status(400).json({ error: 'Usuário já cadastrado' });
 
       // tipo_usuario sempre 'usuario' no auto-cadastro — promoção a admin só via painel admin
       const novoUsuario = await Usuario.create({ name, email, password, tipo_usuario: 'usuario', id_nivel_acesso });
+
+      await NotificationSettings.create({
+        id_usuario: novoUsuario.id,
+        emailEnabled: receberEmails !== false,
+        whatsappEnabled: false,
+        email: novoUsuario.email,
+        telefone: null
+      });
+
       res.status(201).json({
         message: 'Usuário criado com sucesso',
         usuario: {

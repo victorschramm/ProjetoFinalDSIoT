@@ -95,50 +95,53 @@ const Monitoramento = () => {
   }, []); // Sem dependências de estado que mudam frequentemente
 
   // Criar mapa de últimas leituras por sensor
+  // Usa leiturasTempoReal (últimos 60 min, sem limit) como fonte principal
   const criarMapaLeituras = () => {
     const mapa = {};
+    const source = leiturasTempoReal.length > 0 ? leiturasTempoReal : leituras;
 
-    // Ordena leituras por data (mais recente primeiro)
-    const leiturasOrdenadas = [...leituras].sort((a, b) => {
+    const leiturasOrdenadas = [...source].sort((a, b) => {
       const dataA = new Date(a.timestamp || a.data_hora || a.createdAt);
       const dataB = new Date(b.timestamp || b.data_hora || b.createdAt);
       return dataB - dataA;
     });
 
-    // Chave por sensorId+tipo_leitura para não misturar temperatura e umidade do mesmo sensor
     leiturasOrdenadas.forEach(leitura => {
       const sensorId = leitura.id_sensor || leitura.sensor_id || leitura.sensorId;
       const tipo = leitura.tipo_leitura || leitura.tipo || '';
       const key = `${sensorId}-${tipo}`;
-      if (!mapa[key]) {
-        mapa[key] = leitura;
-      }
+      if (!mapa[key]) mapa[key] = leitura;
     });
 
     return mapa;
   };
 
-  // Calcular estatísticas
-  const calcularEstatisticas = () => {
+  // Calcular estatísticas — recebe o mapa já computado para não duplicar o cálculo
+  const calcularEstatisticas = (mapaLeituras) => {
     const alertasAtivos = alertas.filter(a =>
       a.status === 'ativo' || a.status === 'pendente'
     );
-    
-    const alertasCriticos = alertasAtivos.filter(a => 
+
+    const alertasCriticos = alertasAtivos.filter(a =>
       (a.nivel_severidade || a.severidade) === 'alto'
     );
-    
+
     const sensoresOnline = sensores.filter(sensor => {
-      const ultimaLeitura = criarMapaLeituras()[sensor.id];
-      if (!ultimaLeitura) return false;
-      
-      const dataLeitura = new Date(ultimaLeitura.data_hora || ultimaLeitura.createdAt);
-      const agora = new Date();
-      const diffMinutos = (agora - dataLeitura) / (1000 * 60);
-      
-      return diffMinutos < 10; // Considera online se teve leitura nos últimos 10 min
+      const entradas = Object.entries(mapaLeituras)
+        .filter(([k]) => k.startsWith(`${sensor.id}-`))
+        .map(([, v]) => v);
+
+      if (!entradas.length) return false;
+
+      const ultima = entradas.sort((a, b) =>
+        new Date(b.timestamp || b.data_hora || b.createdAt) -
+        new Date(a.timestamp || a.data_hora || a.createdAt)
+      )[0];
+
+      const diffMinutos = (new Date() - new Date(ultima.timestamp || ultima.data_hora || ultima.createdAt)) / 60000;
+      return diffMinutos < 10;
     });
-    
+
     return {
       totalAmbientes: ambientes.length,
       totalSensores: sensores.length,
@@ -146,9 +149,8 @@ const Monitoramento = () => {
       alertasAtivos: alertasAtivos.length,
       alertasCriticos: alertasCriticos.length,
       leiturasHoje: leituras.filter(l => {
-        const data = new Date(l.data_hora || l.createdAt);
-        const hoje = new Date();
-        return data.toDateString() === hoje.toDateString();
+        const data = new Date(l.timestamp || l.data_hora || l.createdAt);
+        return data.toDateString() === new Date().toDateString();
       }).length
     };
   };
@@ -199,8 +201,8 @@ const Monitoramento = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [drawerOpen]);
 
-  const stats = calcularEstatisticas();
   const leiturasMap = criarMapaLeituras();
+  const stats = calcularEstatisticas(leiturasMap);
 
   if (loading) {
     return <Loading />;

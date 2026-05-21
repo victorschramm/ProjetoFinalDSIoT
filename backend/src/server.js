@@ -4,9 +4,12 @@ const { initMQTT } = require('./config/mqtt');
 const app = require('./app');
 const Sensor = require('./models/Sensor');
 const Alerta = require('./models/Alerta');
+const Usuario = require('./models/Usuario');
+const NotificationSettings = require('./models/NotificationSettings');
 const { WebSocketServer, WebSocket } = require('ws');
+const { sendAlert } = require('./services/notificationService');
 
-const syncOptions = process.env.NODE_ENV === 'production' ? {} : { alter: true };
+const syncOptions = {};
 sequelize.sync(syncOptions).then(async () => {
   console.log('✓ Banco de dados sincronizado');
 
@@ -17,6 +20,28 @@ sequelize.sync(syncOptions).then(async () => {
     if (count > 0) console.log(`✓ Migração: ${count} alerta(s) 'aberto' convertido(s) para 'pendente'`);
   } catch (err) {
     console.warn('⚠️  Migração de alertas ignorada:', err.message);
+  }
+
+  // Migração: criar NotificationSettings para usuários que ainda não têm
+  try {
+    const usuarios = await Usuario.findAll();
+    let criados = 0;
+    for (const u of usuarios) {
+      const existe = await NotificationSettings.findOne({ where: { id_usuario: u.id } });
+      if (!existe) {
+        await NotificationSettings.create({
+          id_usuario: u.id,
+          emailEnabled: true,
+          whatsappEnabled: false,
+          email: u.email,
+          telefone: null
+        });
+        criados++;
+      }
+    }
+    if (criados > 0) console.log(`✓ Migração: ${criados} configuração(ões) de notificação criada(s)`);
+  } catch (err) {
+    console.warn('⚠️  Migração de notificações ignorada:', err.message);
   }
 
   initMQTT().catch(err => {
@@ -54,6 +79,11 @@ sequelize.sync(syncOptions).then(async () => {
           mensagem: 'Sensor offline há mais de 5 minutos'
         });
         console.log(`⚠️  Sensor ${sensor.id} (${sensor.nome}) marcado como OFFLINE`);
+
+        sendAlert({
+          assunto: '[ManutAI] Sensor offline',
+          mensagem: `O sensor "${sensor.nome}" (ID: ${sensor.id}) está offline há mais de 5 minutos.`
+        }).catch(() => {});
       }
     } catch (error) {
       console.error('Erro no monitor de sensores:', error.message);

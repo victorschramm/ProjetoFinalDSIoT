@@ -3,9 +3,22 @@ jest.mock('../middleware/rateLimiter', () => ({
   apiLimiter:  (req, res, next) => next(),
 }));
 
-const request  = require('supertest');
-const sequelize = require('../config/database');
-const app      = require('../app');
+jest.mock('../services/emailService', () => ({
+  sendEmail: jest.fn().mockResolvedValue(undefined),
+  transporter: {},
+}));
+
+jest.mock('../services/whatsappService', () => ({
+  sendWhatsApp: jest.fn().mockResolvedValue(undefined),
+}));
+
+const request   = require('supertest');
+const sequelize  = require('../config/database');
+const app        = require('../app');
+const { sendEmail }    = require('../services/emailService');
+const { sendWhatsApp } = require('../services/whatsappService');
+const { sendAlert }    = require('../services/notificationService');
+const NotificationSettings = require('../models/NotificationSettings');
 
 beforeAll(async () => {
   await sequelize.sync({ force: true });
@@ -14,6 +27,12 @@ beforeAll(async () => {
 afterAll(async () => {
   await sequelize.close();
 });
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+// ─── Auth ────────────────────────────────────────────────────────────────────
 
 describe('Auth — login inválido', () => {
   test('POST /api/login com credenciais erradas retorna 401', async () => {
@@ -71,5 +90,76 @@ describe('Fluxo completo: cadastro → login → acesso autenticado', () => {
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
+  });
+});
+
+// ─── Notificações ─────────────────────────────────────────────────────────────
+
+describe('Notificações — sendAlert', () => {
+  let settingsId;
+
+  beforeEach(async () => {
+    await NotificationSettings.destroy({ where: {} });
+  });
+
+  test('envia email quando emailEnabled=true', async () => {
+    await NotificationSettings.create({
+      id_usuario: 99,
+      emailEnabled: true,
+      whatsappEnabled: false,
+      email: 'alerta@teste.com',
+      telefone: null
+    });
+
+    await sendAlert({ assunto: 'Teste', mensagem: 'Mensagem de teste' });
+
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(sendEmail).toHaveBeenCalledWith('alerta@teste.com', 'Teste', 'Mensagem de teste');
+  });
+
+  test('chama sendWhatsApp quando whatsappEnabled=true', async () => {
+    await NotificationSettings.create({
+      id_usuario: 99,
+      emailEnabled: false,
+      whatsappEnabled: true,
+      email: null,
+      telefone: '+5511999999999'
+    });
+
+    await sendAlert({ assunto: 'Teste WA', mensagem: 'Msg WA' });
+
+    expect(sendWhatsApp).toHaveBeenCalledTimes(1);
+    expect(sendWhatsApp).toHaveBeenCalledWith('+5511999999999', 'Teste WA\n\nMsg WA');
+  });
+
+  test('não envia nada quando ambos desativados', async () => {
+    await NotificationSettings.create({
+      id_usuario: 99,
+      emailEnabled: false,
+      whatsappEnabled: false,
+      email: 'silencio@teste.com',
+      telefone: '+5511999999999'
+    });
+
+    await sendAlert({ assunto: 'Silêncio', mensagem: 'Não deve chegar' });
+
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(sendWhatsApp).not.toHaveBeenCalled();
+  });
+
+  test('continua funcionando mesmo se envio falhar', async () => {
+    sendEmail.mockRejectedValueOnce(new Error('SMTP offline'));
+
+    await NotificationSettings.create({
+      id_usuario: 99,
+      emailEnabled: true,
+      whatsappEnabled: false,
+      email: 'falha@teste.com',
+      telefone: null
+    });
+
+    await expect(
+      sendAlert({ assunto: 'Erro', mensagem: 'Deve continuar' })
+    ).resolves.not.toThrow();
   });
 });

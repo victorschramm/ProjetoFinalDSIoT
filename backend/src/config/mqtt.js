@@ -4,6 +4,7 @@ const Sensor = require('../models/Sensor');
 const Dispositivo = require('../models/Dispositivo');
 const Alerta = require('../models/Alerta');
 const Ambiente = require('../models/Ambiente');
+const { sendAlert } = require('../services/notificationService');
 
 let client;
 
@@ -207,7 +208,6 @@ async function verificarEGerarAlerta(sensorId, tipo_leitura, valor) {
     }
 
     if (alertaAcionado) {
-      // Evita flodar com alertas caso exista um pendente para o mesmo tipo e sensor
       const alertaExistente = await Alerta.findOne({
         where: {
           id_sensor: sensor.id,
@@ -215,6 +215,10 @@ async function verificarEGerarAlerta(sensorId, tipo_leitura, valor) {
           status: 'pendente'
         }
       });
+
+      if (alertaExistente) {
+        console.log(`⏭️  Alerta de ${msgTipo} já existe (pendente) para sensor ${sensorId} — notificação suprimida`);
+      }
 
       if (!alertaExistente) {
         await Alerta.create({
@@ -227,6 +231,11 @@ async function verificarEGerarAlerta(sensorId, tipo_leitura, valor) {
           status: 'pendente'
         });
         console.log(`[ALERTA GERADO] ${mensagem}`);
+
+        sendAlert({
+          assunto: `[ManutAI] Alerta: ${msgTipo} fora do limite`,
+          mensagem
+        }).catch(() => {});
       }
     }
   } catch (err) {

@@ -190,6 +190,29 @@
   opacity: 0.5;
 }
 
+/* Checkbox de notificações */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.form-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #00cec9;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.form-check label {
+  font-size: 13px;
+  color: #ccc;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
 /* Mensagem de erro do campo */
 .error-message {
   color: #e74c3c;

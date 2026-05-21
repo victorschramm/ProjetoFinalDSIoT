@@ -7,7 +7,8 @@ const registerSchema = z.object({
   tipo_usuario: z.enum(['admin', 'usuario'], {
     errorMap: () => ({ message: 'Tipo de usuário deve ser admin ou usuario' })
   }),
-  id_nivel_acesso: z.number().int().positive().optional()
+  id_nivel_acesso: z.number().int().positive().optional(),
+  receberEmails: z.boolean().optional().default(true)
 });
 
 const loginSchema = z.object({
