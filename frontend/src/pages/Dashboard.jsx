@@ -329,7 +329,7 @@ const Dashboard = () => {
             Olá, {userProfile?.name || 'Usuário'}! 👋
           </h2>
           <p className="welcome-subtitle">
-            Aqui está um resumo do seu sistema de monitoramento ambiental
+            Aqui está um resumo do seu sistema de monitoramento do ambiente
           </p>
         </div>
 

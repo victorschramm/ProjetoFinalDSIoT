@@ -116,14 +116,14 @@ const Login = () => {
           {/* Header */}
           <div className="login-header">
             <h1>MANUT.AI</h1>
-            <p>Monitoramento Ambiental Inteligente</p>
+            <p>Monitoramento Inteligente do Ambiente</p>
           </div>
 
           {/* Formulário */}
           <form className="login-form" onSubmit={handleSubmit}>
             {/* Campo de Email */}
             <div className="form-group">
-              <label htmlFor="email">Email ou Usuário</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"

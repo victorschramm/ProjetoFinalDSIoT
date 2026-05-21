@@ -268,7 +268,7 @@ const Register = () => {
           {/* Cabeçalho */}
           <div className="register-header">
             <h1>Criar Conta</h1>
-            <p>Sistema de Monitoramento Ambiental IoT</p>
+            <p>Sistema de Monitoramento do Ambiente IoT</p>
           </div>
 
           {/* Formulário de Cadastro */}

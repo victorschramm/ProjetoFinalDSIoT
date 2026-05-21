@@ -21,7 +21,7 @@ async function enviarEmailRedefinicaoSenha(destinatario, token) {
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #0f1923; padding: 32px; border-radius: 12px;">
       <h2 style="color: #00cec9; text-align: center; margin-bottom: 8px;">MANUT.AI</h2>
-      <p style="color: #aaa; text-align: center; margin-bottom: 32px;">Monitoramento Ambiental Inteligente</p>
+      <p style="color: #aaa; text-align: center; margin-bottom: 32px;">Monitoramento Inteligente do Ambiente</p>
 
       <h3 style="color: #fff; margin-bottom: 12px;">Redefinição de Senha</h3>
       <p style="color: #ccc; line-height: 1.6;">
