@@ -1,0 +1,381 @@
+### Cadastro e Registro de ESP32 - Exemplos de API
+
+#### 1️⃣ Criar um Ambiente (Sala)
+
+```http
+POST http://localhost:3000/api/ambientes
+Content-Type: application/json
+Authorization: Bearer SEU_TOKEN_JWT
+
+{
+  "nome": "Sala de Servidores",
+  "descricao": "Monitoramento de temperatura e umidade",
+  "localizacao": "Andar 2, Sala 201",
+  "temperatura_ideal": 25,
+  "umidade_ideal": 60
+}
+```
+
+**Resposta (Sucesso 201):**
+```json
+{
+  "id": 1,
+  "nome": "Sala de Servidores",
+  "descricao": "Monitoramento de temperatura e umidade",
+  "localizacao": "Andar 2, Sala 201",
+  "temperatura_ideal": 25,
+  "umidade_ideal": 60,
+  "createdAt": "2025-12-09T10:30:00.000Z",
+  "updatedAt": "2025-12-09T10:30:00.000Z"
+}
+```
+
+---
+
+#### 2️⃣ Cadastrar o Sensor ESP32
+
+```http
+POST http://localhost:3000/api/sensores
+Content-Type: application/json
+Authorization: Bearer SEU_TOKEN_JWT
+
+{
+  "nome": "ESP32-Sala1",
+  "tipo": "temperatura_umidade",
+  "modelo": "ESP32-DEV",
+  "descricao": "Sensor IoT para monitoramento ambiental",
+  "id_ambiente": 1,
+  "status": "ativo"
+}
+```
+
+**Resposta (Sucesso 201):**
+```json
+{
+  "id": 5,
+  "nome": "ESP32-Sala1",
+  "tipo": "temperatura_umidade",
+  "modelo": "ESP32-DEV",
+  "descricao": "Sensor IoT para monitoramento ambiental",
+  "id_ambiente": 1,
+  "status": "ativo",
+  "createdAt": "2025-12-09T10:32:00.000Z",
+  "updatedAt": "2025-12-09T10:32:00.000Z"
+}
+```
+
+---
+
+#### 3️⃣ Listar Todos os Ambientes
+
+```http
+GET http://localhost:3000/api/ambientes
+Authorization: Bearer SEU_TOKEN_JWT
+```
+
+**Resposta:**
+```json
+[
+  {
+    "id": 1,
+    "nome": "Sala de Servidores",
+    "descricao": "Monitoramento de temperatura e umidade",
+    "localizacao": "Andar 2, Sala 201",
+    "temperatura_ideal": 25,
+    "umidade_ideal": 60,
+    "createdAt": "2025-12-09T10:30:00.000Z",
+    "updatedAt": "2025-12-09T10:30:00.000Z"
+  }
+]
+```
+
+---
+
+#### 4️⃣ Listar Todos os Sensores
+
+```http
+GET http://localhost:3000/api/sensores
+Authorization: Bearer SEU_TOKEN_JWT
+```
+
+**Resposta:**
+```json
+[
+  {
+    "id": 5,
+    "nome": "ESP32-Sala1",
+    "tipo": "temperatura_umidade",
+    "modelo": "ESP32-DEV",
+    "descricao": "Sensor IoT para monitoramento ambiental",
+    "id_ambiente": 1,
+    "status": "ativo",
+    "createdAt": "2025-12-09T10:32:00.000Z",
+    "updatedAt": "2025-12-09T10:32:00.000Z"
+  }
+]
+```
+
+---
+
+#### 5️⃣ Obter Leituras de um Sensor Específico
+
+```http
+GET http://localhost:3000/api/leituras?id_sensor=5
+Authorization: Bearer SEU_TOKEN_JWT
+```
+
+**Resposta:**
+```json
+[
+  {
+    "id": 1,
+    "id_sensor": 5,
+    "valor": 28.5,
+    "tipo_leitura": "temperatura",
+    "unidade": "°C",
+    "timestamp": "2025-12-09T10:35:00.000Z",
+    "createdAt": "2025-12-09T10:35:00.000Z",
+    "updatedAt": "2025-12-09T10:35:00.000Z",
+    "sensor": {
+      "id": 5,
+      "nome": "ESP32-Sala1",
+      "tipo": "temperatura_umidade"
+    }
+  },
+  {
+    "id": 2,
+    "id_sensor": 5,
+    "valor": 65.2,
+    "tipo_leitura": "umidade",
+    "unidade": "%",
+    "timestamp": "2025-12-09T10:35:00.000Z",
+    "createdAt": "2025-12-09T10:35:00.000Z",
+    "updatedAt": "2025-12-09T10:35:00.000Z",
+    "sensor": {
+      "id": 5,
+      "nome": "ESP32-Sala1",
+      "tipo": "temperatura_umidade"
+    }
+  }
+]
+```
+
+---
+
+#### 6️⃣ Editar um Sensor Existente
+
+```http
+PUT http://localhost:3000/api/sensores/5
+Content-Type: application/json
+Authorization: Bearer SEU_TOKEN_JWT
+
+{
+  "nome": "ESP32-Sala1-Atualizado",
+  "tipo": "temperatura_umidade",
+  "modelo": "ESP32-DEV",
+  "descricao": "Sensor IoT atualizado",
+  "id_ambiente": 1,
+  "status": "ativo"
+}
+```
+
+**Resposta (Sucesso 200):**
+```json
+{
+  "id": 5,
+  "nome": "ESP32-Sala1-Atualizado",
+  "tipo": "temperatura_umidade",
+  "modelo": "ESP32-DEV",
+  "descricao": "Sensor IoT atualizado",
+  "id_ambiente": 1,
+  "status": "ativo",
+  "createdAt": "2025-12-09T10:32:00.000Z",
+  "updatedAt": "2025-12-09T10:40:00.000Z"
+}
+```
+
+---
+
+#### 7️⃣ Deletar um Sensor
+
+```http
+DELETE http://localhost:3000/api/sensores/5
+Authorization: Bearer SEU_TOKEN_JWT
+```
+
+**Resposta (Sucesso 200):**
+```json
+{
+  "message": "Sensor deletado com sucesso"
+}
+```
+
+---
+
+#### 8️⃣ Obter Últimas Leituras (Últimas 24 horas)
+
+```http
+GET http://localhost:3000/api/leituras?id_sensor=5&dataInicio=2025-12-08&dataFim=2025-12-09
+Authorization: Bearer SEU_TOKEN_JWT
+```
+
+**Resposta:**
+```json
+[
+  {
+    "id": 1,
+    "id_sensor": 5,
+    "valor": 28.5,
+    "tipo_leitura": "temperatura",
+    "unidade": "°C",
+    "timestamp": "2025-12-08T10:35:00.000Z"
+  },
+  {
+    "id": 2,
+    "id_sensor": 5,
+    "valor": 65.2,
+    "tipo_leitura": "umidade",
+    "unidade": "%",
+    "timestamp": "2025-12-08T10:35:00.000Z"
+  },
+  ...
+]
+```
+
+---
+
+### Fluxo Esperado de Dados MQTT
+
+#### Mensagem Enviada pelo ESP32
+
+**Tópico:** `ProjetoFinalIot`
+
+```json
+{
+  "Temp": 28.5,
+  "Umidade": 65.2,
+  "Potenciometro": 2048
+}
+```
+
+#### O Backend Processa e Salva 3 Registros:
+
+```javascript
+// Leitura 1: Temperatura
+{
+  id_sensor: 5,
+  valor: 28.5,
+  tipo_leitura: "temperatura",
+  unidade: "°C",
+  timestamp: "2025-12-09T10:35:00.000Z"
+}
+
+// Leitura 2: Umidade
+{
+  id_sensor: 5,
+  valor: 65.2,
+  tipo_leitura: "umidade",
+  unidade: "%",
+  timestamp: "2025-12-09T10:35:00.000Z"
+}
+
+// Leitura 3: Potenciômetro
+{
+  id_sensor: 5,
+  valor: 2048,
+  tipo_leitura: "potenciometro",
+  timestamp: "2025-12-09T10:35:00.000Z"
+}
+```
+
+---
+
+### Usando Postman ou VSCode REST Client
+
+#### 1. Crie um arquivo `requests.http` na raiz do projeto
+
+```http
+### Variáveis
+@baseURL = http://localhost:3000
+@token = seu_jwt_token_aqui
+
+### 1. Criar Ambiente
+POST {{baseURL}}/api/ambientes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nome": "Sala de Servidores",
+  "descricao": "Monitoramento de temperatura",
+  "localizacao": "Andar 2",
+  "temperatura_ideal": 25,
+  "umidade_ideal": 60
+}
+
+### 2. Cadastrar Sensor ESP32
+POST {{baseURL}}/api/sensores
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nome": "ESP32-Sala1",
+  "tipo": "temperatura_umidade",
+  "modelo": "ESP32-DEV",
+  "descricao": "Sensor IoT",
+  "id_ambiente": 1,
+  "status": "ativo"
+}
+
+### 3. Listar Sensores
+GET {{baseURL}}/api/sensores
+Authorization: Bearer {{token}}
+
+### 4. Listar Leituras
+GET {{baseURL}}/api/leituras
+Authorization: Bearer {{token}}
+
+### 5. Listar Ambientes
+GET {{baseURL}}/api/ambientes
+Authorization: Bearer {{token}}
+```
+
+#### 2. No VSCode:
+- Instale extensão: `REST Client` (Huachao Mao)
+- Abra `requests.http`
+- Clique em "Send Request" acima de cada requisição
+
+---
+
+### Verificação em Tempo Real
+
+#### Monitor Serial do ESP32 (PlatformIO)
+
+```
+Conectando em WiFi: seu_wifi
+.....
+IP: 192.168.1.100
+Conectando em MQTT...conectado
+Enviando: {"Temp":28.5,"Umidade":65.2,"Potenciometro":2048}
+Enviando: {"Temp":28.6,"Umidade":65.1,"Potenciometro":2050}
+...
+```
+
+#### Logs do Backend
+
+```
+✓ Conectado ao broker MQTT: mqtt://broker.hivemq.com
+✓ Inscrito no tópico: ProjetoFinalIot
+📨 Mensagem recebida em ProjetoFinalIot: {
+  Temp: 28.5,
+  Umidade: 65.2,
+  Potenciometro: 2048
+}
+💾 Temperatura salva: 28.5°C
+💾 Umidade salva: 65.2%
+💾 Potenciômetro salvo: 2048
+```
+
+---
+
+**Documento criado em:** 09/12/2025  
+**Versão:** 1.0

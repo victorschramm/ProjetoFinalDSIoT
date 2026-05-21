@@ -1,0 +1,14 @@
+export { default as Login } from './Login';
+export { default as ForgotPassword } from './ForgotPassword';
+export { default as ResetPassword } from './ResetPassword';
+export { default as Dashboard } from './Dashboard';
+export { default as Register } from './Register';
+export { default as NiveisAcesso } from './NiveisAcesso';
+export { default as Usuarios } from './Usuarios';
+export { default as Ambientes } from './Ambientes';
+export { default as Sensores } from './Sensores';
+export { default as Leituras } from './Leituras';
+export { default as Alertas } from './Alertas';
+export { default as Monitoramento } from './Monitoramento';
+export { default as Historico } from './Historico';
+export { default as Dispositivos } from './Dispositivos';
