@@ -202,26 +202,6 @@ const Dashboard = () => {
     };
   };
 
-  // Pegar leituras recentes para gráfico filtrando por tipo_leitura
-  const getLeiturasRecentes = (tipoLeitura) => {
-    return leituras
-      .filter(l => {
-        const tipo = (l.tipo_leitura || l.tipo || '').toLowerCase();
-        return tipo.includes(tipoLeitura.toLowerCase());
-      })
-      .sort((a, b) => {
-        const dataA = new Date(a.timestamp || a.data_hora || a.createdAt);
-        const dataB = new Date(b.timestamp || b.data_hora || b.createdAt);
-        return dataB - dataA;
-      })
-      .slice(0, 24)
-      .map(l => ({
-        ...l,
-        valor: parseFloat(l.valor),
-        data: l.timestamp || l.data_hora || l.createdAt
-      }));
-  };
-
   // Carregar dados do usuário
   useEffect(() => {
     if (!isAuthenticated()) {
