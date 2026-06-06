@@ -1,0 +1,82 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+/* Overlay padrão para todas as páginas */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.88) 0%, rgba(22, 33, 62, 0.88) 50%, rgba(15, 52, 96, 0.88) 100%);
+    z-index: -1;
+}
+
+/* Fix global para inputs - garante que o texto seja sempre visível */
+input, textarea, select {
+    color: inherit;
+}
+
+/* ==================== FOOTER ==================== */
+.app-footer {
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 50;
+}
+
+.app-footer p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.app-footer p:last-child {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.app-footer.login-footer {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid #00b894;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
