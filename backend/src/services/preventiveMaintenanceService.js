@@ -1,6 +1,8 @@
 // Serviço reutilizável para contagem de horas de operação de qualquer ativo
 const PreventiveMaintenance = require('../models/PreventiveMaintenance');
+const Sensor = require('../models/Sensor');
 const { logAssetEvent } = require('./assetHistoryService');
+const { sendAlert } = require('./notificationService');
 
 // Incrementa horas operadas apenas para sensores configurados manualmente pelo operador.
 // Chamado a cada mensagem MQTT recebida do sensor.
@@ -32,11 +34,23 @@ async function updateOperatingHours(deviceId) {
       status: novoStatus
     });
 
-    // Gera evento de manutenção preventiva apenas na primeira vez que o limite é atingido
+    // Gera evento e envia e-mail apenas na primeira vez que o limite é atingido
     if (limiteAtingidoAgora) {
+      const sensor = await Sensor.findByPk(deviceId);
+      const nomeSensor = sensor ? sensor.nome : `Sensor #${deviceId}`;
       const mensagem = `Manutenção preventiva necessária: ${record.descricao} (${novasHoras.toFixed(1)}h operadas / limite: ${record.limiteHoras}h)`;
-      console.log(`[MANUTENCAO_PREVENTIVA] Sensor ${deviceId}: ${mensagem}`);
+
+      console.log(`[MANUTENCAO_PREVENTIVA] ${nomeSensor}: ${mensagem}`);
       logAssetEvent(deviceId, 'MANUTENCAO_PREVENTIVA', mensagem).catch(() => {});
+
+      sendAlert({
+        assunto: `[ManutAI] Manutenção Preventiva: ${nomeSensor}`,
+        mensagem: `O sensor <strong>${nomeSensor}</strong> atingiu o limite de horas de operação configurado pelo operador.<br><br>` +
+          `<strong>Manutenção necessária:</strong> ${record.descricao}<br>` +
+          `<strong>Horas operadas:</strong> ${novasHoras.toFixed(1)}h<br>` +
+          `<strong>Limite configurado:</strong> ${record.limiteHoras}h<br><br>` +
+          `Acesse o sistema para registrar a manutenção realizada e resetar o contador.`
+      }).catch(() => {});
     }
   } catch (err) {
     console.error('Erro ao atualizar horas de operação:', err.message);
