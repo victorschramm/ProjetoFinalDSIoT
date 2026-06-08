@@ -1,0 +1,308 @@
+/* Monitoramento em Tempo Real */
+
+.monitoramento-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  border-radius: 10px;
+}
+
+.monitoramento-container h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.monitoramento-container h2 {
+  color: white;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+/* Cards de Leitura Atual */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.card.temperatura h3 {
+  color: #ff6b6b;
+}
+
+.card.umidade h3 {
+  color: #4ecdc4;
+}
+
+.card.potenciometro h3 {
+  color: #ffa500;
+}
+
+.card .valor {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  color: #333;
+}
+
+.card.temperatura .valor {
+  color: #ff6b6b;
+}
+
+.card.umidade .valor {
+  color: #4ecdc4;
+}
+
+.card.potenciometro .valor {
+  color: #ffa500;
+}
+
+.card .timestamp {
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+/* Estatísticas */
+.estatisticas-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.estatisticas-container h2 {
+  color: #333;
+  margin-top: 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.stat-item label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+
+.stat-item span {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Histórico */
+.historico-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  margin: 2rem 0;
+}
+
+.historico-container h2 {
+  color: #333;
+  margin-top: 0;
+}
+
+.tabela-container {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.tabela-container table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.tabela-container table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.tabela-container table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #667eea;
+}
+
+.tabela-container table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.tabela-container table tbody tr:hover {
+  background: #f8f9ff;
+}
+
+.tabela-container table tbody tr:nth-child(even) {
+  background: #f5f7ff;
+}
+
+/* Botão */
+.btn-atualizar {
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-atualizar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.btn-atualizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Erro */
+.erro-banner {
+  background: #ff6b6b;
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .monitoramento-container {
+    padding: 1rem;
+  }
+
+  .monitoramento-container h1 {
+    font-size: 1.8rem;
+  }
+
+  .cards-container {
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card .valor {
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabela-container table {
+    font-size: 0.85rem;
+  }
+
+  .tabela-container table th,
+  .tabela-container table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .monitoramento-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+  }
+
+  .card {
+    background: #2a2a3e;
+    color: white;
+  }
+
+  .card h3 {
+    color: #fff;
+  }
+
+  .card .valor {
+    color: #fff;
+  }
+
+  .card .timestamp {
+    color: #aaa;
+  }
+
+  .estatisticas-container,
+  .historico-container {
+    background: #2a2a3e;
+    color: white;
+  }
+
+  .estadisticas-container h2,
+  .historico-container h2 {
+    color: white;
+  }
+
+  .tabela-container table {
+    background: #2a2a3e;
+  }
+
+  .tabela-container table td {
+    color: white;
+    border-color: #444;
+  }
+
+  .tabela-container table tbody tr:hover {
+    background: #3a3a4e;
+  }
+
+  .tabela-container table tbody tr:nth-child(even) {
+    background: #333350;
+  }
+}

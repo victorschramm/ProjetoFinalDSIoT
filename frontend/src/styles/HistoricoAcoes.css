@@ -1,0 +1,332 @@
+/* =============================================================================
+   HISTÓRICO DE AÇÕES - Estilos
+   Seguindo o tema de cores e background do projeto (dark/glass)
+   ============================================================================= */
+
+.historico-acoes-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.historico-acoes-container {
+  flex: 1;
+  padding: 20px 40px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Toolbar */
+.historico-acoes-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.historico-acoes-toolbar h2 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.historico-acoes-total {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+/* Filtros */
+.historico-acoes-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.filtro-group label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filtro-group select,
+.filtro-group input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filtro-group select:focus,
+.filtro-group input:focus {
+  border-color: rgba(0, 184, 148, 0.6);
+}
+
+.filtro-group select option {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.btn-limpar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: background 0.2s, color 0.2s;
+  align-self: flex-end;
+}
+
+.btn-limpar:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* Legenda */
+.historico-acoes-legenda {
+  display: flex;
+  gap: 20px;
+  font-size: 0.82rem;
+}
+
+.legenda-critica {
+  color: #ff6b6b;
+}
+
+.legenda-comum {
+  color: #74b9ff;
+}
+
+/* Table container */
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.historico-acoes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.historico-acoes-table thead tr {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.historico-acoes-table th {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  padding: 12px 14px;
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.historico-acoes-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+/* Row highlights */
+.row-critica {
+  background: rgba(255, 107, 107, 0.06);
+}
+
+.row-critica:hover {
+  background: rgba(255, 107, 107, 0.12);
+}
+
+.row-comum {
+  background: transparent;
+}
+
+.row-comum:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Badges */
+.acao-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.acao-critica {
+  background: rgba(255, 107, 107, 0.2);
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  color: #ff6b6b;
+}
+
+.acao-comum {
+  background: rgba(116, 185, 255, 0.15);
+  border: 1px solid rgba(116, 185, 255, 0.4);
+  color: #74b9ff;
+}
+
+.entidade-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(0, 184, 148, 0.15);
+  border: 1px solid rgba(0, 184, 148, 0.3);
+  color: #00b894;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.entidade-id {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.78rem;
+}
+
+.origem-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  font-size: 0.76rem;
+}
+
+/* Columns */
+.col-usuario {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.col-descricao {
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 300px;
+}
+
+.col-data {
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  font-size: 0.82rem;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 60px 0;
+}
+
+.loading-spinner-local {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #00b894;
+  border-radius: 50%;
+  animation: spin-local 0.9s linear infinite;
+}
+
+@keyframes spin-local {
+  to { transform: rotate(360deg); }
+}
+
+/* Paginação */
+.historico-acoes-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.btn-pagina {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: background 0.2s;
+}
+
+.btn-pagina:hover:not(:disabled) {
+  background: rgba(0, 184, 148, 0.2);
+  border-color: rgba(0, 184, 148, 0.4);
+}
+
+.btn-pagina:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pagina-info {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.88rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .historico-acoes-container {
+    padding: 12px 16px 80px;
+  }
+
+  .historico-acoes-filtros {
+    flex-direction: column;
+  }
+
+  .filtro-group {
+    min-width: 100%;
+  }
+
+  .col-descricao {
+    max-width: 180px;
+  }
+}
