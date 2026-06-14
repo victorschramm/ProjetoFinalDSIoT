@@ -9,11 +9,16 @@ import ChatBot from './components/ChatBot';
 import { isAuthenticated } from './services/api';
 import './styles/global.css';
 
+// Páginas públicas onde o chatbot nunca deve aparecer, mesmo que exista
+// um token (válido ou não) no localStorage
+const ROTAS_SEM_CHATBOT = ['/login', '/register', '/forgot-password'];
+
 // ChatBot disponível apenas para usuários autenticados
 // Evita exposição antes do login e melhora a experiência do usuário
 // useLocation garante re-avaliação a cada troca de rota (login e logout)
 function ChatBotGuard() {
-  useLocation();
+  const location = useLocation();
+  if (ROTAS_SEM_CHATBOT.includes(location.pathname)) return null;
   return isAuthenticated() ? <ChatBot /> : null;
 }
 

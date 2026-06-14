@@ -276,11 +276,17 @@ async function verificarEGerarAlerta(sensorId, tipo_leitura, valor) {
         }).catch(() => {});
       }
     } else {
-      // Retorno à normalidade: se havia alerta pendente, registra o evento
+      // Retorno à normalidade: se havia alerta pendente, registra o evento uma única vez
+      // e marca o alerta como resolvido. Só volta a registrar quando um novo alerta for gerado.
       const alertaPendente = await Alerta.findOne({
         where: { id_sensor: sensor.id, tipo: msgTipo, status: 'pendente' }
       });
       if (alertaPendente) {
+        await alertaPendente.update({
+          status: 'resolvido',
+          resolucao: 'Resolvido automaticamente: valor retornou à faixa ideal.'
+        });
+
         logAssetEvent(
           sensor.id_dispositivo || sensor.id,
           'RETORNO_NORMALIDADE',

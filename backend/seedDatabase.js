@@ -11,9 +11,13 @@ const Sensor     = require('./src/models/Sensor');
 const Dispositivo = require('./src/models/Dispositivo');
 const Leitura    = require('./src/models/Leitura');
 const Alerta     = require('./src/models/Alerta');
+const PreventiveMaintenance = require('./src/models/PreventiveMaintenance');
+const AssetHistory = require('./src/models/AssetHistory');
 
-// Gera timestamp retroativo em minutos
+// Gera timestamp retroativo em minutos / horas / dias
 const minutesAgo = (min) => new Date(Date.now() - min * 60 * 1000);
+const hoursAgo = (h) => new Date(Date.now() - h * 60 * 60 * 1000);
+const daysAgo = (d) => new Date(Date.now() - d * 24 * 60 * 60 * 1000);
 
 async function seedDatabase() {
   try {
@@ -338,6 +342,79 @@ async function seedDatabase() {
 
     console.log('✓ 4 alertas criados (3 pendentes, 1 resolvido)');
 
+    // ─── 7. MANUTENÇÃO PREVENTIVA ─────────────────────────────────────────────
+    console.log('\n🔧 Criando configurações de manutenção preventiva...');
+
+    await PreventiveMaintenance.findOrCreate({
+      where: { deviceId: sensorTempSala.id },
+      defaults: {
+        deviceId: sensorTempSala.id,
+        horasOperadas: 480,
+        limiteHoras: 500,
+        ultimaAtualizacao: hoursAgo(5),
+        status: 'OK',
+        descricao: 'Limpeza e calibração do sensor DHT11'
+      }
+    });
+
+    await PreventiveMaintenance.findOrCreate({
+      where: { deviceId: sensorUmidLab.id },
+      defaults: {
+        deviceId: sensorUmidLab.id,
+        horasOperadas: 620,
+        limiteHoras: 600,
+        ultimaAtualizacao: hoursAgo(8),
+        status: 'MANUTENCAO_PENDENTE',
+        descricao: 'Substituição do sensor DHT11 (fim de vida útil)'
+      }
+    });
+
+    await PreventiveMaintenance.findOrCreate({
+      where: { deviceId: sensorTempAlmox.id },
+      defaults: {
+        deviceId: sensorTempAlmox.id,
+        horasOperadas: 150,
+        limiteHoras: 1000,
+        ultimaAtualizacao: hoursAgo(12),
+        status: 'OK',
+        descricao: 'Verificação geral do ESP32 e conexões'
+      }
+    });
+
+    console.log('✓ 3 configurações de manutenção preventiva criadas');
+
+    // ─── 8. CURRÍCULO DA MÁQUINA (HISTÓRICO DE EVENTOS) ────────────────────────
+    console.log('\n📜 Criando histórico de eventos (currículo da máquina)...');
+
+    const criarEvento = async (deviceId, tipoEvento, descricao, dataEvento) => {
+      await AssetHistory.findOrCreate({
+        where: { deviceId: String(deviceId), tipoEvento, dataEvento },
+        defaults: { deviceId: String(deviceId), tipoEvento, descricao, dataEvento }
+      });
+    };
+
+    // ESP32 — Sala de Servidores
+    await criarEvento(disp1.id, 'SENSOR_ONLINE', `Sensor "${sensorTempSala.nome}" (ID: ${sensorTempSala.id}) iniciado e conectado.`, daysAgo(5));
+    await criarEvento(disp1.id, 'MANUTENCAO', 'Limpeza do sensor DHT11 e verificação das conexões realizada pelo técnico.', daysAgo(3));
+    await criarEvento(disp1.id, 'ALERTA_TEMPERATURA', 'Temperatura acima do normal (31.7). O ideal é 22 (máximo configurado de 24).', minutesAgo(15));
+    await criarEvento(disp1.id, 'INTERVENCAO_MANUAL', 'Ar-condicionado da Sala de Servidores ajustado manualmente pelo operador.', minutesAgo(10));
+    await criarEvento(disp1.id, 'ALERTA_TEMPERATURA', 'Temperatura acima do normal (33.0). O ideal é 22 (máximo configurado de 24).', minutesAgo(5));
+
+    // ESP32 — Laboratório
+    await criarEvento(disp2.id, 'MANUTENCAO', 'Manutenção preventiva: limpeza do sensor DHT11 do Laboratório realizada.', daysAgo(10));
+    await criarEvento(disp2.id, 'SENSOR_OFFLINE', `Sensor "${sensorUmidLab.nome}" (ID: ${sensorUmidLab.id}) ficou offline há mais de 5 minutos.`, daysAgo(2));
+    await criarEvento(disp2.id, 'SENSOR_ONLINE', `Sensor "${sensorUmidLab.nome}" (ID: ${sensorUmidLab.id}) voltou a ficar online.`, new Date(daysAgo(2).getTime() + 10 * 60 * 1000));
+    await criarEvento(disp2.id, 'MANUTENCAO_PREVENTIVA', 'Manutenção preventiva necessária: Substituição do sensor DHT11 (fim de vida útil) (620.0h operadas / limite: 600h).', hoursAgo(8));
+    await criarEvento(disp2.id, 'ALERTA_TEMPERATURA', 'Temperatura do Laboratório acima do limite: 24.5°C (limite: 23°C).', minutesAgo(8));
+    await criarEvento(disp2.id, 'RETORNO_NORMALIDADE', 'Temperatura voltou ao normal (23.0). Ideal: 21.', minutesAgo(3));
+
+    // ESP32 — Almoxarifado
+    await criarEvento(disp3.id, 'MANUTENCAO', 'Substituição do sensor DHT11 antigo do Almoxarifado.', daysAgo(7));
+    await criarEvento(disp3.id, 'ALERTA_UMIDADE', 'Umidade acima do normal (73.0). O ideal é 40 (máximo configurado de 50).', minutesAgo(12));
+    await criarEvento(disp3.id, 'ALERTA_TEMPERATURA', 'Temperatura abaixo do normal (14.0). O ideal é 18 (mínimo configurado de 16).', minutesAgo(12));
+
+    console.log('✓ 14 eventos de histórico criados (3 dispositivos)');
+
     // ─── RESUMO ───────────────────────────────────────────────────────────────
     console.log('\n✅ Banco de dados populado com sucesso!\n');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -361,6 +438,14 @@ async function seedDatabase() {
     console.log('   🔴 PENDENTE  — Umidade Alta: Almoxarifado (73.0%)');
     console.log('   🟡 PENDENTE  — Temperatura Baixa: Almoxarifado (14.0°C)');
     console.log('   ✅ RESOLVIDO — Temperatura Alta: Laboratório (resolvido)');
+    console.log('\n🔧 Manutenção Preventiva (3):');
+    console.log('   DHT11 — Temp. Sala de Servidores — 480h / 500h (OK)');
+    console.log('   DHT11 — Umid. Laboratório         — 620h / 600h (MANUTENÇÃO PENDENTE)');
+    console.log('   DHT11 — Temp. Almoxarifado         — 150h / 1000h (OK)');
+    console.log('\n📜 Currículo da Máquina (14 eventos):');
+    console.log('   ESP32 — Sala de Servidores: 5 eventos (manutenção, alertas, intervenção)');
+    console.log('   ESP32 — Laboratório:        6 eventos (manutenção, offline/online, alertas)');
+    console.log('   ESP32 — Almoxarifado:       3 eventos (manutenção, alertas)');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   } catch (error) {

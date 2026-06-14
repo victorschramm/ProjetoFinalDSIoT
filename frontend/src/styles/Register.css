@@ -346,12 +346,7 @@
    ============================================================================= */
 
 @media (prefers-color-scheme: dark) {
-  .register-container {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  }
-
   .register-box {
-    background: #0f3460;
     color: #eee;
   }
 
