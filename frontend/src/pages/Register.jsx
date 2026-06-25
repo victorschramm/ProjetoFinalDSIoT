@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from 'lucide-react';
 import { Footer, Loading } from '../components';
 import { register } from '../services/api'; // Importa função de registro da API
 import '../styles/Register.css';
@@ -212,7 +213,7 @@ const Register = () => {
       const data = await register(userData);
 
       // Se chegou aqui, cadastro foi bem-sucedido
-      toast.success(data.message || 'Cadastro realizado com sucesso! 🎉');
+      toast.success(data.message || 'Cadastro realizado com sucesso!');
       
       // Limpa o formulário
       clearForm();
@@ -227,7 +228,7 @@ const Register = () => {
       // TRATAMENTO DE ERROS
       // ======================================================================
       
-      console.error('❌ Erro no cadastro:', err);
+      console.error('Erro no cadastro:', err);
 
       // Mensagens de erro amigáveis baseadas no status
       let mensagemErro = 'Erro ao realizar cadastro';
@@ -331,7 +332,11 @@ const Register = () => {
                   disabled={loading}
                   aria-label="Mostrar/Ocultar senha"
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  {showPassword ? (
+                    <EyeOff size={18} className="icon-inline icon-muted" />
+                  ) : (
+                    <Eye size={18} className="icon-inline icon-muted" />
+                  )}
                 </button>
               </div>
               {passwordError && <span className="error-message">{passwordError}</span>}
@@ -358,7 +363,11 @@ const Register = () => {
                   disabled={loading}
                   aria-label="Mostrar/Ocultar senha"
                 >
-                  {showConfirmPassword ? '🙈' : '👁️'}
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} className="icon-inline icon-muted" />
+                  ) : (
+                    <Eye size={18} className="icon-inline icon-muted" />
+                  )}
                 </button>
               </div>
               {confirmPasswordError && <span className="error-message">{confirmPasswordError}</span>}

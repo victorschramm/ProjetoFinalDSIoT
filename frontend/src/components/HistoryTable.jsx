@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClipboardList } from 'lucide-react';
 import '../styles/HistoryTable.css';
 
 /**
@@ -90,7 +91,7 @@ const HistoryTable = ({
     return (
       <div className="history-table empty">
         <div className="no-data">
-          <span className="icon">📋</span>
+          <span className="icon"><ClipboardList size={28} className="icon-muted" /></span>
           <p>Nenhum registro encontrado</p>
         </div>
       </div>

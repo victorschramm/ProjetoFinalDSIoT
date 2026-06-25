@@ -316,6 +316,26 @@ PORT=3001
 
 - Victor Schramm
 
+Email	Senha	Perfil
+admin@manutai.com	admin123	admin
+usuario@manutai.com	user123	usuário comum
+
+
 ---
 
 **Projeto Final — DS IoT | SENAI**
+
+
+-------------------------------------
+Tudo bem, paro por aqui.
+
+Resumo do que ficou pronto nesta sessão:
+
+Corrigi um bug real no cálculo de MTBF: o histórico (AssetHistory) grava eventos automáticos usando o ID do Dispositivo (ESP32), não o ID do Sensor, quando o sensor está vinculado a um. O serviço de MTBF e o registro de falha manual agora usam essa mesma chave — antes, 5 dos 9 sensores estavam puxando dados do dispositivo errado.
+Adicionei exibição do MTBF na tela Currículo da Máquina, ao lado das infos do dispositivo selecionado.
+Build do frontend e sintaxe do backend validados sem erros.
+Pendência para retomar: o backend não chegou a reiniciar limpo no final (mesmo bug pré-existente de churn de foreign key no MySQL do Railway, que já tinha aparecido antes — não é causado por essas últimas mudanças). Quando voltar, é só rodar npm run dev na pasta backend de novo; se travar com erro de ALTER TABLE ... DROP FOREIGN KEY, mate os processos node residual (taskkill / kill -9) e suba de novo — geralmente estabiliza numa segunda tentativa, como aconteceu hoje.
+
+Se quiser, quando retomar posso também corrigir a causa raiz desse bug de FK (é uma definição duplicada de chave estrangeira no Sensor.js) para parar de acontecer.
+
+---------------------------------------

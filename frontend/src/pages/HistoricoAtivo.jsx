@@ -2,10 +2,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Activity } from 'lucide-react';
 import { Header, Drawer, Footer, Loading } from '../components';
 import {
   getDispositivos,
   getAssetHistory,
+  getAssetMTBF,
   isAuthenticated,
   logout as apiLogout,
   getUserEmail,
@@ -56,6 +58,7 @@ function HistoricoAtivo() {
   const [eventos, setEventos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [carregouUmaVez, setCarregouUmaVez] = useState(false);
+  const [mtbf, setMtbf] = useState(null);
 
   // Filtros
   const [filtroTipo, setFiltroTipo] = useState('');
@@ -79,6 +82,14 @@ function HistoricoAtivo() {
       .then(data => setDispositivos(data))
       .catch(() => {});
   }, [navigate]);
+
+  // MTBF é uma métrica do dispositivo inteiro (não depende dos filtros de evento)
+  useEffect(() => {
+    if (!deviceId) { setMtbf(null); return; }
+    getAssetMTBF(deviceId)
+      .then(setMtbf)
+      .catch(() => setMtbf(null));
+  }, [deviceId]);
 
   const buscarHistorico = useCallback(async () => {
     if (!deviceId) {
@@ -199,6 +210,13 @@ function HistoricoAtivo() {
               {dispositivoSelecionado.status}
             </span>
             <span className="device-topico">{dispositivoSelecionado.topico_mqtt}</span>
+            {mtbf && (
+              <span className="device-mtbf">
+                <Activity size={14} className="icon-inline icon-muted" /> MTBF:{' '}
+                {mtbf.mtbfHoras != null ? `${mtbf.mtbfHoras.toFixed(1)}h` : 'Sem falhas registradas'}
+                {mtbf.falhas > 0 && ` (${mtbf.falhas} falha${mtbf.falhas > 1 ? 's' : ''} em ${Math.round(mtbf.horasObservadas / 24)}d)`}
+              </span>
+            )}
           </div>
         )}
 

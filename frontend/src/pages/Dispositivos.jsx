@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import {
+  Radio, Wifi, Plug, Cpu, Wrench, Plus, Info, Eye, Pencil, Trash2,
+  AlertTriangle, MessageSquare, Link2, Clock
+} from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import { 
   getDispositivos, 
@@ -65,18 +69,18 @@ const Dispositivos = () => {
 
   // Tipos de dispositivos disponíveis
   const tiposDispositivo = [
-    { value: 'ESP32', label: '📡 ESP32' },
-    { value: 'ESP8266', label: '📶 ESP8266' },
-    { value: 'Arduino', label: '🔌 Arduino' },
-    { value: 'Raspberry', label: '🍓 Raspberry Pi' },
-    { value: 'outro', label: '🔧 Outro' },
+    { value: 'ESP32', label: 'ESP32' },
+    { value: 'ESP8266', label: 'ESP8266' },
+    { value: 'Arduino', label: 'Arduino' },
+    { value: 'Raspberry', label: 'Raspberry Pi' },
+    { value: 'outro', label: 'Outro' },
   ];
 
   // Status disponíveis
   const statusOptions = [
-    { value: 'ativo', label: '🟢 Ativo', color: '#2ecc71' },
-    { value: 'inativo', label: '🔴 Inativo', color: '#e74c3c' },
-    { value: 'offline', label: '⚫ Offline', color: '#95a5a6' },
+    { value: 'ativo', label: 'Ativo', color: '#2ecc71' },
+    { value: 'inativo', label: 'Inativo', color: '#e74c3c' },
+    { value: 'offline', label: 'Offline', color: '#95a5a6' },
   ];
 
   // Verificar autenticação
@@ -282,14 +286,25 @@ const Dispositivos = () => {
     return date.toLocaleString('pt-BR');
   };
 
-  // Obter ícone do status
-  const getStatusIcon = (status) => {
-    const icons = {
-      ativo: '🟢',
-      inativo: '🔴',
-      offline: '⚫',
+  // Obter cor do status
+  const getStatusColor = (status) => {
+    const colors = {
+      ativo: '#2ecc71',
+      inativo: '#e74c3c',
+      offline: '#95a5a6',
     };
-    return icons[status] || '⚪';
+    return colors[status] || '#bdc3c7';
+  };
+
+  // Obter ícone do tipo de dispositivo
+  const getTipoIcon = (tipo) => {
+    const icons = {
+      ESP32: Radio,
+      ESP8266: Wifi,
+      Arduino: Plug,
+      Raspberry: Cpu,
+    };
+    return icons[tipo] || Wrench;
   };
 
   return (
@@ -315,17 +330,17 @@ const Dispositivos = () => {
         {/* Cabeçalho da página */}
         <div className="page-header">
           <div className="page-title">
-            <h1>📡 Dispositivos IoT</h1>
+            <h1><Radio size={22} className="icon-inline" /> Dispositivos IoT</h1>
             <p>Gerencie seus dispositivos ESP32/ESP8266 e tópicos MQTT</p>
           </div>
           <button className="btn-primary" onClick={handleCreate}>
-            ➕ Novo Dispositivo
+            <Plus size={16} className="icon-inline" /> Novo Dispositivo
           </button>
         </div>
 
         {/* Info Box */}
         <div className="info-box">
-          <h3>ℹ️ Como funciona?</h3>
+          <h3><Info size={16} className="icon-inline" /> Como funciona?</h3>
           <ol>
             <li><strong>Cadastre o dispositivo</strong> com o tópico MQTT que ele publica</li>
             <li><strong>Crie um sensor</strong> e vincule ao dispositivo</li>
@@ -343,18 +358,18 @@ const Dispositivos = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="todos">Todos</option>
-              <option value="ativo">🟢 Ativo</option>
-              <option value="inativo">🔴 Inativo</option>
-              <option value="offline">⚫ Offline</option>
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+              <option value="offline">Offline</option>
             </select>
           </div>
-          
+
           <div className="filter-stats">
             <span className="stat-badge">
-              📡 {dispositivos.length} dispositivo(s)
+              <Radio size={14} className="icon-inline" /> {dispositivos.length} dispositivo(s)
             </span>
             <span className="stat-badge success">
-              🟢 {dispositivos.filter(d => d.status === 'ativo').length} ativo(s)
+              <span className="status-dot" style={{ background: '#2ecc71' }} /> {dispositivos.filter(d => d.status === 'ativo').length} ativo(s)
             </span>
           </div>
         </div>
@@ -367,82 +382,82 @@ const Dispositivos = () => {
           </div>
         ) : dispositivosFiltrados.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">📡</span>
+            <span className="empty-icon"><Radio size={32} className="icon-muted" /></span>
             <h3>Nenhum dispositivo cadastrado</h3>
             <p>Cadastre seu primeiro dispositivo ESP para começar a receber dados</p>
             <button className="btn-primary" onClick={handleCreate}>
-              ➕ Cadastrar Dispositivo
+              <Plus size={16} className="icon-inline" /> Cadastrar Dispositivo
             </button>
           </div>
         ) : (
           <div className="dispositivos-grid">
-            {dispositivosFiltrados.map((dispositivo) => (
+            {dispositivosFiltrados.map((dispositivo) => {
+              const TipoIcon = getTipoIcon(dispositivo.tipo);
+              return (
               <div key={dispositivo.id} className={`dispositivo-card ${dispositivo.status}`}>
                 <div className="card-header">
                   <div className="card-icon">
-                    {dispositivo.tipo === 'ESP32' ? '📡' : 
-                     dispositivo.tipo === 'ESP8266' ? '📶' : 
-                     dispositivo.tipo === 'Arduino' ? '🔌' : 
-                     dispositivo.tipo === 'Raspberry' ? '🍓' : '🔧'}
+                    <TipoIcon size={20} className="icon-inline" />
                   </div>
                   <div className="card-status">
-                    {getStatusIcon(dispositivo.status)} {dispositivo.status}
+                    <span className="status-dot" style={{ background: getStatusColor(dispositivo.status) }} /> {dispositivo.status}
                   </div>
                 </div>
-                
+
                 <div className="card-body">
                   <h3>{dispositivo.nome}</h3>
                   <p className="card-tipo">{dispositivo.tipo}</p>
-                  
+
                   <div className="card-info">
                     <div className="info-item">
-                      <span className="info-label">📨 Tópico MQTT:</span>
+                      <span className="info-label"><MessageSquare size={14} className="icon-inline icon-muted" /> Tópico MQTT:</span>
                       <code className="info-value">{dispositivo.topico_mqtt}</code>
                     </div>
-                    
+
                     {dispositivo.mac_address && (
                       <div className="info-item">
-                        <span className="info-label">🔗 MAC:</span>
+                        <span className="info-label"><Link2 size={14} className="icon-inline icon-muted" /> MAC:</span>
                         <code className="info-value">{dispositivo.mac_address}</code>
                       </div>
                     )}
-                    
+
                     <div className="info-item">
-                      <span className="info-label">🕐 Última conexão:</span>
+                      <span className="info-label"><Clock size={14} className="icon-inline icon-muted" /> Última conexão:</span>
                       <span className="info-value">{formatUltimaConexao(dispositivo.ultima_conexao)}</span>
                     </div>
                   </div>
-                  
+
                   {dispositivo.descricao && (
                     <p className="card-descricao">{dispositivo.descricao}</p>
                   )}
                 </div>
-                
+
                 <div className="card-actions">
-                  <button 
-                    className="btn-icon" 
+                  <button
+                    className="btn-icon"
                     onClick={() => handleView(dispositivo)}
                     title="Visualizar"
                   >
-                    👁️
+                    <Eye size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-icon" 
+                  <button
+                    className="btn-icon"
                     onClick={() => handleEdit(dispositivo)}
                     title="Editar"
                   >
-                    ✏️
+                    <Pencil size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-icon danger" 
+                  <button
+                    className="btn-icon danger"
                     onClick={() => handleDeleteClick(dispositivo)}
                     title="Excluir"
                   >
-                    🗑️
+                    <Trash2 size={16} className="icon-inline" />
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -453,9 +468,9 @@ const Dispositivos = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>
-                {modalMode === 'create' ? '➕ Novo Dispositivo' : 
-                 modalMode === 'edit' ? '✏️ Editar Dispositivo' : 
-                 '👁️ Detalhes do Dispositivo'}
+                {modalMode === 'create' ? <><Plus size={18} className="icon-inline" /> Novo Dispositivo</> :
+                 modalMode === 'edit' ? <><Pencil size={18} className="icon-inline" /> Editar Dispositivo</> :
+                 <><Eye size={18} className="icon-inline" /> Detalhes do Dispositivo</>}
               </h2>
               <button className="modal-close" onClick={handleCloseModal}>×</button>
             </div>
@@ -588,16 +603,16 @@ const Dispositivos = () => {
         <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
           <div className="modal-content modal-small" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header danger">
-              <h2>⚠️ Confirmar Exclusão</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Confirmar Exclusão</h2>
               <button className="modal-close" onClick={() => setShowDeleteConfirm(false)}>×</button>
             </div>
-            
+
             <div className="modal-body">
               <p>
                 Tem certeza que deseja excluir o dispositivo <strong>"{dispositivoToDelete?.nome}"</strong>?
               </p>
               <p className="warning-text">
-                ⚠️ Os sensores vinculados a este dispositivo deixarão de receber dados!
+                <AlertTriangle size={14} className="icon-inline" /> Os sensores vinculados a este dispositivo deixarão de receber dados!
               </p>
             </div>
             

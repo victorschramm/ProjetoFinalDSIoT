@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import {
+  AlertTriangle, Bell, Clock, CheckCircle2, Ban, HelpCircle,
+  Thermometer, Droplet, Radio, BatteryWarning, BarChart3,
+  Eye, Pencil, Trash2, X
+} from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import {
   getAlertas,
@@ -162,17 +167,6 @@ function Alertas() {
     return date.toLocaleString('pt-BR');
   };
 
-  // Obter ícone de severidade
-  const getSeveridadeIcon = (severidade) => {
-    const icons = {
-      baixo: '🟢',
-      medio: '🟡',
-      alto: '🟠',
-      critico: '🔴'
-    };
-    return icons[severidade?.toLowerCase()] || '⚪';
-  };
-
   // Obter cor de severidade
   const getSeveridadeColor = (severidade) => {
     const colors = {
@@ -187,12 +181,12 @@ function Alertas() {
   // Obter ícone de status
   const getStatusIcon = (status) => {
     const icons = {
-      ativo: '🔔',
-      pendente: '⏳',
-      resolvido: '✅',
-      ignorado: '🚫'
+      ativo: Bell,
+      pendente: Clock,
+      resolvido: CheckCircle2,
+      ignorado: Ban
     };
-    return icons[status?.toLowerCase()] || '❓';
+    return icons[status?.toLowerCase()] || HelpCircle;
   };
 
   // Obter cor de status
@@ -209,15 +203,15 @@ function Alertas() {
   // Obter ícone do tipo de alerta
   const getTipoIcon = (tipo) => {
     const icons = {
-      temperatura_alta: '🌡️🔥',
-      temperatura_baixa: '🌡️❄️',
-      umidade_alta: '💧⬆️',
-      umidade_baixa: '💧⬇️',
-      sensor_offline: '📡❌',
-      bateria_baixa: '🔋⚠️',
-      limite_excedido: '⚠️📊'
+      temperatura_alta: Thermometer,
+      temperatura_baixa: Thermometer,
+      umidade_alta: Droplet,
+      umidade_baixa: Droplet,
+      sensor_offline: Radio,
+      bateria_baixa: BatteryWarning,
+      limite_excedido: BarChart3
     };
-    return icons[tipo?.toLowerCase()] || '⚠️';
+    return icons[tipo?.toLowerCase()] || AlertTriangle;
   };
 
   // Abrir modal de visualização
@@ -331,19 +325,19 @@ function Alertas() {
       <div className="alertas-container">
         {/* Toolbar */}
         <div className="alertas-toolbar">
-          <h2>⚠️ Alertas do Sistema</h2>
+          <h2><AlertTriangle size={18} className="icon-inline" /> Alertas do Sistema</h2>
           <div className="toolbar-stats">
             <span className="stat-item stat-ativo">
-              🔔 {countByStatus('ativo')} Ativos
+              <Bell size={14} className="icon-inline" /> {countByStatus('ativo')} Ativos
             </span>
             <span className="stat-item stat-pendente">
-              ⏳ {countByStatus('pendente')} Pendentes
+              <Clock size={14} className="icon-inline" /> {countByStatus('pendente')} Pendentes
             </span>
             <span className="stat-item stat-resolvido">
-              ✅ {countByStatus('resolvido')} Resolvidos
+              <CheckCircle2 size={14} className="icon-inline" /> {countByStatus('resolvido')} Resolvidos
             </span>
             <span className="stat-item stat-ignorado">
-              🚫 {countByStatus('ignorado')} Ignorados
+              <Ban size={14} className="icon-inline" /> {countByStatus('ignorado')} Ignorados
             </span>
           </div>
         </div>
@@ -372,10 +366,10 @@ function Alertas() {
             onChange={(e) => setFiltroSeveridade(e.target.value)}
           >
             <option value="">Todas</option>
-            <option value="baixo">🟢 Baixo</option>
-            <option value="medio">🟡 Médio</option>
-            <option value="alto">🟠 Alto</option>
-            <option value="critico">🔴 Crítico</option>
+            <option value="baixo">Baixo</option>
+            <option value="medio">Médio</option>
+            <option value="alto">Alto</option>
+            <option value="critico">Crítico</option>
           </select>
         </div>
 
@@ -386,15 +380,15 @@ function Alertas() {
             onChange={(e) => setFiltroStatus(e.target.value)}
           >
             <option value="">Todos</option>
-            <option value="ativo">🔔 Ativo</option>
-            <option value="pendente">⏳ Pendente</option>
-            <option value="resolvido">✅ Resolvido</option>
-            <option value="ignorado">🚫 Ignorado</option>
+            <option value="ativo">Ativo</option>
+            <option value="pendente">Pendente</option>
+            <option value="resolvido">Resolvido</option>
+            <option value="ignorado">Ignorado</option>
           </select>
         </div>
 
         <button className="btn-clear" onClick={handleClearFilters}>
-          ✕ Limpar
+          <X size={16} className="icon-inline" /> Limpar
         </button>
 
         <div className="filter-stats">
@@ -414,7 +408,7 @@ function Alertas() {
         <div className="alertas-content">
           {alertas.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">🔔</span>
+              <span className="empty-icon"><Bell size={32} className="icon-muted" /></span>
               <p>Nenhum alerta encontrado</p>
               <span className="empty-subtitle">
                 Os alertas aparecerão aqui quando forem gerados
@@ -422,14 +416,17 @@ function Alertas() {
             </div>
           ) : (
             <div className="alertas-list">
-              {alertas.map(alerta => (
+              {alertas.map(alerta => {
+                const TipoIcon = getTipoIcon(alerta.tipo);
+                const StatusIcon = getStatusIcon(alerta.status);
+                return (
                 <div
                   key={alerta.id}
                   className={`alerta-card severidade-${alerta.nivel_severidade?.toLowerCase()}`}
                 >
                   <div className="alerta-header">
                     <div className="alerta-tipo">
-                      <span className="tipo-icon">{getTipoIcon(alerta.tipo)}</span>
+                      <span className="tipo-icon"><TipoIcon size={18} className="icon-inline" /></span>
                       <span className="tipo-text">{alerta.tipo?.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="alerta-badges">
@@ -437,37 +434,37 @@ function Alertas() {
                         className="badge-severidade"
                         style={{ backgroundColor: getSeveridadeColor(alerta.nivel_severidade) }}
                       >
-                        {getSeveridadeIcon(alerta.nivel_severidade)} {alerta.nivel_severidade}
+                        {alerta.nivel_severidade}
                       </span>
                       <span
                         className="badge-status"
                         style={{ backgroundColor: getStatusColor(alerta.status) }}
                       >
-                        {getStatusIcon(alerta.status)} {alerta.status}
+                        <StatusIcon size={14} className="icon-inline" /> {alerta.status}
                       </span>
                     </div>
                   </div>
 
                   <div className="alerta-body">
                     <p className="alerta-mensagem">{alerta.mensagem}</p>
-                    
+
                     <div className="alerta-details">
                       <div className="detail-item">
-                        <span className="detail-icon">📡</span>
+                        <span className="detail-icon"><Radio size={14} className="icon-inline icon-muted" /></span>
                         <span className="detail-label">Sensor:</span>
                         <span className="detail-value">{getSensorNome(alerta.id_sensor)}</span>
                       </div>
-                      
+
                       {alerta.valor_detectado !== null && alerta.valor_detectado !== undefined && (
                         <div className="detail-item">
-                          <span className="detail-icon">📊</span>
+                          <span className="detail-icon"><BarChart3 size={14} className="icon-inline icon-muted" /></span>
                           <span className="detail-label">Valor:</span>
                           <span className="detail-value valor">{alerta.valor_detectado}</span>
                         </div>
                       )}
-                      
+
                       <div className="detail-item">
-                        <span className="detail-icon">🕐</span>
+                        <span className="detail-icon"><Clock size={14} className="icon-inline icon-muted" /></span>
                         <span className="detail-label">Data:</span>
                         <span className="detail-value">{formatDateTime(alerta.timestamp)}</span>
                       </div>
@@ -475,7 +472,7 @@ function Alertas() {
 
                     {alerta.resolucao && (
                       <div className="alerta-resolucao">
-                        <span className="resolucao-icon">✅</span>
+                        <span className="resolucao-icon"><CheckCircle2 size={14} className="icon-inline" /></span>
                         <span className="resolucao-text">{alerta.resolucao}</span>
                       </div>
                     )}
@@ -487,14 +484,14 @@ function Alertas() {
                       onClick={() => handleView(alerta)}
                       title="Visualizar"
                     >
-                      👁️
+                      <Eye size={16} className="icon-inline" />
                     </button>
                     <button
                       className="btn-action btn-edit"
                       onClick={() => handleOpenUpdate(alerta)}
                       title="Atualizar Status"
                     >
-                      ✏️
+                      <Pencil size={16} className="icon-inline" />
                     </button>
                     {alerta.status !== 'resolvido' && (
                       <button
@@ -502,7 +499,7 @@ function Alertas() {
                         onClick={() => handleQuickResolve(alerta)}
                         title="Marcar como Resolvido"
                       >
-                        ✅
+                        <CheckCircle2 size={16} className="icon-inline" />
                       </button>
                     )}
                     <button
@@ -510,11 +507,12 @@ function Alertas() {
                       onClick={() => handleOpenDelete(alerta)}
                       title="Excluir"
                     >
-                      🗑️
+                      <Trash2 size={16} className="icon-inline" />
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -525,7 +523,7 @@ function Alertas() {
         <div className="modal-overlay" onClick={() => setShowViewModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Detalhes do Alerta #{selectedAlerta.id}</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Detalhes do Alerta #{selectedAlerta.id}</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowViewModal(false)}
@@ -536,22 +534,30 @@ function Alertas() {
 
             <div className="view-body">
               <div className="view-main-alert">
-                <span className="view-icon">{getTipoIcon(selectedAlerta.tipo)}</span>
-                <span className="view-tipo">{selectedAlerta.tipo?.replace(/_/g, ' ')}</span>
-                <div className="view-badges">
-                  <span
-                    className="badge-severidade"
-                    style={{ backgroundColor: getSeveridadeColor(selectedAlerta.nivel_severidade) }}
-                  >
-                    {getSeveridadeIcon(selectedAlerta.nivel_severidade)} {selectedAlerta.nivel_severidade}
-                  </span>
-                  <span
-                    className="badge-status"
-                    style={{ backgroundColor: getStatusColor(selectedAlerta.status) }}
-                  >
-                    {getStatusIcon(selectedAlerta.status)} {selectedAlerta.status}
-                  </span>
-                </div>
+                {(() => {
+                  const ViewTipoIcon = getTipoIcon(selectedAlerta.tipo);
+                  const ViewStatusIcon = getStatusIcon(selectedAlerta.status);
+                  return (
+                    <>
+                      <span className="view-icon"><ViewTipoIcon size={20} className="icon-inline" /></span>
+                      <span className="view-tipo">{selectedAlerta.tipo?.replace(/_/g, ' ')}</span>
+                      <div className="view-badges">
+                        <span
+                          className="badge-severidade"
+                          style={{ backgroundColor: getSeveridadeColor(selectedAlerta.nivel_severidade) }}
+                        >
+                          {selectedAlerta.nivel_severidade}
+                        </span>
+                        <span
+                          className="badge-status"
+                          style={{ backgroundColor: getStatusColor(selectedAlerta.status) }}
+                        >
+                          <ViewStatusIcon size={14} className="icon-inline" /> {selectedAlerta.status}
+                        </span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               <div className="view-message">
@@ -619,7 +625,7 @@ function Alertas() {
                     handleOpenUpdate(selectedAlerta);
                   }}
                 >
-                  ✏️ Atualizar Status
+                  <Pencil size={14} className="icon-inline" /> Atualizar Status
                 </button>
               </div>
             </div>
@@ -632,7 +638,7 @@ function Alertas() {
         <div className="modal-overlay" onClick={() => setShowUpdateModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>✏️ Atualizar Alerta #{selectedAlerta.id}</h2>
+              <h2><Pencil size={18} className="icon-inline" /> Atualizar Alerta #{selectedAlerta.id}</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowUpdateModal(false)}
@@ -643,7 +649,10 @@ function Alertas() {
 
             <form onSubmit={handleUpdate}>
               <div className="update-preview">
-                <span className="preview-icon">{getTipoIcon(selectedAlerta.tipo)}</span>
+                {(() => {
+                  const PreviewTipoIcon = getTipoIcon(selectedAlerta.tipo);
+                  return <span className="preview-icon"><PreviewTipoIcon size={18} className="icon-inline" /></span>;
+                })()}
                 <span className="preview-tipo">{selectedAlerta.tipo?.replace(/_/g, ' ')}</span>
                 <p className="preview-msg">{selectedAlerta.mensagem}</p>
               </div>
@@ -655,10 +664,10 @@ function Alertas() {
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
                   required
                 >
-                  <option value="ativo">🔔 Ativo</option>
-                  <option value="pendente">⏳ Pendente</option>
-                  <option value="resolvido">✅ Resolvido</option>
-                  <option value="ignorado">🚫 Ignorado</option>
+                  <option value="ativo">Ativo</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="resolvido">Resolvido</option>
+                  <option value="ignorado">Ignorado</option>
                 </select>
               </div>
 
@@ -702,7 +711,7 @@ function Alertas() {
         <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
           <div className="modal-content modal-confirm" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Confirmar Exclusão</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Confirmar Exclusão</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowDeleteModal(false)}
@@ -714,7 +723,10 @@ function Alertas() {
             <div className="confirm-body">
               <p>Deseja realmente excluir este alerta?</p>
               <div className="confirm-preview">
-                <span className="preview-icon">{getTipoIcon(selectedAlerta.tipo)}</span>
+                {(() => {
+                  const ConfirmTipoIcon = getTipoIcon(selectedAlerta.tipo);
+                  return <span className="preview-icon"><ConfirmTipoIcon size={18} className="icon-inline" /></span>;
+                })()}
                 <strong>{selectedAlerta.tipo?.replace(/_/g, ' ')}</strong>
               </div>
               <p className="confirm-msg">"{selectedAlerta.mensagem}"</p>

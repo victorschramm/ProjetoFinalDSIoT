@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { 
-  Header, 
-  Drawer, 
-  Footer, 
-  SensorChart, 
+import { BarChart3, ClipboardList } from 'lucide-react';
+import {
+  Header,
+  Drawer,
+  Footer,
+  SensorChart,
   DateTimeFilter,
   HistoryTable,
-  Loading 
+  Loading
 } from '../components';
 import { 
   getAmbientes, 
@@ -252,13 +253,13 @@ const Historico = () => {
               className={`tab ${activeTab === 'graficos' ? 'active' : ''}`}
               onClick={() => setActiveTab('graficos')}
             >
-              📊 Gráficos
+              <BarChart3 size={16} className="icon-inline" /> Gráficos
             </button>
-            <button 
+            <button
               className={`tab ${activeTab === 'lista' ? 'active' : ''}`}
               onClick={() => setActiveTab('lista')}
             >
-              📋 Lista
+              <ClipboardList size={16} className="icon-inline" /> Lista
             </button>
           </div>
           <span className="result-count">
@@ -272,7 +273,7 @@ const Historico = () => {
             <div className="charts-container">
               {Object.keys(leiturasAgrupadas).length === 0 ? (
                 <div className="empty-state">
-                  <span className="empty-icon">📊</span>
+                  <span className="empty-icon"><BarChart3 size={32} className="icon-muted" /></span>
                   <h3>Nenhum dado para exibir</h3>
                   <p>Ajuste os filtros para visualizar os gráficos</p>
                 </div>

@@ -1,14 +1,15 @@
 import React from 'react';
+import { Menu } from 'lucide-react';
 
 const Header = ({ title, userEmail, onMenuToggle, onLogout }) => {
   return (
     <header className="app-header">
-      <button 
-        className="menu-toggle" 
+      <button
+        className="menu-toggle"
         onClick={onMenuToggle}
         aria-label="Abrir menu"
       >
-        ☰
+        <Menu size={22} className="icon-inline" />
       </button>
       
       <div className="header-title">

@@ -12,3 +12,23 @@ export async function getAssetHistory(deviceId, { tipoEvento, inicio, fim } = {}
   if (!response.ok) throw new Error(`Erro ao buscar histórico: ${response.status}`);
   return response.json();
 }
+
+// Registra uma falha identificada manualmente pelo usuário (fora dos critérios automáticos)
+export async function registrarFalhaManual(deviceId, { descricao, dataEvento } = {}) {
+  const response = await authFetch(`/assets/${deviceId}/history`, {
+    method: 'POST',
+    body: JSON.stringify({ descricao, dataEvento })
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || `Erro ao registrar falha: ${response.status}`);
+  }
+  return response.json();
+}
+
+// MTBF do dispositivo: { falhas, horasObservadas, mtbfHoras }
+export async function getAssetMTBF(deviceId) {
+  const response = await authFetch(`/assets/${deviceId}/mtbf`);
+  if (!response.ok) throw new Error(`Erro ao buscar MTBF: ${response.status}`);
+  return response.json();
+}

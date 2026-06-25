@@ -1,6 +1,7 @@
 const PreventiveMaintenance = require('../models/PreventiveMaintenance');
 const Sensor = require('../models/Sensor');
 const { logAssetEvent } = require('../services/assetHistoryService');
+const { calcularMTBFTodos } = require('../services/mtbfService');
 
 module.exports = {
   // Retorna apenas os registros de manutenção configurados pelo operador.
@@ -12,6 +13,17 @@ module.exports = {
     } catch (error) {
       console.error('Erro ao listar manutenções:', error);
       res.status(500).json({ error: 'Erro ao listar manutenções' });
+    }
+  },
+
+  // MTBF de todos os sensores, configurados ou não (independe da configuração de manutenção)
+  async mtbf(req, res) {
+    try {
+      const resultado = await calcularMTBFTodos();
+      res.json(resultado);
+    } catch (error) {
+      console.error('Erro ao calcular MTBF:', error);
+      res.status(500).json({ error: 'Erro ao calcular MTBF' });
     }
   },
 

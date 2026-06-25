@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import {
+  BarChart3, Thermometer, Droplet, Lightbulb, Cloud, Volume2,
+  Search, X, Eye, Trash2, Wrench, AlertTriangle
+} from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import { 
   getLeituras,
@@ -176,14 +180,14 @@ function Leituras() {
   // Obter ícone do tipo de leitura
   const getTipoIcon = (tipo) => {
     const icons = {
-      temperatura: '🌡️',
-      umidade: '💧',
-      pressao: '🌡️',
-      luminosidade: '💡',
-      co2: '☁️',
-      ruido: '🔊'
+      temperatura: Thermometer,
+      umidade: Droplet,
+      pressao: Thermometer,
+      luminosidade: Lightbulb,
+      co2: Cloud,
+      ruido: Volume2
     };
-    return icons[tipo?.toLowerCase()] || '📊';
+    return icons[tipo?.toLowerCase()] || BarChart3;
   };
 
   // Validar formulário
@@ -315,7 +319,7 @@ function Leituras() {
       <div className="leituras-container">
         {/* Toolbar */}
         <div className="leituras-toolbar">
-          <h2>📊 Leituras Registradas</h2>
+          <h2><BarChart3 size={18} className="icon-inline" /> Leituras Registradas</h2>
           <button className="btn-new" onClick={handleOpenCreate}>
             + Nova Leitura
           </button>
@@ -357,11 +361,11 @@ function Leituras() {
         </div>
 
         <button className="btn-filter" onClick={handleApplyPeriod}>
-          🔍 Filtrar
+          <Search size={16} className="icon-inline" /> Filtrar
         </button>
 
         <button className="btn-clear" onClick={handleClearFilters}>
-          ✕ Limpar
+          <X size={16} className="icon-inline" /> Limpar
         </button>
 
         <div className="filter-stats">
@@ -381,7 +385,7 @@ function Leituras() {
         <div className="leituras-content">
           {leituras.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">📊</span>
+              <span className="empty-icon"><BarChart3 size={32} className="icon-muted" /></span>
               <p>Nenhuma leitura encontrada</p>
               <button className="btn-new-empty" onClick={handleOpenCreate}>
                 + Registrar Nova Leitura
@@ -401,7 +405,9 @@ function Leituras() {
                   </tr>
                 </thead>
                 <tbody>
-                  {leituras.map(leitura => (
+                  {leituras.map(leitura => {
+                    const TipoIcon = getTipoIcon(leitura.tipo_leitura);
+                    return (
                     <tr key={leitura.id}>
                       <td className="td-id">#{leitura.id}</td>
                       <td className="td-sensor">
@@ -411,7 +417,7 @@ function Leituras() {
                       </td>
                       <td className="td-tipo">
                         <span className="tipo-badge">
-                          {getTipoIcon(leitura.tipo_leitura)} {leitura.tipo_leitura}
+                          <TipoIcon size={14} className="icon-inline" /> {leitura.tipo_leitura}
                         </span>
                       </td>
                       <td className="td-valor">
@@ -428,18 +434,19 @@ function Leituras() {
                           onClick={() => handleView(leitura)}
                           title="Visualizar"
                         >
-                          👁️
+                          <Eye size={16} className="icon-inline" />
                         </button>
                         <button
                           className="btn-action btn-delete"
                           onClick={() => handleOpenDelete(leitura)}
                           title="Excluir"
                         >
-                          🗑️
+                          <Trash2 size={16} className="icon-inline" />
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -452,7 +459,7 @@ function Leituras() {
         <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>📊 Registrar Nova Leitura</h2>
+              <h2><BarChart3 size={18} className="icon-inline" /> Registrar Nova Leitura</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowCreateModal(false)}
@@ -505,12 +512,12 @@ function Leituras() {
                     className={formErrors.tipo_leitura ? 'error' : ''}
                   >
                     <option value="">Selecione o tipo</option>
-                    <option value="temperatura">🌡️ Temperatura</option>
-                    <option value="umidade">💧 Umidade</option>
-                    <option value="pressao">🌡️ Pressão</option>
-                    <option value="luminosidade">💡 Luminosidade</option>
-                    <option value="co2">☁️ CO₂</option>
-                    <option value="ruido">🔊 Ruído</option>
+                    <option value="temperatura">Temperatura</option>
+                    <option value="umidade">Umidade</option>
+                    <option value="pressao">Pressão</option>
+                    <option value="luminosidade">Luminosidade</option>
+                    <option value="co2">CO₂</option>
+                    <option value="ruido">Ruído</option>
                   </select>
                   {formErrors.tipo_leitura && (
                     <span className="error-message">{formErrors.tipo_leitura}</span>
@@ -555,7 +562,7 @@ function Leituras() {
         <div className="modal-overlay" onClick={() => setShowViewModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>📊 Detalhes da Leitura #{selectedLeitura.id}</h2>
+              <h2><BarChart3 size={18} className="icon-inline" /> Detalhes da Leitura #{selectedLeitura.id}</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowViewModal(false)}
@@ -566,7 +573,10 @@ function Leituras() {
 
             <div className="view-body">
               <div className="view-main-value">
-                <span className="view-icon">{getTipoIcon(selectedLeitura.tipo_leitura)}</span>
+                {(() => {
+                  const ViewTipoIcon = getTipoIcon(selectedLeitura.tipo_leitura);
+                  return <span className="view-icon"><ViewTipoIcon size={20} className="icon-inline" /></span>;
+                })()}
                 <span className="view-valor">
                   {formatValor(selectedLeitura.valor, selectedLeitura.tipo_leitura)}
                 </span>
@@ -615,7 +625,7 @@ function Leituras() {
                   className="btn-sensor-link"
                   onClick={() => navigate(`/sensores`)}
                 >
-                  🔧 Ver Sensores
+                  <Wrench size={14} className="icon-inline" /> Ver Sensores
                 </button>
               </div>
             </div>
@@ -628,7 +638,7 @@ function Leituras() {
         <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
           <div className="modal-content modal-confirm" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Confirmar Exclusão</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Confirmar Exclusão</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowDeleteModal(false)}

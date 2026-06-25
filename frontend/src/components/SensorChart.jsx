@@ -11,6 +11,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import { BarChart3 } from 'lucide-react';
 import '../styles/SensorChart.css';
 
 /**
@@ -133,7 +134,7 @@ const SensorChart = ({
       <div className="sensor-chart empty">
         <h4>{title || config.label}</h4>
         <div className="no-data">
-          <span className="icon">📊</span>
+          <span className="icon"><BarChart3 size={28} className="icon-muted" /></span>
           <p>Sem dados para exibir</p>
         </div>
       </div>

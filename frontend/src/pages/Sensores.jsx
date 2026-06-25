@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import {
+  Thermometer, Droplet, Gauge, Lightbulb, Footprints, Wind, Radio,
+  Plus, Eye, Pencil, Trash2, BarChart3, Tag, Building2, FileText, AlertTriangle
+} from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import { 
   getSensores, 
@@ -71,20 +75,20 @@ const Sensores = () => {
 
   // Tipos de sensores disponíveis
   const tiposSensor = [
-    { value: 'temperatura', label: '🌡️ Temperatura', icon: '🌡️' },
-    { value: 'umidade', label: '💧 Umidade', icon: '💧' },
-    { value: 'pressao', label: '🌀 Pressão', icon: '🌀' },
-    { value: 'luminosidade', label: '💡 Luminosidade', icon: '💡' },
-    { value: 'movimento', label: '🚶 Movimento', icon: '🚶' },
-    { value: 'gas', label: '💨 Gás', icon: '💨' },
-    { value: 'outro', label: '📡 Outro', icon: '📡' },
+    { value: 'temperatura', label: 'Temperatura', icon: Thermometer },
+    { value: 'umidade', label: 'Umidade', icon: Droplet },
+    { value: 'pressao', label: 'Pressão', icon: Gauge },
+    { value: 'luminosidade', label: 'Luminosidade', icon: Lightbulb },
+    { value: 'movimento', label: 'Movimento', icon: Footprints },
+    { value: 'gas', label: 'Gás', icon: Wind },
+    { value: 'outro', label: 'Outro', icon: Radio },
   ];
 
   // Status disponíveis
   const statusOptions = [
-    { value: 'ativo', label: '🟢 Ativo', color: '#2ecc71' },
-    { value: 'inativo', label: '🔴 Inativo', color: '#e74c3c' },
-    { value: 'manutencao', label: '🟡 Manutenção', color: '#f39c12' },
+    { value: 'ativo', label: 'Ativo', color: '#2ecc71' },
+    { value: 'inativo', label: 'Inativo', color: '#e74c3c' },
+    { value: 'manutencao', label: 'Manutenção', color: '#f39c12' },
   ];
 
   // Verificar autenticação
@@ -324,7 +328,7 @@ const Sensores = () => {
   // Obter ícone do tipo
   const getTipoIcon = (tipo) => {
     const tipoObj = tiposSensor.find(t => t.value === tipo);
-    return tipoObj ? tipoObj.icon : '📡';
+    return tipoObj ? tipoObj.icon : Radio;
   };
 
   // Obter cor do status
@@ -336,9 +340,9 @@ const Sensores = () => {
   // Renderizar título do modal
   const getModalTitle = () => {
     switch (modalMode) {
-      case 'create': return '➕ Novo Sensor';
-      case 'edit': return '✏️ Editar Sensor';
-      case 'view': return '👁️ Detalhes do Sensor';
+      case 'create': return <><Plus size={18} className="icon-inline" /> Novo Sensor</>;
+      case 'edit': return <><Pencil size={18} className="icon-inline" /> Editar Sensor</>;
+      case 'view': return <><Eye size={18} className="icon-inline" /> Detalhes do Sensor</>;
       default: return 'Sensor';
     }
   };
@@ -371,9 +375,9 @@ const Sensores = () => {
       <div className="sensores-container">
         {/* Toolbar */}
         <div className="sensores-toolbar">
-          <h2>📡 Sensores Cadastrados</h2>
+          <h2><Radio size={18} className="icon-inline" /> Sensores Cadastrados</h2>
           <button className="btn-new" onClick={handleCreate}>
-            + Novo Sensor
+            <Plus size={16} className="icon-inline" /> Novo Sensor
           </button>
         </div>
 
@@ -399,7 +403,7 @@ const Sensores = () => {
         </div>
         <div className="filter-stats">
           <span className="stat-badge">
-            📡 {sensoresFiltrados.length} sensor{sensoresFiltrados.length !== 1 ? 'es' : ''}
+            <Radio size={14} className="icon-inline" /> {sensoresFiltrados.length} sensor{sensoresFiltrados.length !== 1 ? 'es' : ''}
           </span>
         </div>
       </div>
@@ -415,17 +419,19 @@ const Sensores = () => {
         <div className="sensores-grid">
           {sensoresFiltrados.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">📡</span>
+              <span className="empty-icon"><Radio size={32} className="icon-muted" /></span>
               <p>Nenhum sensor encontrado.</p>
               <button className="btn-new-empty" onClick={handleCreate}>
                 Criar primeiro sensor
               </button>
             </div>
           ) : (
-            sensoresFiltrados.map((sensor) => (
+            sensoresFiltrados.map((sensor) => {
+              const TipoIcon = getTipoIcon(sensor.tipo);
+              return (
               <div key={sensor.id} className="sensor-card">
                 <div className="card-header">
-                  <div className="sensor-icon">{getTipoIcon(sensor.tipo)}</div>
+                  <div className="sensor-icon"><TipoIcon size={22} className="icon-inline" /></div>
                   <div className="sensor-info">
                     <h3>{sensor.nome}</h3>
                     <span className="sensor-modelo">{sensor.modelo || 'Sem modelo'}</span>
@@ -440,58 +446,59 @@ const Sensores = () => {
                 
                 <div className="card-body">
                   <div className="info-row">
-                    <span className="info-icon">🏷️</span>
+                    <span className="info-icon"><Tag size={14} className="icon-inline icon-muted" /></span>
                     <span className="info-label">Tipo:</span>
                     <span className="info-value">{sensor.tipo}</span>
                   </div>
-                  
+
                   <div className="info-row">
-                    <span className="info-icon">🏢</span>
+                    <span className="info-icon"><Building2 size={14} className="icon-inline icon-muted" /></span>
                     <span className="info-label">Ambiente:</span>
                     <span className="info-value">{getAmbienteNome(sensor.id_ambiente)}</span>
                   </div>
-                  
+
                   {sensor.descricao && (
                     <div className="info-row">
-                      <span className="info-icon">📝</span>
+                      <span className="info-icon"><FileText size={14} className="icon-inline icon-muted" /></span>
                       <span className="info-label">Descrição:</span>
                       <span className="info-value description">{sensor.descricao}</span>
                     </div>
                   )}
                 </div>
-                
+
                 <div className="card-actions">
-                  <button 
-                    className="btn-action btn-leituras" 
+                  <button
+                    className="btn-action btn-leituras"
                     onClick={() => handleViewLeituras(sensor)}
                     title="Ver Leituras"
                   >
-                    📊
+                    <BarChart3 size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-action btn-view" 
+                  <button
+                    className="btn-action btn-view"
                     onClick={() => handleView(sensor)}
                     title="Visualizar"
                   >
-                    👁️
+                    <Eye size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-action btn-edit" 
+                  <button
+                    className="btn-action btn-edit"
                     onClick={() => handleEdit(sensor)}
                     title="Editar"
                   >
-                    ✏️
+                    <Pencil size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-action btn-delete" 
+                  <button
+                    className="btn-action btn-delete"
                     onClick={() => handleDeleteClick(sensor)}
                     title="Excluir"
                   >
-                    🗑️
+                    <Trash2 size={16} className="icon-inline" />
                   </button>
                 </div>
               </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
@@ -588,7 +595,7 @@ const Sensores = () => {
 
               {/* Dispositivo ESP */}
               <div className="form-group">
-                <label htmlFor="id_dispositivo">📡 Dispositivo ESP (opcional)</label>
+                <label htmlFor="id_dispositivo"><Radio size={14} className="icon-inline" /> Dispositivo ESP (opcional)</label>
                 <select
                   id="id_dispositivo"
                   value={formData.id_dispositivo}
@@ -656,14 +663,14 @@ const Sensores = () => {
                       className="btn-leituras-action" 
                       onClick={() => handleViewLeituras(selectedSensor)}
                     >
-                      📊 Ver Leituras
+                      <BarChart3 size={14} className="icon-inline" /> Ver Leituras
                     </button>
-                    <button 
-                      type="button" 
-                      className="btn-edit-action" 
+                    <button
+                      type="button"
+                      className="btn-edit-action"
                       onClick={() => setModalMode('edit')}
                     >
-                      ✏️ Editar
+                      <Pencil size={14} className="icon-inline" /> Editar
                     </button>
                   </>
                 ) : (
@@ -687,13 +694,13 @@ const Sensores = () => {
         <div className="modal-overlay" onClick={handleDeleteCancel}>
           <div className="modal-content modal-confirm" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Confirmar Exclusão</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Confirmar Exclusão</h2>
             </div>
-            
+
             <div className="confirm-body">
               <p>Tem certeza que deseja excluir o sensor:</p>
               <strong>"{sensorToDelete?.nome}"</strong>
-              <p className="location-info">🏢 {getAmbienteNome(sensorToDelete?.id_ambiente)}</p>
+              <p className="location-info"><Building2 size={14} className="icon-inline icon-muted" /> {getAmbienteNome(sensorToDelete?.id_ambiente)}</p>
               <p className="warning-text">Esta ação não pode ser desfeita!</p>
               <p className="warning-text">Todas as leituras associadas serão perdidas.</p>
             </div>

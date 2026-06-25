@@ -7,6 +7,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.use(authMiddleware);
 
 router.get('/', maintenanceController.list);
+router.get('/mtbf', maintenanceController.mtbf);
 router.post('/', maintenanceController.create);
 router.put('/:deviceId', maintenanceController.update);
 router.post('/reset/:deviceId', maintenanceController.reset);

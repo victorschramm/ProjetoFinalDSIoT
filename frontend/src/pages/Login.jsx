@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from 'lucide-react';
 import { Footer, Loading } from '../components';
 import { login, saveAuthData } from '../services/api';
 import '../styles/Login.css';
@@ -71,7 +72,7 @@ const Login = () => {
     try {
       const data = await login(email, password);
 
-      toast.success(data.message || 'Login realizado com sucesso! 🎉');
+      toast.success(data.message || 'Login realizado com sucesso!');
 
       // Armazenar token
       if (data.token) {
@@ -84,7 +85,7 @@ const Login = () => {
       }
 
     } catch (err) {
-      console.error('❌ Erro no login:', err);
+      console.error('Erro no login:', err);
 
       let mensagemErro = 'Erro ao conectar com o servidor';
 
@@ -158,7 +159,11 @@ const Login = () => {
                   aria-label="Mostrar/Ocultar senha"
                   disabled={loading}
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  {showPassword ? (
+                    <EyeOff size={18} className="icon-inline icon-muted" />
+                  ) : (
+                    <Eye size={18} className="icon-inline icon-muted" />
+                  )}
                 </button>
               </div>
               {passwordError && <span className="error-message">{passwordError}</span>}

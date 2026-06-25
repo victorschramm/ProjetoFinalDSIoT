@@ -1,4 +1,5 @@
 import React from 'react';
+import { Calendar, Home, Search, X } from 'lucide-react';
 import '../styles/DateTimeFilter.css';
 
 /**
@@ -47,7 +48,7 @@ const DateTimeFilter = ({
   return (
     <form className="datetime-filter" onSubmit={handleSubmit}>
       <div className="filter-section">
-        <h4 className="filter-title">📅 Período</h4>
+        <h4 className="filter-title"><Calendar size={16} className="icon-inline" /> Período</h4>
         <div className="filter-row">
           <div className="filter-group">
             <label>Data Início</label>
@@ -91,7 +92,7 @@ const DateTimeFilter = ({
       </div>
 
       <div className="filter-section">
-        <h4 className="filter-title">🏠 Local</h4>
+        <h4 className="filter-title"><Home size={16} className="icon-inline" /> Local</h4>
         <div className="filter-row">
           <div className="filter-group">
             <label>Ambiente</label>
@@ -131,10 +132,10 @@ const DateTimeFilter = ({
 
       <div className="filter-actions">
         <button type="submit" className="btn-filter">
-          🔍 Filtrar
+          <Search size={16} className="icon-inline" /> Filtrar
         </button>
         <button type="button" className="btn-clear" onClick={handleClear}>
-          ✕ Limpar
+          <X size={16} className="icon-inline" /> Limpar
         </button>
       </div>
     </form>

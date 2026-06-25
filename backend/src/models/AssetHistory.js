@@ -25,6 +25,11 @@ const AssetHistory = sequelize.define('AssetHistory', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW
+  },
+  // Preenchido apenas em eventos registrados manualmente pelo usuário (ex: INTERVENCAO_MANUAL)
+  id_usuario: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   tableName: 'AssetHistory'

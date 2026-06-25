@@ -48,3 +48,9 @@ export const resetMaintenance = async (deviceId) => {
   const response = await authFetch(`/maintenance/reset/${deviceId}`, { method: 'POST' });
   return parseJson(response, 'Erro ao resetar contador');
 };
+
+// MTBF de todos os sensores: { [sensorId]: { falhas, horasObservadas, mtbfHoras } }
+export const getMTBF = async () => {
+  const response = await authFetch('/maintenance/mtbf');
+  return parseJson(response, 'Erro ao calcular MTBF');
+};

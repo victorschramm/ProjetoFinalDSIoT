@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { RefreshCw, Home, Radio, AlertTriangle, BarChart3, ArrowRight } from 'lucide-react';
 import { Header, Drawer, Footer, StatsCard, AmbientePanel, Loading } from '../components';
 import {
   getAmbientes,
@@ -230,7 +231,7 @@ const Monitoramento = () => {
         {/* Barra de status */}
         <div className="status-bar">
           <div className="last-update">
-            <span className="update-icon">🔄</span>
+            <span className="update-icon"><RefreshCw size={14} className="icon-inline" /></span>
             <span>Última atualização: {ultimaAtualizacao.toLocaleTimeString('pt-BR')}</span>
           </div>
           <div className="interval-control">
@@ -251,7 +252,7 @@ const Monitoramento = () => {
               onClick={carregarDados}
               title="Atualizar agora"
             >
-              🔄
+              <RefreshCw size={16} className="icon-inline" />
             </button>
           </div>
         </div>
@@ -261,28 +262,28 @@ const Monitoramento = () => {
           <StatsCard
             title="Ambientes"
             value={stats.totalAmbientes}
-            icon="🏠"
+            icon={Home}
             color="primary"
             subtitle="Monitorados"
           />
           <StatsCard
             title="Sensores Online"
             value={`${stats.sensoresOnline}/${stats.totalSensores}`}
-            icon="📡"
+            icon={Radio}
             color="success"
             subtitle="Ativos agora"
           />
           <StatsCard
             title="Alertas Ativos"
             value={stats.alertasAtivos}
-            icon="⚠️"
+            icon={AlertTriangle}
             color={stats.alertasCriticos > 0 ? 'danger' : 'warning'}
             subtitle={stats.alertasCriticos > 0 ? `${stats.alertasCriticos} crítico(s)` : 'Em atenção'}
           />
           <StatsCard
             title="Leituras Hoje"
             value={stats.leiturasHoje}
-            icon="📊"
+            icon={BarChart3}
             color="primary"
             subtitle="Registradas"
           />
@@ -297,7 +298,7 @@ const Monitoramento = () => {
         <div className="ambientes-list">
           {ambientes.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">🏠</span>
+              <span className="empty-icon"><Home size={32} className="icon-muted" /></span>
               <h3>Nenhum ambiente cadastrado</h3>
               <p>Cadastre ambientes para iniciar o monitoramento</p>
               <button
@@ -324,12 +325,12 @@ const Monitoramento = () => {
         {stats.alertasAtivos > 0 && (
           <>
             <div className="section-header alerts-header">
-              <h2>⚠️ Alertas Ativos</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Alertas Ativos</h2>
               <button
                 className="btn-ver-todos"
                 onClick={() => navigate('/alertas')}
               >
-                Ver todos →
+                Ver todos <ArrowRight size={14} className="icon-inline" />
               </button>
             </div>
             <div className="alertas-preview">
@@ -348,7 +349,13 @@ const Monitoramento = () => {
                       className={`alerta-preview-item severidade-${alerta.nivel_severidade || alerta.severidade}`}
                     >
                       <div className="alerta-icon">
-                        {(alerta.nivel_severidade || alerta.severidade) === 'alto' ? '🔴' : (alerta.nivel_severidade || alerta.severidade) === 'medio' ? '🟡' : '🟢'}
+                        <span
+                          className="status-dot"
+                          style={{
+                            background: (alerta.nivel_severidade || alerta.severidade) === 'alto' ? '#ef4444' :
+                              (alerta.nivel_severidade || alerta.severidade) === 'medio' ? '#f59e0b' : '#10b981'
+                          }}
+                        />
                       </div>
                       <div className="alerta-content">
                         <span className="alerta-tipo">{alerta.tipo}</span>

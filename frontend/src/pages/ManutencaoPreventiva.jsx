@@ -2,10 +2,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Wrench, Radio, AlertTriangle, CheckCircle2, X, Pencil, ClipboardList, Lightbulb, Plus, Activity, FlagTriangleRight } from 'lucide-react';
 import { Header, Drawer, Footer, Loading } from '../components';
-import { getMaintenance, createMaintenance, updateMaintenance, resetMaintenance } from '../services/maintenance';
+import { getMaintenance, createMaintenance, updateMaintenance, resetMaintenance, getMTBF } from '../services/maintenance';
 import { getSensores } from '../services/sensores';
 import { getAlertas } from '../services/alertas';
+import { registrarFalhaManual } from '../services/assetHistory';
 import { logout as apiLogout, isAuthenticated, getUserEmail, isAdmin as checkIsAdmin } from '../services/api';
 import '../styles/ManutencaoPreventiva.css';
 
@@ -20,6 +22,7 @@ const ManutencaoPreventiva = () => {
   // Estado de formulários abertos por sensorId
   const [configurando, setConfigurando] = useState({});
   const [editando, setEditando] = useState({});
+  const [registrandoFalha, setRegistrandoFalha] = useState({});
   const [salvando, setSalvando] = useState({});
 
   const handleLogout = useCallback(() => {
@@ -28,18 +31,20 @@ const ManutencaoPreventiva = () => {
   }, [navigate]);
 
   const carregarDados = useCallback(async () => {
-    // Busca sensores, registros de manutenção e alertas em paralelo.
+    // Busca sensores, registros de manutenção, alertas e MTBF em paralelo.
     // Sensores vêm de /sensores (endpoint consolidado), garantindo que a lista
     // apareça mesmo que /maintenance ainda não esteja disponível.
-    const [sensoresRes, manutencaoRes, alertasRes] = await Promise.allSettled([
+    const [sensoresRes, manutencaoRes, alertasRes, mtbfRes] = await Promise.allSettled([
       getSensores(),
       getMaintenance(),
-      getAlertas()
+      getAlertas(),
+      getMTBF()
     ]);
 
     const listaSensores = sensoresRes.status === 'fulfilled' ? (sensoresRes.value || []) : [];
     const registros     = manutencaoRes.status === 'fulfilled' ? (manutencaoRes.value || []) : [];
     const alertas       = alertasRes.status === 'fulfilled'    ? (alertasRes.value || [])    : [];
+    const mtbfPorSensor  = mtbfRes.status === 'fulfilled'       ? (mtbfRes.value || {})       : {};
 
     if (sensoresRes.status === 'rejected') {
       toast.error('Erro ao carregar sensores');
@@ -52,15 +57,19 @@ const ManutencaoPreventiva = () => {
       if (id !== undefined) alertasPorSensor[id] = (alertasPorSensor[id] || 0) + 1;
     });
 
-    // Mescla sensores com seus dados de manutenção (se configurados)
+    // Mescla sensores com seus dados de manutenção (se configurados) e MTBF
     const merged = listaSensores.map(sensor => {
       const registro = registros.find(r => r.deviceId === sensor.id);
+      const mtbf = mtbfPorSensor[String(sensor.id)] || {};
       return {
         sensorId:    sensor.id,
         sensorNome:  sensor.nome,
         sensorTipo:  sensor.tipo || '--',
         configurado: !!registro,
         alertasCount: alertasPorSensor[sensor.id] || 0,
+        falhas: mtbf.falhas || 0,
+        horasObservadas: mtbf.horasObservadas ?? 0,
+        mtbfHoras: mtbf.mtbfHoras ?? null,
         ...(registro || {})
       };
     });
@@ -136,6 +145,36 @@ const ManutencaoPreventiva = () => {
     }
   };
 
+  // ---------- Registrar falha manual ----------
+  // Para falhas que o usuário identifica fora dos critérios automáticos
+  // (ex: leitura incorreta, problema mecânico) — entra no histórico do ativo
+  // e passa a contar no cálculo de MTBF junto com as quedas automáticas.
+
+  const abrirRegistrarFalha = (sensorId) => {
+    setRegistrandoFalha(prev => ({ ...prev, [sensorId]: { descricao: '' } }));
+  };
+
+  const cancelarRegistrarFalha = (sensorId) => {
+    setRegistrandoFalha(prev => { const n = { ...prev }; delete n[sensorId]; return n; });
+  };
+
+  const salvarFalha = async (sensor) => {
+    const dados = registrandoFalha[sensor.sensorId];
+    if (!dados.descricao.trim()) { toast.error('Descreva a falha identificada'); return; }
+
+    setSalvando(prev => ({ ...prev, [`falha_${sensor.sensorId}`]: true }));
+    try {
+      await registrarFalhaManual(sensor.sensorId, { descricao: dados.descricao.trim() });
+      toast.success(`Falha registrada para "${sensor.sensorNome}"`);
+      cancelarRegistrarFalha(sensor.sensorId);
+      await carregarDados();
+    } catch (err) {
+      toast.error(err.message || 'Erro ao registrar falha');
+    } finally {
+      setSalvando(prev => ({ ...prev, [`falha_${sensor.sensorId}`]: false }));
+    }
+  };
+
   // ---------- Realizar manutenção ----------
 
   const realizarManutencao = async (sensor) => {
@@ -164,9 +203,9 @@ const ManutencaoPreventiva = () => {
 
   // Nível de sugestão com base na quantidade de alertas
   const getSugestao = (alertasCount) => {
-    if (alertasCount >= 10) return { label: '🔴 Alta prioridade', sub: `${alertasCount} alertas`, cls: 'alta' };
-    if (alertasCount >= 5)  return { label: '🟡 Sugerido',        sub: `${alertasCount} alertas`, cls: 'media' };
-    if (alertasCount >= 1)  return { label: '🔵 Atenção',         sub: `${alertasCount} alerta(s)`, cls: 'baixa' };
+    if (alertasCount >= 10) return { label: 'Alta prioridade', color: '#ef4444', sub: `${alertasCount} alertas`, cls: 'alta' };
+    if (alertasCount >= 5)  return { label: 'Sugerido',        color: '#f59e0b', sub: `${alertasCount} alertas`, cls: 'media' };
+    if (alertasCount >= 1)  return { label: 'Atenção',         color: '#3b82f6', sub: `${alertasCount} alerta(s)`, cls: 'baixa' };
     return null;
   };
 
@@ -191,7 +230,7 @@ const ManutencaoPreventiva = () => {
 
       <div className="container">
         <div className="manutencao-header">
-          <h1>🔧 Manutenção Preventiva</h1>
+          <h1><Wrench size={22} className="icon-inline" /> Manutenção Preventiva</h1>
           <p>
             Configure quais sensores precisam de manutenção, defina o limite de horas e o tipo de intervenção.
             {pendentes > 0 && (
@@ -202,7 +241,7 @@ const ManutencaoPreventiva = () => {
 
         {sensores.length === 0 ? (
           <div className="manutencao-vazio">
-            <span>📡</span>
+            <span><Radio size={28} className="icon-muted" /></span>
             <p>Nenhum sensor cadastrado no sistema.</p>
           </div>
         ) : (
@@ -217,6 +256,8 @@ const ManutencaoPreventiva = () => {
                     const isPendente = sensor.status === 'MANUTENCAO_PENDENTE';
                     const estaEditando = !!editando[sensor.sensorId];
                     const dadosEdit = editando[sensor.sensorId] || {};
+                    const estaRegistrandoFalha = !!registrandoFalha[sensor.sensorId];
+                    const dadosFalha = registrandoFalha[sensor.sensorId] || {};
 
                     return (
                       <div key={sensor.sensorId} className={`manutencao-card ${isPendente ? 'status-pendente' : 'status-ok'}`}>
@@ -226,7 +267,11 @@ const ManutencaoPreventiva = () => {
                             <div className="card-tipo">{sensor.sensorTipo} · ID {sensor.sensorId}</div>
                           </div>
                           <span className={`status-badge ${isPendente ? 'pendente' : 'ok'}`}>
-                            {isPendente ? '⚠ PENDENTE' : '✓ OK'}
+                            {isPendente ? (
+                              <><AlertTriangle size={14} className="icon-inline" /> PENDENTE</>
+                            ) : (
+                              <><CheckCircle2 size={14} className="icon-inline" /> OK</>
+                            )}
                           </span>
                         </div>
 
@@ -245,7 +290,47 @@ const ManutencaoPreventiva = () => {
                           </div>
                         </div>
 
-                        <div className="card-descricao">📋 {sensor.descricao}</div>
+                        <div className="mtbf-info">
+                          <span className="mtbf-label"><Activity size={14} className="icon-inline icon-muted" /> MTBF</span>
+                          <span className="mtbf-valor">
+                            {sensor.mtbfHoras != null ? `${sensor.mtbfHoras.toFixed(1)}h` : 'Sem falhas registradas'}
+                          </span>
+                          {sensor.falhas > 0 && (
+                            <span className="mtbf-sub">{sensor.falhas} falha(s) em {Math.round(sensor.horasObservadas / 24)}d</span>
+                          )}
+                        </div>
+
+                        <div className="card-descricao"><ClipboardList size={14} className="icon-inline icon-muted" /> {sensor.descricao}</div>
+
+                        {estaRegistrandoFalha && (
+                          <div className="card-edit-form">
+                            <h4>Registrar falha</h4>
+                            <div className="form-row">
+                              <label>O que aconteceu?</label>
+                              <textarea
+                                rows={3}
+                                value={dadosFalha.descricao}
+                                onChange={e => setRegistrandoFalha(prev => ({
+                                  ...prev, [sensor.sensorId]: { ...dadosFalha, descricao: e.target.value }
+                                }))}
+                                placeholder="Ex: Leitura de temperatura incoerente, sem queda de conexão"
+                                autoFocus
+                              />
+                            </div>
+                            <div className="form-actions">
+                              <button
+                                className="btn-salvar"
+                                onClick={() => salvarFalha(sensor)}
+                                disabled={salvando[`falha_${sensor.sensorId}`]}
+                              >
+                                {salvando[`falha_${sensor.sensorId}`] ? 'Registrando…' : 'Registrar'}
+                              </button>
+                              <button className="btn-cancelar" onClick={() => cancelarRegistrarFalha(sensor.sensorId)}>
+                                Cancelar
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         {estaEditando && (
                           <div className="card-edit-form">
@@ -292,14 +377,28 @@ const ManutencaoPreventiva = () => {
                             className="btn-editar"
                             onClick={() => estaEditando ? cancelarEditar(sensor.sensorId) : abrirEditar(sensor)}
                           >
-                            {estaEditando ? '✕ Fechar' : '✏ Editar'}
+                            {estaEditando ? (
+                              <><X size={14} className="icon-inline" /> Fechar</>
+                            ) : (
+                              <><Pencil size={14} className="icon-inline" /> Editar</>
+                            )}
+                          </button>
+                          <button
+                            className="btn-falha"
+                            onClick={() => estaRegistrandoFalha ? cancelarRegistrarFalha(sensor.sensorId) : abrirRegistrarFalha(sensor.sensorId)}
+                          >
+                            {estaRegistrandoFalha ? (
+                              <><X size={14} className="icon-inline" /> Fechar</>
+                            ) : (
+                              <><FlagTriangleRight size={14} className="icon-inline" /> Registrar Falha</>
+                            )}
                           </button>
                           <button
                             className="btn-manutencao"
                             onClick={() => realizarManutencao(sensor)}
                             disabled={salvando[`reset_${sensor.sensorId}`]}
                           >
-                            {salvando[`reset_${sensor.sensorId}`] ? 'Aguarde…' : '🔧 Realizar Manutenção'}
+                            {salvando[`reset_${sensor.sensorId}`] ? 'Aguarde…' : <><Wrench size={14} className="icon-inline" /> Realizar Manutenção</>}
                           </button>
                         </div>
                       </div>
@@ -318,7 +417,7 @@ const ManutencaoPreventiva = () => {
 
                 {naoConfOrdenados.some(s => s.alertasCount >= 5) && (
                   <div className="sugestao-banner">
-                    💡 O sistema identificou sensores com histórico de alertas frequentes.
+                    <Lightbulb size={16} className="icon-inline" /> O sistema identificou sensores com histórico de alertas frequentes.
                     Considere configurar manutenção preventiva para eles.
                   </div>
                 )}
@@ -328,6 +427,8 @@ const ManutencaoPreventiva = () => {
                     const estaConfigurando = !!configurando[sensor.sensorId];
                     const dadosConfig = configurando[sensor.sensorId] || {};
                     const sugestao = getSugestao(sensor.alertasCount);
+                    const estaRegistrandoFalha = !!registrandoFalha[sensor.sensorId];
+                    const dadosFalha = registrandoFalha[sensor.sensorId] || {};
 
                     return (
                       <div key={sensor.sensorId} className="manutencao-card status-inativo">
@@ -342,14 +443,54 @@ const ManutencaoPreventiva = () => {
                         {/* Badge de sugestão baseada em alertas */}
                         {sugestao && (
                           <div className={`sugestao-badge sugestao-${sugestao.cls}`}>
-                            <span>{sugestao.label}</span>
+                            <span><span className="status-dot" style={{ background: sugestao.color }} /> {sugestao.label}</span>
                             <span className="sugestao-sub">{sugestao.sub} registrados</span>
                           </div>
                         )}
 
+                        <div className="mtbf-info">
+                          <span className="mtbf-label"><Activity size={14} className="icon-inline icon-muted" /> MTBF</span>
+                          <span className="mtbf-valor">
+                            {sensor.mtbfHoras != null ? `${sensor.mtbfHoras.toFixed(1)}h` : 'Sem falhas registradas'}
+                          </span>
+                          {sensor.falhas > 0 && (
+                            <span className="mtbf-sub">{sensor.falhas} falha(s) em {Math.round(sensor.horasObservadas / 24)}d</span>
+                          )}
+                        </div>
+
                         <div className="card-descricao" style={{ color: '#64748b' }}>
                           Nenhuma regra de manutenção definida.
                         </div>
+
+                        {estaRegistrandoFalha && (
+                          <div className="card-edit-form">
+                            <h4>Registrar falha</h4>
+                            <div className="form-row">
+                              <label>O que aconteceu?</label>
+                              <textarea
+                                rows={3}
+                                value={dadosFalha.descricao}
+                                onChange={e => setRegistrandoFalha(prev => ({
+                                  ...prev, [sensor.sensorId]: { ...dadosFalha, descricao: e.target.value }
+                                }))}
+                                placeholder="Ex: Leitura de temperatura incoerente, sem queda de conexão"
+                                autoFocus
+                              />
+                            </div>
+                            <div className="form-actions">
+                              <button
+                                className="btn-salvar"
+                                onClick={() => salvarFalha(sensor)}
+                                disabled={salvando[`falha_${sensor.sensorId}`]}
+                              >
+                                {salvando[`falha_${sensor.sensorId}`] ? 'Registrando…' : 'Registrar'}
+                              </button>
+                              <button className="btn-cancelar" onClick={() => cancelarRegistrarFalha(sensor.sensorId)}>
+                                Cancelar
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         {estaConfigurando ? (
                           <div className="card-edit-form">
@@ -391,11 +532,16 @@ const ManutencaoPreventiva = () => {
                             </div>
                           </div>
                         ) : (
-                          <div className="card-footer">
-                            <button className="btn-configurar" onClick={() => abrirConfigurar(sensor.sensorId)}>
-                              + Configurar Manutenção
-                            </button>
-                          </div>
+                          !estaRegistrandoFalha && (
+                            <div className="card-footer">
+                              <button className="btn-configurar" onClick={() => abrirConfigurar(sensor.sensorId)}>
+                                <Plus size={14} className="icon-inline" /> Configurar Manutenção
+                              </button>
+                              <button className="btn-falha" onClick={() => abrirRegistrarFalha(sensor.sensorId)}>
+                                <FlagTriangleRight size={14} className="icon-inline" /> Registrar Falha
+                              </button>
+                            </div>
+                          )
                         )}
                       </div>
                     );

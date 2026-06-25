@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Users, Crown, User, Pencil, Trash2, AlertTriangle } from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import {
   getUsuarios,
@@ -227,7 +228,7 @@ const Usuarios = () => {
       <div className="usuarios-container">
         {/* Toolbar */}
         <div className="usuarios-toolbar">
-          <h2>👥 Usuários do Sistema</h2>
+          <h2><Users size={18} className="icon-inline" /> Usuários do Sistema</h2>
         </div>
 
         {/* Loading */}
@@ -241,7 +242,7 @@ const Usuarios = () => {
         <div className="table-container">
           {usuarios.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">👥</span>
+              <span className="empty-icon"><Users size={32} className="icon-muted" /></span>
               <p>Nenhum usuário cadastrado.</p>
             </div>
           ) : (
@@ -264,24 +265,28 @@ const Usuarios = () => {
                     <td className="email-cell">{usuario.email}</td>
                     <td>
                       <span className={`tipo-badge tipo-${usuario.tipo_usuario}`}>
-                        {usuario.tipo_usuario === 'admin' ? '👑 Admin' : '👤 Usuário'}
+                        {usuario.tipo_usuario === 'admin' ? (
+                          <><Crown size={14} className="icon-inline" /> Admin</>
+                        ) : (
+                          <><User size={14} className="icon-inline" /> Usuário</>
+                        )}
                       </span>
                     </td>
                     <td>{new Date(usuario.createdAt).toLocaleDateString('pt-BR')}</td>
                     <td className="actions-cell">
-                      <button 
-                        className="btn-action btn-edit" 
+                      <button
+                        className="btn-action btn-edit"
                         onClick={() => handleEdit(usuario)}
                         title="Editar"
                       >
-                        ✏️
+                        <Pencil size={16} className="icon-inline" />
                       </button>
-                      <button 
-                        className="btn-action btn-delete" 
+                      <button
+                        className="btn-action btn-delete"
                         onClick={() => handleDeleteClick(usuario)}
                         title="Excluir"
                       >
-                        🗑️
+                        <Trash2 size={16} className="icon-inline" />
                       </button>
                     </td>
                   </tr>
@@ -297,7 +302,7 @@ const Usuarios = () => {
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>✏️ Editar Usuário</h2>
+              <h2><Pencil size={18} className="icon-inline" /> Editar Usuário</h2>
               <button className="modal-close" onClick={handleCloseModal}>×</button>
             </div>
             
@@ -339,8 +344,8 @@ const Usuarios = () => {
                   className={formErrors.tipo_usuario ? 'error' : ''}
                   disabled={submitting}
                 >
-                  <option value="usuario">👤 Usuário Comum</option>
-                  <option value="admin">👑 Administrador</option>
+                  <option value="usuario">Usuário Comum</option>
+                  <option value="admin">Administrador</option>
                 </select>
                 {formErrors.tipo_usuario && <span className="error-message">{formErrors.tipo_usuario}</span>}
               </div>
@@ -363,7 +368,7 @@ const Usuarios = () => {
         <div className="modal-overlay" onClick={handleDeleteCancel}>
           <div className="modal-content modal-confirm" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Confirmar Exclusão</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Confirmar Exclusão</h2>
             </div>
             
             <div className="confirm-body">

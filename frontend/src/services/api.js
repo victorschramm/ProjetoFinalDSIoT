@@ -127,7 +127,7 @@ export {
   getUsuarios, getUsuarioById, updateUsuario, deleteUsuario
 } from './usuarios';
 
-export { getAssetHistory } from './assetHistory';
+export { getAssetHistory, registrarFalhaManual, getAssetMTBF } from './assetHistory';
 
 export { getAuditLogs } from './auditLogs';
 

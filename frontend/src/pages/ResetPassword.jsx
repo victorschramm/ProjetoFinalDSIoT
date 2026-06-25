@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { AlertTriangle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { Footer, Loading } from '../components';
 import '../styles/Login.css';
 
@@ -80,7 +81,9 @@ const ResetPassword = () => {
 
           {tokenInvalido && (
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+              <div style={{ marginBottom: '16px', color: '#ef4444' }}>
+                <AlertTriangle size={48} className="icon-inline" strokeWidth={1.5} />
+              </div>
               <div className="error-alert" style={{ marginBottom: '20px' }}>
                 <strong>Link inválido ou expirado</strong>
                 <p style={{ margin: '8px 0 0', fontSize: '13px' }}>
@@ -116,7 +119,11 @@ const ResetPassword = () => {
                       required
                     />
                     <button type="button" className="toggle-password" onClick={() => setShowNova(!showNova)}>
-                      {showNova ? '🙈' : '👁️'}
+                      {showNova ? (
+                        <EyeOff size={18} className="icon-inline icon-muted" />
+                      ) : (
+                        <Eye size={18} className="icon-inline icon-muted" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -134,7 +141,11 @@ const ResetPassword = () => {
                       required
                     />
                     <button type="button" className="toggle-password" onClick={() => setShowConfirmar(!showConfirmar)}>
-                      {showConfirmar ? '🙈' : '👁️'}
+                      {showConfirmar ? (
+                        <EyeOff size={18} className="icon-inline icon-muted" />
+                      ) : (
+                        <Eye size={18} className="icon-inline icon-muted" />
+                      )}
                     </button>
                   </div>
                   {confirmarSenha && novaSenha !== confirmarSenha && (
@@ -151,7 +162,9 @@ const ResetPassword = () => {
 
           {concluido && (
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '52px', marginBottom: '16px' }}>✅</div>
+              <div style={{ marginBottom: '16px', color: '#10b981' }}>
+                <CheckCircle2 size={52} className="icon-inline" strokeWidth={1.5} />
+              </div>
               <div className="success-alert" style={{ marginBottom: '20px' }}>
                 <strong>Senha redefinida com sucesso!</strong>
               </div>

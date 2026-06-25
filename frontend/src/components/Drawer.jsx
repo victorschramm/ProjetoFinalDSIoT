@@ -1,5 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import {
+  Home, BarChart3, Radio, TrendingUp, AlertTriangle, History,
+  Wrench, Settings, Building2, SlidersHorizontal, Crown, Users,
+  ClipboardList, LogOut
+} from 'lucide-react';
 import '../styles/Drawer.css';
 
 const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
@@ -28,89 +33,89 @@ const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
         <ul className="drawer-menu">
           <li>
             <NavLink to="/dashboard" onClick={onClose}>
-              🏠 Início
+              <Home size={16} className="icon-inline" /> Início
             </NavLink>
           </li>
-          
+
           <li className="drawer-divider" />
           <li className="drawer-section-title">
-            <span>📊 Monitoramento</span>
+            <span><BarChart3 size={16} className="icon-inline" /> Monitoramento</span>
           </li>
           <li>
             <NavLink to="/monitoramento" onClick={onClose}>
-              📡 Tempo Real
+              <Radio size={16} className="icon-inline" /> Tempo Real
             </NavLink>
           </li>
           <li>
             <NavLink to="/historico" onClick={onClose}>
-              📈 Histórico e Gráficos
+              <TrendingUp size={16} className="icon-inline" /> Histórico e Gráficos
             </NavLink>
           </li>
           <li>
             <NavLink to="/alertas" onClick={onClose}>
-              ⚠️ Alertas
+              <AlertTriangle size={16} className="icon-inline" /> Alertas
             </NavLink>
           </li>
           <li>
             <NavLink to="/historico-ativo" onClick={onClose}>
-              🗂️ Currículo da Máquina
+              <History size={16} className="icon-inline" /> Currículo da Máquina
             </NavLink>
           </li>
           <li>
             <NavLink to="/manutencao-preventiva" onClick={onClose}>
-              🔧 Manutenção Preventiva
+              <Wrench size={16} className="icon-inline" /> Manutenção Preventiva
             </NavLink>
           </li>
-          
+
           <li className="drawer-divider" />
           <li className="drawer-section-title">
-            <span>⚙️ Configurações</span>
+            <span><Settings size={16} className="icon-inline" /> Configurações</span>
           </li>
           <li>
             <NavLink to="/dispositivos" onClick={onClose}>
-              📡 Dispositivos ESP
+              <Radio size={16} className="icon-inline" /> Dispositivos ESP
             </NavLink>
           </li>
           <li>
             <NavLink to="/ambientes" onClick={onClose}>
-              🏢 Ambientes
+              <Building2 size={16} className="icon-inline" /> Ambientes
             </NavLink>
           </li>
           <li>
             <NavLink to="/sensores" onClick={onClose}>
-              🎛️ Sensores
+              <SlidersHorizontal size={16} className="icon-inline" /> Sensores
             </NavLink>
           </li>
           <li>
             <NavLink to="/leituras" onClick={onClose}>
-              📊 Leituras
+              <BarChart3 size={16} className="icon-inline" /> Leituras
             </NavLink>
           </li>
-          
+
           {/* Opções de Administrador */}
           {isAdmin && (
             <>
               <li className="drawer-divider" />
               <li className="drawer-section-title">
-                <span>👑 Administração</span>
+                <span><Crown size={16} className="icon-inline" /> Administração</span>
               </li>
               <li>
                 <NavLink to="/usuarios" onClick={onClose}>
-                  👥 Usuários
+                  <Users size={16} className="icon-inline" /> Usuários
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/historico-acoes" onClick={onClose}>
-                  📋 Histórico de Ações
+                  <ClipboardList size={16} className="icon-inline" /> Histórico de Ações
                 </NavLink>
               </li>
             </>
           )}
-          
+
           <li className="drawer-divider" />
           <li>
             <button onClick={onLogout}>
-              🚪 Logout
+              <LogOut size={16} className="icon-inline" /> Logout
             </button>
           </li>
         </ul>

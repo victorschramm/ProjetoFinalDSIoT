@@ -1,4 +1,5 @@
 import React from 'react';
+import { CheckCircle2, Ban, Bell, Clock, Home, Radio } from 'lucide-react';
 import '../styles/AlertCard.css';
 
 /**
@@ -12,39 +13,39 @@ const AlertCard = ({ alerta, sensor, ambiente, onResolver }) => {
   const getSeveridadeConfig = () => {
     switch (alerta.severidade?.toLowerCase()) {
       case 'alto':
-        return { 
-          icon: '🔴', 
-          label: 'Alta', 
-          class: 'severidade-alta' 
+        return {
+          color: '#ef4444',
+          label: 'Alta',
+          class: 'severidade-alta'
         };
       case 'medio':
-        return { 
-          icon: '🟡', 
-          label: 'Média', 
-          class: 'severidade-media' 
+        return {
+          color: '#f59e0b',
+          label: 'Média',
+          class: 'severidade-media'
         };
       case 'baixo':
-        return { 
-          icon: '🟢', 
-          label: 'Baixa', 
-          class: 'severidade-baixa' 
+        return {
+          color: '#10b981',
+          label: 'Baixa',
+          class: 'severidade-baixa'
         };
       default:
-        return { 
-          icon: '⚪', 
-          label: 'Indefinida', 
-          class: 'severidade-indefinida' 
+        return {
+          color: '#9ca3af',
+          label: 'Indefinida',
+          class: 'severidade-indefinida'
         };
     }
   };
 
   const getStatusConfig = () => {
     switch (alerta.status?.toLowerCase()) {
-      case 'resolvido': return { icon: '✅', label: 'Resolvido', class: 'status-resolvido' };
-      case 'ignorado':  return { icon: '🚫', label: 'Ignorado',  class: 'status-ignorado'  };
-      case 'ativo':     return { icon: '🔔', label: 'Ativo',     class: 'status-ativo'     };
+      case 'resolvido': return { icon: CheckCircle2, label: 'Resolvido', class: 'status-resolvido' };
+      case 'ignorado':  return { icon: Ban, label: 'Ignorado',  class: 'status-ignorado'  };
+      case 'ativo':     return { icon: Bell, label: 'Ativo',     class: 'status-ativo'     };
       case 'pendente':
-      default:          return { icon: '⏳', label: 'Pendente',  class: 'status-pendente'  };
+      default:          return { icon: Clock, label: 'Pendente',  class: 'status-pendente'  };
     }
   };
 
@@ -62,6 +63,7 @@ const AlertCard = ({ alerta, sensor, ambiente, onResolver }) => {
 
   const severidade = getSeveridadeConfig();
   const statusConfig = getStatusConfig();
+  const StatusIcon = statusConfig.icon;
   const isResolvido = alerta.status?.toLowerCase() === 'resolvido';
 
   return (
@@ -69,10 +71,10 @@ const AlertCard = ({ alerta, sensor, ambiente, onResolver }) => {
       <div className="alert-header">
         <div className="alert-badges">
           <span className={`badge-severidade ${severidade.class}`}>
-            {severidade.icon} {severidade.label}
+            <span className="status-dot" style={{ background: severidade.color }} /> {severidade.label}
           </span>
           <span className={`badge-status ${statusConfig.class}`}>
-            {statusConfig.icon} {statusConfig.label}
+            <StatusIcon size={14} className="icon-inline" /> {statusConfig.label}
           </span>
         </div>
         <span className="alert-date">
@@ -93,22 +95,22 @@ const AlertCard = ({ alerta, sensor, ambiente, onResolver }) => {
         <div className="alert-location">
           {ambiente && (
             <span className="location-item">
-              🏠 {ambiente.nome}
+              <Home size={14} className="icon-inline icon-muted" /> {ambiente.nome}
             </span>
           )}
           {sensor && (
             <span className="location-item">
-              📡 {sensor.nome} ({sensor.tipo})
+              <Radio size={14} className="icon-inline icon-muted" /> {sensor.nome} ({sensor.tipo})
             </span>
           )}
         </div>
 
         {!isResolvido && onResolver && (
-          <button 
+          <button
             className="btn-resolver"
             onClick={() => onResolver(alerta.id)}
           >
-            ✓ Resolver
+            <CheckCircle2 size={14} className="icon-inline" /> Resolver
           </button>
         )}
       </div>

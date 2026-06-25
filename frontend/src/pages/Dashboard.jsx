@@ -5,6 +5,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import {
+  Radio, Home, BarChart3, AlertTriangle, Thermometer, Droplet,
+  Building2, TrendingUp, Bell, Wrench, ArrowRight
+} from 'lucide-react';
 import { Header, Drawer, Footer, StatsCard, Loading } from '../components';
 import {
   getProfile,
@@ -386,7 +390,7 @@ const Dashboard = () => {
         <div className="welcome-section">
           <h1 className="brand-title">MANUT.AI</h1>
           <h2>
-            Olá, {userProfile?.name || 'Usuário'}! 👋
+            Olá, {userProfile?.name || 'Usuário'}!
           </h2>
           <p className="welcome-subtitle">
             Aqui está um resumo do seu sistema de monitoramento do ambiente
@@ -398,28 +402,28 @@ const Dashboard = () => {
           <StatsCard
             title="Sensores"
             value={stats.sensoresAtivos || stats.totalSensores}
-            icon="📡"
+            icon={Radio}
             color="success"
             subtitle={`${stats.totalSensores} cadastrado(s)`}
           />
           <StatsCard
             title="Ambientes"
             value={stats.totalAmbientes}
-            icon="🏠"
+            icon={Home}
             color="primary"
             subtitle="Monitorados"
           />
           <StatsCard
             title="Leituras Hoje"
             value={stats.leiturasHoje}
-            icon="📊"
+            icon={BarChart3}
             color="primary"
             subtitle={`${stats.totalLeituras} total`}
           />
           <StatsCard
             title="Alertas (Atenção)"
             value={stats.alertasEmAtencao}
-            icon="⚠️"
+            icon={AlertTriangle}
             color={stats.alertasCriticos > 0 ? 'danger' : stats.alertasEmAtencao > 0 ? 'warning' : 'success'}
             subtitle={stats.alertasCriticos > 0 ? `${stats.alertasCriticos} crítico(s)` : `${stats.alertasAtivos} Ativos | ${stats.alertasPendentes} Pend./Abertos`}
           />
@@ -427,10 +431,12 @@ const Dashboard = () => {
 
         {/* Lista de temperatura e umidade por ambiente */}
         <div className="ambientes-leituras-section">
-          <h2 className="ambientes-leituras-title">🌡️ Temperatura e Umidade por Ambiente</h2>
+          <h2 className="ambientes-leituras-title">
+            <Thermometer size={18} className="icon-inline" /> Temperatura e Umidade por Ambiente
+          </h2>
           {leiturasAmbientes.length === 0 ? (
             <div className="ambientes-leituras-vazio">
-              <span>🏠</span>
+              <span><Home size={28} className="icon-muted" /></span>
               <p>Nenhum ambiente cadastrado</p>
             </div>
           ) : (
@@ -438,7 +444,7 @@ const Dashboard = () => {
               {leiturasAmbientes.map(amb => (
                 <div key={amb.id} className="ambiente-leitura-item">
                   <div className="ambiente-leitura-nome">
-                    <span className="ambiente-leitura-icone">🏢</span>
+                    <span className="ambiente-leitura-icone"><Building2 size={18} className="icon-inline" /></span>
                     <div>
                       <span className="ambiente-leitura-label">{amb.nome}</span>
                       {amb.localizacao && (
@@ -448,7 +454,7 @@ const Dashboard = () => {
                   </div>
                   <div className="ambiente-leitura-dados">
                     <div className="ambiente-leitura-valor temp">
-                      <span className="ambiente-leitura-valor-icone">🌡️</span>
+                      <span className="ambiente-leitura-valor-icone"><Thermometer size={16} className="icon-inline" /></span>
                       <span className="ambiente-leitura-numero">
                         {amb.temperatura !== undefined && amb.temperatura !== null
                           ? `${amb.temperatura}°C`
@@ -458,7 +464,7 @@ const Dashboard = () => {
                     </div>
                     <div className="ambiente-leitura-divisor" />
                     <div className="ambiente-leitura-valor umid">
-                      <span className="ambiente-leitura-valor-icone">💧</span>
+                      <span className="ambiente-leitura-valor-icone"><Droplet size={16} className="icon-inline" /></span>
                       <span className="ambiente-leitura-numero">
                         {amb.umidade !== undefined && amb.umidade !== null
                           ? `${amb.umidade}%`
@@ -486,22 +492,22 @@ const Dashboard = () => {
             <h2>Acesso Rápido</h2>
             <div className="actions-grid">
               <button className="action-card" onClick={() => navigate('/monitoramento')}>
-                <span className="action-icon">📊</span>
+                <span className="action-icon"><BarChart3 size={24} className="icon-inline" /></span>
                 <span className="action-title">Monitoramento</span>
                 <span className="action-desc">Tempo real</span>
               </button>
               <button className="action-card" onClick={() => navigate('/historico')}>
-                <span className="action-icon">📈</span>
+                <span className="action-icon"><TrendingUp size={24} className="icon-inline" /></span>
                 <span className="action-title">Histórico</span>
                 <span className="action-desc">Gráficos e dados</span>
               </button>
               <button className="action-card" onClick={() => navigate('/alertas')}>
-                <span className="action-icon">🔔</span>
+                <span className="action-icon"><Bell size={24} className="icon-inline" /></span>
                 <span className="action-title">Alertas</span>
                 <span className="action-desc">{stats.alertasEmAtencao} em atenção</span>
               </button>
               <button className="action-card" onClick={() => navigate('/ambientes')}>
-                <span className="action-icon">🏢</span>
+                <span className="action-icon"><Building2 size={24} className="icon-inline" /></span>
                 <span className="action-title">Ambientes</span>
                 <span className="action-desc">Gerenciar</span>
               </button>
@@ -510,7 +516,7 @@ const Dashboard = () => {
                 onClick={() => navigate('/manutencao-preventiva')}
                 style={manutencaoPendente > 0 ? { borderColor: '#ef4444' } : {}}
               >
-                <span className="action-icon">🔧</span>
+                <span className="action-icon"><Wrench size={24} className="icon-inline" /></span>
                 <span className="action-title">Manutenção</span>
                 <span className="action-desc" style={manutencaoPendente > 0 ? { color: '#ef4444', fontWeight: 600 } : {}}>
                   {manutencaoPendente > 0 ? `${manutencaoPendente} pendente(s)` : 'Preventiva'}
@@ -525,7 +531,7 @@ const Dashboard = () => {
 
             {dadosComparativo.length === 0 ? (
               <div className="empty-charts">
-                <span className="empty-icon">📊</span>
+                <span className="empty-icon"><BarChart3 size={28} className="icon-muted" /></span>
                 <p>Nenhuma leitura disponível para comparar ambientes</p>
               </div>
             ) : (
@@ -533,17 +539,23 @@ const Dashboard = () => {
                 {/* Destaques */}
                 <div className="comparativo-destaques">
                   <div className="comparativo-destaque maior">
-                    <span className="comparativo-destaque-label">🔴 Maior Temp.</span>
+                    <span className="comparativo-destaque-label">
+                      <span className="status-dot" style={{ background: '#ef4444' }} /> Maior Temp.
+                    </span>
                     <span className="comparativo-destaque-valor">{maiorTemp?.temperatura}°C</span>
                     <span className="comparativo-destaque-nome">{maiorTemp?.nome}</span>
                   </div>
                   <div className="comparativo-destaque media">
-                    <span className="comparativo-destaque-label">🟡 Média</span>
+                    <span className="comparativo-destaque-label">
+                      <span className="status-dot" style={{ background: '#f59e0b' }} /> Média
+                    </span>
                     <span className="comparativo-destaque-valor">{mediaTemp}°C</span>
                     <span className="comparativo-destaque-nome">{ambientesComTemp.length} ambiente(s)</span>
                   </div>
                   <div className="comparativo-destaque menor">
-                    <span className="comparativo-destaque-label">🔵 Menor Temp.</span>
+                    <span className="comparativo-destaque-label">
+                      <span className="status-dot" style={{ background: '#3b82f6' }} /> Menor Temp.
+                    </span>
                     <span className="comparativo-destaque-valor">{menorTemp?.temperatura}°C</span>
                     <span className="comparativo-destaque-nome">{menorTemp?.nome}</span>
                   </div>
@@ -585,7 +597,7 @@ const Dashboard = () => {
                         itemStyle={{ color: '#f1f5f9' }}
                         formatter={(value, name) => [
                           `${value}${name === 'temperatura' ? '°C' : '%'}`,
-                          name === 'temperatura' ? '🌡️ Temperatura' : '💧 Umidade'
+                          name === 'temperatura' ? 'Temperatura' : 'Umidade'
                         ]}
                         labelFormatter={(label) => {
                           const item = dadosComparativo.find(d => d.nome === label);
@@ -593,7 +605,7 @@ const Dashboard = () => {
                         }}
                       />
                       <Legend
-                        formatter={(value) => value === 'temperatura' ? '🌡️ Temperatura (°C)' : '💧 Umidade (%)'}
+                        formatter={(value) => value === 'temperatura' ? 'Temperatura (°C)' : 'Umidade (%)'}
                         wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }}
                       />
                       <Bar dataKey="temperatura" name="temperatura" fill="#f97316" radius={[4, 4, 0, 0]} />
@@ -610,9 +622,9 @@ const Dashboard = () => {
             {stats.alertasEmAtencao > 0 && (
               <div className="alerts-section">
                 <div className="section-header">
-                  <h2>⚠️ Alertas em Atenção</h2>
+                  <h2><AlertTriangle size={18} className="icon-inline" /> Alertas em Atenção</h2>
                   <button className="btn-link" onClick={() => navigate('/alertas')}>
-                    Ver todos →
+                    Ver todos <ArrowRight size={14} className="icon-inline" />
                   </button>
                 </div>
                 <div className="alerts-list">
@@ -630,8 +642,13 @@ const Dashboard = () => {
                           className={`alert-item severidade-${alerta.nivel_severidade || alerta.severidade}`}
                         >
                           <span className="alert-icon">
-                            {(alerta.nivel_severidade || alerta.severidade) === 'alto' ? '🔴' :
-                             (alerta.nivel_severidade || alerta.severidade) === 'medio' ? '🟡' : '🟢'}
+                            <span
+                              className="status-dot"
+                              style={{
+                                background: (alerta.nivel_severidade || alerta.severidade) === 'alto' ? '#ef4444' :
+                                  (alerta.nivel_severidade || alerta.severidade) === 'medio' ? '#f59e0b' : '#10b981'
+                              }}
+                            />
                           </span>
                           <div className="alert-info">
                             <span className="alert-tipo">{alerta.tipo}</span>

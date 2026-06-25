@@ -17,11 +17,14 @@ const passwordError = document.getElementById('passwordError');
 /**
  * Toggle para mostrar/ocultar senha
  */
+const EYE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>';
+
 togglePasswordBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
     passwordInput.setAttribute('type', type);
-    togglePasswordBtn.textContent = type === 'password' ? '👁️' : '🙈';
+    togglePasswordBtn.innerHTML = type === 'password' ? EYE_ICON : EYE_OFF_ICON;
 });
 
 /**
@@ -169,7 +172,7 @@ loginForm.addEventListener('submit', async (e) => {
                 localStorage.setItem('userData', JSON.stringify(data.usuario));
             }
 
-            console.log('✅ Login bem-sucedido. Token armazenado.');
+            console.log('Login bem-sucedido. Token armazenado.');
 
             // Redirecionar após 2 segundos
             setTimeout(() => {
@@ -179,7 +182,7 @@ loginForm.addEventListener('submit', async (e) => {
         }
 
     } catch (error) {
-        console.error('❌ Erro no login:', error);
+        console.error('Erro no login:', error);
 
         // Tratamento específico de erros
         let mensagemErro = 'Erro ao conectar com o servidor';
@@ -191,7 +194,7 @@ loginForm.addEventListener('submit', async (e) => {
         } else if (error.status === 500) {
             mensagemErro = 'Erro no servidor. Tente novamente mais tarde';
         } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-            mensagemErro = '⚠️ Servidor indisponível. Verifique se o servidor está rodando.';
+            mensagemErro = 'Servidor indisponível. Verifique se o servidor está rodando.';
         } else if (error.message) {
             mensagemErro = error.message;
         }
@@ -221,7 +224,7 @@ window.addEventListener('load', () => {
     // Se houver token salvo, redirecionar para dashboard
     const authToken = localStorage.getItem('authToken');
     if (authToken) {
-        console.log('✅ Token encontrado. Redirecionando...');
+        console.log('Token encontrado. Redirecionando...');
         // Descomente se quiser redirecionar automaticamente se já estiver logado
         // window.location.href = '/dashboard.html';
     }

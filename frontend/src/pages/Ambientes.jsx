@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Plus, Pencil, Eye, Building2, MapPin, FileText, Thermometer, Droplet, Trash2, AlertTriangle } from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import { 
   getAmbientes, 
@@ -270,9 +271,9 @@ const Ambientes = () => {
   // Renderizar título do modal
   const getModalTitle = () => {
     switch (modalMode) {
-      case 'create': return '➕ Novo Ambiente';
-      case 'edit': return '✏️ Editar Ambiente';
-      case 'view': return '👁️ Detalhes do Ambiente';
+      case 'create': return <><Plus size={18} className="icon-inline" /> Novo Ambiente</>;
+      case 'edit': return <><Pencil size={18} className="icon-inline" /> Editar Ambiente</>;
+      case 'view': return <><Eye size={18} className="icon-inline" /> Detalhes do Ambiente</>;
       default: return 'Ambiente';
     }
   };
@@ -298,9 +299,9 @@ const Ambientes = () => {
       <div className="ambientes-container">
         {/* Toolbar */}
         <div className="ambientes-toolbar">
-          <h2>🏢 Ambientes Cadastrados</h2>
+          <h2><Building2 size={18} className="icon-inline" /> Ambientes Cadastrados</h2>
           <button className="btn-new" onClick={handleCreate}>
-            + Novo Ambiente
+            <Plus size={16} className="icon-inline" /> Novo Ambiente
           </button>
         </div>
 
@@ -315,7 +316,7 @@ const Ambientes = () => {
         <div className="ambientes-grid">
           {ambientes.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">🏢</span>
+              <span className="empty-icon"><Building2 size={32} className="icon-muted" /></span>
               <p>Nenhum ambiente cadastrado.</p>
               <button className="btn-new-empty" onClick={handleCreate}>
                 Criar primeiro ambiente
@@ -331,29 +332,29 @@ const Ambientes = () => {
                 
                 <div className="card-body">
                   <div className="info-row">
-                    <span className="info-icon">📍</span>
+                    <span className="info-icon"><MapPin size={14} className="icon-inline icon-muted" /></span>
                     <span className="info-label">Localização:</span>
                     <span className="info-value">{ambiente.localizacao || '-'}</span>
                   </div>
-                  
+
                   {ambiente.descricao && (
                     <div className="info-row">
-                      <span className="info-icon">📝</span>
+                      <span className="info-icon"><FileText size={14} className="icon-inline icon-muted" /></span>
                       <span className="info-label">Descrição:</span>
                       <span className="info-value description">{ambiente.descricao}</span>
                     </div>
                   )}
-                  
+
                   <div className="metrics-row">
                     <div className="metric">
-                      <span className="metric-icon">🌡️</span>
+                      <span className="metric-icon"><Thermometer size={16} className="icon-inline" /></span>
                       <span className="metric-label">Temp. Ideal</span>
                       <span className="metric-value">
                         {ambiente.temperatura_ideal !== null ? `${ambiente.temperatura_ideal}°C` : '-'}
                       </span>
                     </div>
                     <div className="metric">
-                      <span className="metric-icon">💧</span>
+                      <span className="metric-icon"><Droplet size={16} className="icon-inline" /></span>
                       <span className="metric-label">Umid. Ideal</span>
                       <span className="metric-value">
                         {ambiente.umidade_ideal !== null ? `${ambiente.umidade_ideal}%` : '-'}
@@ -363,26 +364,26 @@ const Ambientes = () => {
                 </div>
                 
                 <div className="card-actions">
-                  <button 
-                    className="btn-action btn-view" 
+                  <button
+                    className="btn-action btn-view"
                     onClick={() => handleView(ambiente)}
                     title="Visualizar"
                   >
-                    👁️
+                    <Eye size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-action btn-edit" 
+                  <button
+                    className="btn-action btn-edit"
                     onClick={() => handleEdit(ambiente)}
                     title="Editar"
                   >
-                    ✏️
+                    <Pencil size={16} className="icon-inline" />
                   </button>
-                  <button 
-                    className="btn-action btn-delete" 
+                  <button
+                    className="btn-action btn-delete"
                     onClick={() => handleDeleteClick(ambiente)}
                     title="Excluir"
                   >
-                    🗑️
+                    <Trash2 size={16} className="icon-inline" />
                   </button>
                 </div>
               </div>
@@ -516,7 +517,7 @@ const Ambientes = () => {
                         setModalMode('edit');
                       }}
                     >
-                      ✏️ Editar
+                      <Pencil size={14} className="icon-inline" /> Editar
                     </button>
                   </>
                 ) : (
@@ -540,13 +541,13 @@ const Ambientes = () => {
         <div className="modal-overlay" onClick={handleDeleteCancel}>
           <div className="modal-content modal-confirm" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>⚠️ Confirmar Exclusão</h2>
+              <h2><AlertTriangle size={18} className="icon-inline" /> Confirmar Exclusão</h2>
             </div>
-            
+
             <div className="confirm-body">
               <p>Tem certeza que deseja excluir o ambiente:</p>
               <strong>"{ambienteToDelete?.nome}"</strong>
-              <p className="location-info">📍 {ambienteToDelete?.localizacao}</p>
+              <p className="location-info"><MapPin size={14} className="icon-inline icon-muted" /> {ambienteToDelete?.localizacao}</p>
               <p className="warning-text">Esta ação não pode ser desfeita!</p>
             </div>
             

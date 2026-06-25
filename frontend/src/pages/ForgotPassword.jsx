@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { MailCheck } from 'lucide-react';
 import { Footer, Loading } from '../components';
 import '../styles/Login.css';
 
@@ -87,7 +88,9 @@ const ForgotPassword = () => {
             </>
           ) : (
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '52px', marginBottom: '16px' }}>📧</div>
+              <div style={{ marginBottom: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                <MailCheck size={52} className="icon-inline" strokeWidth={1.5} />
+              </div>
 
               <div className="success-alert" style={{ marginBottom: '20px' }}>
                 <strong>Email enviado para {email}</strong>

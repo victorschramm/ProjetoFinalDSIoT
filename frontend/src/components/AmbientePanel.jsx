@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MapPin, Radio, AlertTriangle, ChevronUp, ChevronDown } from 'lucide-react';
 import SensorCard from './SensorCard';
 import '../styles/AmbientePanel.css';
 
@@ -39,11 +40,11 @@ const AmbientePanel = ({ ambiente, sensores = [], leiturasMap = {}, alertas = []
 
   const status = getStatusAmbiente();
 
-  const statusIcons = {
-    normal: '🟢',
-    atencao: '🟡',
-    critico: '🔴',
-    offline: '⚫'
+  const statusColors = {
+    normal: '#10b981',
+    atencao: '#f59e0b',
+    critico: '#ef4444',
+    offline: '#6b7280'
   };
 
   return (
@@ -53,26 +54,28 @@ const AmbientePanel = ({ ambiente, sensores = [], leiturasMap = {}, alertas = []
         onClick={() => setExpanded(!expanded)}
       >
         <div className="ambiente-info">
-          <span className="status-indicator">{statusIcons[status]}</span>
+          <span className="status-indicator">
+            <span className="status-dot" style={{ background: statusColors[status] }} />
+          </span>
           <div className="ambiente-details">
             <h3 className="ambiente-name">{ambiente.nome}</h3>
             <span className="ambiente-location">
-              📍 {ambiente.localizacao || 'Localização não definida'}
+              <MapPin size={14} className="icon-inline icon-muted" /> {ambiente.localizacao || 'Localização não definida'}
             </span>
           </div>
         </div>
-        
+
         <div className="ambiente-stats">
           <span className="sensor-count">
-            📡 {sensoresDoAmbiente.length} sensor{sensoresDoAmbiente.length !== 1 ? 'es' : ''}
+            <Radio size={14} className="icon-inline icon-muted" /> {sensoresDoAmbiente.length} sensor{sensoresDoAmbiente.length !== 1 ? 'es' : ''}
           </span>
           {alertasAtivos.length > 0 && (
             <span className="alert-badge">
-              ⚠️ {alertasAtivos.length}
+              <AlertTriangle size={14} className="icon-inline" /> {alertasAtivos.length}
             </span>
           )}
           <button className="expand-btn">
-            {expanded ? '▲' : '▼'}
+            {expanded ? <ChevronUp size={16} className="icon-inline" /> : <ChevronDown size={16} className="icon-inline" />}
           </button>
         </div>
       </div>
@@ -81,7 +84,7 @@ const AmbientePanel = ({ ambiente, sensores = [], leiturasMap = {}, alertas = []
         <div className="ambiente-content">
           {sensoresDoAmbiente.length === 0 ? (
             <div className="no-sensors">
-              <span className="icon">📡</span>
+              <span className="icon"><Radio size={32} className="icon-muted" /></span>
               <p>Nenhum sensor cadastrado neste ambiente</p>
             </div>
           ) : (

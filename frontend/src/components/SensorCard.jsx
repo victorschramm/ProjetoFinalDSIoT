@@ -1,14 +1,15 @@
 import React from 'react';
+import { Thermometer, Droplet, SlidersHorizontal, Wind, Gauge, Lightbulb, Radio, Calendar, AlertTriangle } from 'lucide-react';
 import '../styles/SensorCard.css';
 
 const TIPOS_CONFIG = {
-  temperatura:   { icon: '🌡️', unidade: '°C',  label: 'Temperatura' },
-  umidade:       { icon: '💧', unidade: '%',   label: 'Umidade' },
-  potenciometro: { icon: '🎛️', unidade: '%',   label: 'Potenciômetro' },
-  co2:           { icon: '💨', unidade: 'ppm', label: 'CO₂' },
-  pressao:       { icon: '🔵', unidade: 'hPa', label: 'Pressão' },
-  luz:           { icon: '💡', unidade: 'lux', label: 'Luminosidade' },
-  luminosidade:  { icon: '💡', unidade: 'lux', label: 'Luminosidade' },
+  temperatura:   { icon: Thermometer, unidade: '°C',  label: 'Temperatura' },
+  umidade:       { icon: Droplet, unidade: '%',   label: 'Umidade' },
+  potenciometro: { icon: SlidersHorizontal, unidade: '%',   label: 'Potenciômetro' },
+  co2:           { icon: Wind, unidade: 'ppm', label: 'CO₂' },
+  pressao:       { icon: Gauge, unidade: 'hPa', label: 'Pressão' },
+  luz:           { icon: Lightbulb, unidade: 'lux', label: 'Luminosidade' },
+  luminosidade:  { icon: Lightbulb, unidade: 'lux', label: 'Luminosidade' },
 };
 
 const getStatusPorTipo = (tipo, valor) => {
@@ -66,14 +67,13 @@ const SensorCard = ({ sensor, leituras = {}, alertasAtivos = [] }) => {
   const getIconSensor = () => {
     const temTemp = tiposDisponiveis.includes('temperatura');
     const temUmid = tiposDisponiveis.includes('umidade');
-    if (temTemp && temUmid) return '🌡️';
-    if (temTemp) return '🌡️';
-    if (temUmid) return '💧';
+    if (temTemp) return Thermometer;
+    if (temUmid) return Droplet;
     const tipo = sensor.tipo?.toLowerCase() || '';
-    if (tipo.includes('co2') || tipo.includes('gas')) return '💨';
-    if (tipo.includes('pressao')) return '🔵';
-    if (tipo.includes('luz') || tipo.includes('luminosidade')) return '💡';
-    return '📡';
+    if (tipo.includes('co2') || tipo.includes('gas')) return Wind;
+    if (tipo.includes('pressao')) return Gauge;
+    if (tipo.includes('luz') || tipo.includes('luminosidade')) return Lightbulb;
+    return Radio;
   };
 
   const formatarData = (dataString) => {
@@ -93,11 +93,12 @@ const SensorCard = ({ sensor, leituras = {}, alertasAtivos = [] }) => {
   };
 
   const ultimaData = getUltimaData();
+  const IconSensor = getIconSensor();
 
   return (
     <div className={`sensor-card status-${status}`}>
       <div className="sensor-card-header">
-        <span className="sensor-icon">{getIconSensor()}</span>
+        <span className="sensor-icon"><IconSensor size={22} className="icon-inline" /></span>
         <div className="sensor-info">
           <h4 className="sensor-name">{sensor.nome || `Sensor ${sensor.id}`}</h4>
           <span className="sensor-type">{sensor.tipo || 'Desconhecido'}</span>
@@ -115,12 +116,13 @@ const SensorCard = ({ sensor, leituras = {}, alertasAtivos = [] }) => {
         ) : (
           <div className="sensor-readings">
             {tiposDisponiveis.map(tipo => {
-              const config = TIPOS_CONFIG[tipo] || { icon: '📡', unidade: '', label: tipo };
+              const config = TIPOS_CONFIG[tipo] || { icon: Radio, unidade: '', label: tipo };
               const valor = parseFloat(leituras[tipo].valor);
               const statusTipo = getStatusPorTipo(tipo, valor);
+              const ReadingIcon = config.icon;
               return (
                 <div key={tipo} className={`reading-item reading-${statusTipo}`}>
-                  <span className="reading-icon">{config.icon}</span>
+                  <span className="reading-icon"><ReadingIcon size={18} className="icon-inline" /></span>
                   <div className="reading-data">
                     <span className="reading-label">{config.label}</span>
                     <span className="reading-value">
@@ -135,14 +137,14 @@ const SensorCard = ({ sensor, leituras = {}, alertasAtivos = [] }) => {
 
         <div className="sensor-meta">
           <span className="last-update">
-            📅 {ultimaData ? formatarData(ultimaData) : '--'}
+            <Calendar size={14} className="icon-inline icon-muted" /> {ultimaData ? formatarData(ultimaData) : '--'}
           </span>
         </div>
       </div>
 
       {alertasAtivos.length > 0 && (
         <div className="sensor-alerts">
-          <span className="alert-icon">⚠️</span>
+          <span className="alert-icon"><AlertTriangle size={16} className="icon-inline" /></span>
           <span className="alert-count">
             {alertasAtivos.length} alerta{alertasAtivos.length > 1 ? 's' : ''} ativo{alertasAtivos.length > 1 ? 's' : ''}
           </span>

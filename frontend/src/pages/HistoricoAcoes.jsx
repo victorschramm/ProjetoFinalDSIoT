@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { ClipboardList } from 'lucide-react';
 import { Header, Drawer, Footer } from '../components';
 import {
   getAuditLogs,
@@ -145,7 +146,7 @@ const HistoricoAcoes = () => {
 
       <div className="historico-acoes-container">
         <div className="historico-acoes-toolbar">
-          <h2>📋 Histórico de Ações do Sistema</h2>
+          <h2><ClipboardList size={18} className="icon-inline" /> Histórico de Ações do Sistema</h2>
           <span className="historico-acoes-total">{paginacao.total} registros</span>
         </div>
 
@@ -198,8 +199,8 @@ const HistoricoAcoes = () => {
 
         {/* Legenda */}
         <div className="historico-acoes-legenda">
-          <span className="legenda-critica">🔴 Ação Crítica</span>
-          <span className="legenda-comum">🔵 Ação Comum</span>
+          <span className="legenda-critica"><span className="status-dot" style={{ background: '#ef4444' }} /> Ação Crítica</span>
+          <span className="legenda-comum"><span className="status-dot" style={{ background: '#3b82f6' }} /> Ação Comum</span>
         </div>
 
         {loading ? (
@@ -212,7 +213,7 @@ const HistoricoAcoes = () => {
             <div className="table-container">
               {logs.length === 0 ? (
                 <div className="empty-state">
-                  <span className="empty-icon">📋</span>
+                  <span className="empty-icon"><ClipboardList size={32} className="icon-muted" /></span>
                   <p>Nenhuma ação registrada para os filtros aplicados.</p>
                 </div>
               ) : (

@@ -12,7 +12,7 @@ const { logAssetEvent } = require('./services/assetHistoryService');
 require('./models/AuditLog');
 require('./models/PreventiveMaintenance');
 
-sequelize.sync({ alter: true }).then(async () => {
+sequelize.sync().then(async () => {
   console.log('✓ Banco de dados sincronizado');
 
   try {
