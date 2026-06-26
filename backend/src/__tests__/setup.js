@@ -1,0 +1,12 @@
+process.env.DB_STORAGE = ':memory:';
+process.env.DB_DIALECT = 'sqlite';
+process.env.JWT_SECRET = 'test-secret-key';
+process.env.NODE_ENV = 'test';
+process.env.EMAIL_USER = '';
+process.env.EMAIL_PASS = '';
+process.env.GROQ_API_KEY = 'gsk_test_key_ci';
+process.env.GROQ_MODEL = 'llama-3.3-70b-versatile';
+process.env.MQTT_BROKER = '';
+process.env.MQTT_USERNAME = '';
+process.env.MQTT_PASSWORD = '';
+process.env.MQTT_TOPIC = 'test/topic';

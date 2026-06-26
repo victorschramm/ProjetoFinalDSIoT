@@ -1,0 +1,222 @@
+@baseUrl = http://localhost:3000/api
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+# Autenticação e Usuários
+### Registrar um novo usuário | Tipo de usuário: 'admin' ou 'usuario'
+# @name register
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "name": "admin",
+  "email": "admin@example.com",
+  "password": "123456",
+  "tipo_usuario": "admin"
+}
+
+### Login do usuário
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "123456"
+}
+
+### Consultar perfil do usuário | Bearer = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA = Colar Token retornado no login
+GET http://localhost:3000/api/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+# Nível de Acesso
+### Criar novo nível de acesso
+POST http://localhost:3000/api/niveis-acesso
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Supervisor",
+  "descricao": "Acesso total ao sistema",
+  "nivel": 2
+}
+
+### Listar níveis de acesso
+GET http://localhost:3000/api/niveis-acesso
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Obter nível de acesso específico
+GET http://localhost:3000/api/niveis-acesso/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+### Atualizar nível de acesso
+PUT http://localhost:3000/api/niveis-acesso/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Supervisor Senior",
+  "descricao": "Acesso total ao sistema com privilégios especiais"
+}
+
+### Deletar nível de acesso
+DELETE http://localhost:3000/api/niveis-acesso/4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+# Ambientes
+### Criar novo ambiente
+POST http://localhost:3000/api/ambientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Sala dos Servidores",
+  "descricao": "Sala principal dos Servidores",
+  "localizacao": "Andar 1",
+  "temperatura_ideal": 15,
+  "umidade_ideal": 40
+}
+
+### Criar Segundo ambiente
+POST http://localhost:3000/api/ambientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Sala da Gerência",
+  "descricao": "Sala principal da Gerência",
+  "localizacao": "Andar 3",
+  "temperatura_ideal": 17,
+  "umidade_ideal": 65
+}
+
+### Listar ambientes
+GET http://localhost:3000/api/ambientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Obter ambiente específico
+GET http://localhost:3000/api/ambientes/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Atualizar ambiente
+PUT http://localhost:3000/api/ambientes/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Sala de Servidores Principal",
+  "temperatura_ideal": 18,
+  "umidade_ideal": 55
+}
+
+### Deletar ambiente
+DELETE http://localhost:3000/api/ambientes/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+# Sensores
+### Criar novo sensor
+POST http://localhost:3000/api/sensores
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Sensor Temperatura 01",
+  "tipo": "temperatura",
+  "modelo": "DHT22",
+  "descricao": "Sensor de temperatura principal",
+  "id_ambiente": 1,
+  "status": "ativo"
+}
+
+### Listar sensores
+GET http://localhost:3000/api/sensores
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Obter sensor específico
+GET http://localhost:3000/api/sensores/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Atualizar sensor
+PUT http://localhost:3000/api/sensores/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "nome": "Sensor Temperatura Principal",
+  "status": "manutenção"
+}
+
+### Deletar sensor
+DELETE http://localhost:3000/api/sensores/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+# Leituras
+### Registrar nova leitura
+POST http://localhost:3000/api/leituras
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "id_sensor": 1,
+  "valor": 22.5,
+  "tipo_leitura": "temperatura",
+  "timestamp": "2025-10-24T10:00:00Z"
+}
+
+### Listar leituras
+GET http://localhost:3000/api/leituras
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Obter leitura específica
+GET http://localhost:3000/api/leituras/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Listar leituras por sensor
+GET http://localhost:3000/api/leituras/sensor/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Listar leituras por período
+GET http://localhost:3000/api/leituras/periodo?inicio=2025-10-23T00:00:00Z&fim=2025-10-24T23:59:59Z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+# Alertas
+### Criar novo alerta
+POST http://localhost:3000/api/alertas
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "id_sensor": 1,
+  "tipo": "temperatura_alta",
+  "mensagem": "Temperatura acima do limite",
+  "nivel_severidade": "alto",
+  "valor_detectado": 28.5,
+  "timestamp": "2025-10-24T10:15:00Z"
+}
+
+### Listar alertas
+GET http://localhost:3000/api/alertas
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Obter alerta específico
+GET http://localhost:3000/api/alertas/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Listar alertas por sensor
+GET http://localhost:3000/api/alertas/sensor/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Listar alertas por severidade
+GET http://localhost:3000/api/alertas/severidade/alto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+
+### Atualizar status do alerta
+PUT http://localhost:3000/api/alertas/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA
+Content-Type: application/json
+
+{
+  "status": "resolvido",
+  "resolucao": "Ajuste do ar condicionado realizado"
+}
+
+### Deletar alerta
+DELETE http://localhost:3000/api/alertas/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzU5MzcyNCwiZXhwIjoxNzYzNjgwMTI0fQ.vxuqpN5w20WhMp4xpMWHnnmy3aKFQU3-SY10Hw9CVpA

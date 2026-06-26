@@ -1,0 +1,15 @@
+{
+  "short_name": "ManutAI",
+  "name": "ManutAI — Monitoramento do Ambiente IoT",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#00cec9",
+  "background_color": "#0f172a"
+}
