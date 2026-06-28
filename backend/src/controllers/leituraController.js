@@ -9,7 +9,7 @@ module.exports = {
     if (!result.success) {
       return res.status(400).json({
         error: 'Dados inválidos',
-        detalhes: result.error.errors.map(e => e.message)
+        detalhes: result.error.issues.map(e => e.message)
       });
     }
 
