@@ -5,7 +5,7 @@ import { AlertTriangle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { Footer, Loading } from '../components';
 import '../styles/Login.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://import.meta.env.VITE_API_URL:3000/api';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();

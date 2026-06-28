@@ -1,5 +1,5 @@
 // Configuração da API
-const API_BASE_URL = 'http://localhost:3000/api'; // Ajuste conforme necessário
+const API_BASE_URL = 'https://projetofinaldsiot.onrender.com/api'; // Ajuste conforme necessário
 const LOGIN_ENDPOINT = '/login';
 
 // Elementos do DOM
