@@ -52,7 +52,7 @@ sequelize.sync().then(async () => {
   });
 
   const PORT = process.env.PORT || 3000;
-  const httpServer = app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://https://projetofinaldsiot.onrender.com`));
+  const httpServer = app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
 
   const wss = new WebSocketServer({ server: httpServer });
   wss.on('connection', (ws) => {

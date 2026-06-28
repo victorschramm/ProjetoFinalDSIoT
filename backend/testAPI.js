@@ -5,7 +5,7 @@
 
 const fetch = require('node-fetch');
 
-const API_URL = 'http://https://projetofinaldsiot.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 let authToken = '';
 
 async function test() {
