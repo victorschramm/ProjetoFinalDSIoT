@@ -1,0 +1,92 @@
+/* ==================== CABEÇALHO ==================== */
+.help-header {
+    margin-bottom: 1.5rem;
+}
+
+.help-header h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.help-header p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* ==================== ACCORDION ==================== */
+.help-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 900px;
+}
+
+.help-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.help-card--aberta {
+    border-color: #00cec9;
+}
+
+.help-card__cabecalho {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    color: #f1f5f9;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.help-card__titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.help-card__seta {
+    color: #64748b;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.help-card--aberta .help-card__seta {
+    transform: rotate(180deg);
+    color: #00cec9;
+}
+
+.help-card__conteudo {
+    padding: 0 1.25rem 1.25rem;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.help-card__conteudo p {
+    margin: 0 0 0.75rem;
+}
+
+.help-card__conteudo ul {
+    margin: 0 0 0.75rem;
+    padding-left: 1.25rem;
+}
+
+.help-card__conteudo li {
+    margin-bottom: 0.4rem;
+}
+
+.help-card__conteudo strong {
+    color: #f1f5f9;
+}

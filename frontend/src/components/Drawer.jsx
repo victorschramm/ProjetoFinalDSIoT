@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
   Home, BarChart3, Radio, TrendingUp, AlertTriangle, History,
   Wrench, Settings, Building2, SlidersHorizontal, Crown, Users,
-  ClipboardList, LogOut
+  ClipboardList, LogOut, HelpCircle
 } from 'lucide-react';
 import '../styles/Drawer.css';
 
@@ -111,6 +111,13 @@ const Drawer = ({ isOpen, onClose, onLogout, isAdmin }) => {
               </li>
             </>
           )}
+
+          <li className="drawer-divider" />
+          <li>
+            <NavLink to="/help" onClick={onClose}>
+              <HelpCircle size={16} className="icon-inline" /> Ajuda
+            </NavLink>
+          </li>
 
           <li className="drawer-divider" />
           <li>

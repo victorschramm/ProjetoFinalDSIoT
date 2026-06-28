@@ -3,6 +3,7 @@ export { default as Drawer } from './Drawer';
 export { default as Header } from './Header';
 export { default as Loading } from './Loading';
 export { default as InfoCard } from './InfoCard';
+export { default as HelpWidget } from './HelpWidget';
 
 // Route guards
 export { default as PrivateRoute } from './PrivateRoute';

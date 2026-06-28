@@ -1,0 +1,123 @@
+/* ============================
+   BOTÃO FLUTUANTE (canto inferior esquerdo)
+   ============================ */
+.help-widget-fab {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.45);
+  z-index: 1000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.help-widget-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.6);
+}
+
+/* ============================
+   PAINEL DE AJUDA RÁPIDA
+   ============================ */
+.help-widget-painel {
+  position: fixed;
+  bottom: 92px;
+  left: 28px;
+  width: 280px;
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(59, 130, 246, 0.12);
+  z-index: 999;
+  animation: help-widget-aparecer 0.2s ease;
+}
+
+@keyframes help-widget-aparecer {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.help-widget-pergunta {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.help-widget-texto {
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.help-widget-botao-principal {
+  width: 100%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.help-widget-botao-principal:hover {
+  transform: scale(1.02);
+}
+
+.help-widget-links {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.help-widget-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 12px;
+  padding: 7px 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.help-widget-link:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: #3b82f6;
+}
+
+/* ============================
+   RESPONSIVIDADE
+   ============================ */
+@media (max-width: 480px) {
+  .help-widget-painel {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    bottom: 84px;
+  }
+
+  .help-widget-fab {
+    left: 16px;
+    bottom: 20px;
+  }
+}

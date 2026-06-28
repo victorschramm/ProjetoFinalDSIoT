@@ -14,3 +14,4 @@ export { default as Dispositivos } from './Dispositivos';
 export { default as HistoricoAtivo } from './HistoricoAtivo';
 export { default as HistoricoAcoes } from './HistoricoAcoes';
 export { default as ManutencaoPreventiva } from './ManutencaoPreventiva';
+export { default as Help } from './Help';

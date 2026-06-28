@@ -2,10 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Login, ForgotPassword, ResetPassword, Dashboard, Register, Usuarios, Ambientes, Sensores, Leituras, Alertas, Monitoramento, Historico, Dispositivos, HistoricoAtivo, HistoricoAcoes, ManutencaoPreventiva } from './pages';
+import { Login, ForgotPassword, ResetPassword, Dashboard, Register, Usuarios, Ambientes, Sensores, Leituras, Alertas, Monitoramento, Historico, Dispositivos, HistoricoAtivo, HistoricoAcoes, ManutencaoPreventiva, Help } from './pages';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import ChatBot from './components/ChatBot';
+import HelpWidget from './components/HelpWidget';
 import { isAuthenticated } from './services/api';
 import './styles/global.css';
 
@@ -59,7 +60,8 @@ function App() {
         <Route path="/alertas" element={<PrivateRoute><Alertas /></PrivateRoute>} />
         <Route path="/historico-ativo" element={<PrivateRoute><HistoricoAtivo /></PrivateRoute>} />
         <Route path="/manutencao-preventiva" element={<PrivateRoute><ManutencaoPreventiva /></PrivateRoute>} />
-        
+        <Route path="/help" element={<PrivateRoute><Help /></PrivateRoute>} />
+
         {/* Rotas de administração (requerem admin) */}
         <Route path="/usuarios" element={<AdminRoute><Usuarios /></AdminRoute>} />
         <Route path="/historico-acoes" element={<AdminRoute><HistoricoAcoes /></AdminRoute>} />
@@ -69,6 +71,9 @@ function App() {
       </Routes>
 
       <ChatBotGuard />
+
+      {/* Widget global de ajuda — disponível em todas as rotas do sistema */}
+      <HelpWidget />
     </Router>
   );
 }
