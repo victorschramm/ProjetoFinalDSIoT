@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use('/api', apiLimiter);
 
-const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001')
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || 'http://https://projetofinaldsiot.onrender.com')
   .split(',')
   .map(o => o.trim());
 

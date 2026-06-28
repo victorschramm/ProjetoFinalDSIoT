@@ -315,7 +315,7 @@ GROQ_MODEL=llama-3.3-70b-versatile
 ### 1. Verificar se o backend está respondendo
 
 ```bash
-curl -X POST http://localhost:3000/api/chatbot/chat \
+curl -X POST http://https://projetofinaldsiot.onrender.com/api/chatbot/chat \
   -H "Authorization: Bearer SEU_TOKEN_JWT" \
   -H "Content-Type: application/json" \
   -d '{"mensagem": "O que é o ManutAI?"}'

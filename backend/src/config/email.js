@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 async function enviarEmailRedefinicaoSenha(destinatario, token) {
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+  const frontendUrl = process.env.FRONTEND_URL || 'http://https://projetofinaldsiot.onrender.com';
   const link = `${frontendUrl}/reset-password?token=${token}`;
 
   const html = `
