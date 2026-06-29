@@ -27,12 +27,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// static removido (frontend separado no Vercel)
-
-app.get('/', (req, res) => {
-  res.redirect('/login.html');
-});
-
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return res.status(400).json({ error: 'JSON inválido' });

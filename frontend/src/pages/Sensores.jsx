@@ -130,19 +130,13 @@ const Sensores = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Carregando dados...');
-      
+
       const [sensoresData, ambientesData, dispositivosData] = await Promise.all([
         getSensores(),
         getAmbientes(),
         getDispositivosAtivos().catch(() => [])
       ]);
-      
-      console.log('✓ Sensores carregados:', sensoresData.length);
-      console.log('✓ Ambientes carregados:', ambientesData.length);
-      console.log('  Ambientes:', ambientesData);
-      console.log('✓ Dispositivos carregados:', dispositivosData.length);
-      
+
       setSensores(sensoresData);
       setAmbientes(ambientesData);
       setDispositivos(dispositivosData);
@@ -170,9 +164,6 @@ const Sensores = () => {
 
   // Abrir modal para criar
   const handleCreate = () => {
-    console.log('📝 Abrindo modal de criar sensor');
-    console.log('   Ambientes disponíveis:', ambientes.length);
-    console.log('   Dados de ambientes:', ambientes);
     resetForm();
     setModalMode('create');
     setSelectedSensor(null);

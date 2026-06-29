@@ -74,31 +74,27 @@ const Dashboard = () => {
       // Processar resultados individualmente
       if (ambientesResult.status === 'fulfilled') {
         setAmbientes(Array.isArray(ambientesResult.value) ? ambientesResult.value : []);
-        console.log('✅ Ambientes carregados:', ambientesResult.value);
       } else {
         console.error('❌ Erro ao carregar ambientes:', ambientesResult.reason);
         setAmbientes([]);
       }
-      
+
       if (sensoresResult.status === 'fulfilled') {
         setSensores(Array.isArray(sensoresResult.value) ? sensoresResult.value : []);
-        console.log('✅ Sensores carregados:', sensoresResult.value);
       } else {
         console.error('❌ Erro ao carregar sensores:', sensoresResult.reason);
         setSensores([]);
       }
-      
+
       if (leiturasResult.status === 'fulfilled') {
         setLeituras(Array.isArray(leiturasResult.value) ? leiturasResult.value : []);
-        console.log('✅ Leituras carregadas:', leiturasResult.value);
       } else {
         console.error('❌ Erro ao carregar leituras:', leiturasResult.reason);
         setLeituras([]);
       }
-      
+
       if (alertasResult.status === 'fulfilled') {
         setAlertas(Array.isArray(alertasResult.value) ? alertasResult.value : []);
-        console.log('✅ Alertas carregados:', alertasResult.value);
       } else {
         console.error('❌ Erro ao carregar alertas:', alertasResult.reason);
         setAlertas([]);
@@ -158,16 +154,6 @@ const Dashboard = () => {
       return dataExtraida;
     };
 
-    // Debug: mostrar tipos de sensores disponíveis
-    console.log('🔍 Sensores disponíveis:', sensores.map(s => ({ id: s.id, tipo: s.tipo, nome: s.nome })));
-    console.log('🔍 Leituras disponíveis (primeiras 5):', leituras.slice(0, 5).map(l => ({ 
-      id_sensor: l.id_sensor || l.sensor_id || l.sensorId, 
-      valor: l.valor, 
-      unidade: l.unidade,
-      tipo: l.tipo,
-      tipo_leitura: l.tipo_leitura
-    })));
-
     // Última leitura de temperatura — usa tipo_leitura para não pegar umidade do mesmo sensor
     const leiturasTemp = leituras.filter(l => {
       const tipoLeitura = (l.tipo_leitura || l.tipo || '').toLowerCase();
@@ -185,20 +171,6 @@ const Dashboard = () => {
     const ultimaUmid = leiturasUmid.length > 0 
       ? leiturasUmid.sort((a, b) => new Date(extrairData(b) || Date.now()) - new Date(extrairData(a) || Date.now()))[0]
       : null;
-
-    console.log('🌡️ Leituras de temperatura encontradas:', leiturasTemp.length);
-    if (ultimaTemp) {
-      const dataTemp = extrairData(ultimaTemp);
-      console.log('  → Última temp:', ultimaTemp.valor, '°C | Data:', dataTemp);
-      console.log('  → Objeto:', ultimaTemp);
-    }
-    
-    console.log('💧 Leituras de umidade encontradas:', leiturasUmid.length);
-    if (ultimaUmid) {
-      const dataUmid = extrairData(ultimaUmid);
-      console.log('  → Última umid:', ultimaUmid.valor, '% | Data:', dataUmid);
-      console.log('  → Objeto:', ultimaUmid);
-    }
 
     return {
       totalAmbientes: ambientes.length,
