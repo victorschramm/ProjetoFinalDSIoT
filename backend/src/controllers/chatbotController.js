@@ -1,4 +1,4 @@
-const { chat } = require('../services/geminiService');
+const { chat } = require('../services/groqService');
 const { logAction } = require('../services/auditLogService');
 
 module.exports = {

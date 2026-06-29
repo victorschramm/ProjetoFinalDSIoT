@@ -59,7 +59,7 @@ Usuário faz uma pergunta
         ↓
   chatbotController.js
         ↓
-  geminiService.js (lógica principal)
+  groqService.js (lógica principal)
         ↓
   Modelo de IA (decide se precisa de dados)
         ↓ (se precisar)
@@ -100,7 +100,7 @@ npm install groq-sdk
 
 | Arquivo | Responsabilidade |
 |---|---|
-| `backend/src/services/geminiService.js` | Lógica da IA, Function Calling, loop de respostas |
+| `backend/src/services/groqService.js` | Lógica da IA, Function Calling, loop de respostas (renomeado de `geminiService.js` após a troca de provedor) |
 | `backend/src/controllers/chatbotController.js` | Recebe requisição, chama o service, registra no AuditLog |
 | `backend/src/routes/chatbotRoutes.js` | Rota `POST /api/chatbot/chat` com autenticação JWT e rate limiting |
 
