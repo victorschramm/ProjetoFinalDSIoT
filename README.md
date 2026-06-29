@@ -102,7 +102,7 @@ ProjetoFinalDSIoT/
 | Backend | Node.js, Express 5, Sequelize, SQLite (dev) / MySQL (produção), JWT, bcrypt, Zod, WebSocket (ws), express-rate-limit, Nodemailer |
 | IA | Groq SDK — modelo `llama-3.3-70b-versatile` (function calling) |
 | Frontend | React 19, React Router 7, Recharts, React Toastify, Lucide React, date-fns |
-| Deploy | Backend no Railway, Frontend na Vercel, Broker MQTT no HiveMQ Cloud |
+| Deploy | Backend no Render, Frontend na Vercel, Broker MQTT no HiveMQ Cloud |
 
 ---
 
@@ -439,6 +439,6 @@ Documentação técnica detalhada por funcionalidade está em [docs/](docs/):
 
 ## Autores
 
-- Victor Schramm
+- Victor Schramm, Yana Rosa, Pedro de Souza e Marley Fonseca
 
 **Projeto Final — DS IoT | SENAI**
